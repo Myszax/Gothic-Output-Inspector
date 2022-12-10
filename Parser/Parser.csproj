@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="g2nk_ou.bin" />
+  </ItemGroup>
+
 </Project>
