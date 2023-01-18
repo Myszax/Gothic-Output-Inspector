@@ -194,10 +194,10 @@ namespace Parser
             return true;
         }
 
-        void SkipObject(bool skipCurrent)
+        private void SkipObject(bool skipCurrent)
         {
-            ArchiveObject tmp = new();
-            int level = skipCurrent ? 1 : 0;
+            var tmp = new ArchiveObject();
+            var level = skipCurrent ? 1 : 0;
 
             do
             {

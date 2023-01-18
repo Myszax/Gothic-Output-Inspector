@@ -5,7 +5,7 @@ public static class BinaryReaderExtension
     public static String ReadLine(this BinaryReader reader)
     {
         var result = new StringBuilder();
-        bool foundEndOfLine = false;
+        var foundEndOfLine = false;
         char ch;
         while (!foundEndOfLine)
         {
