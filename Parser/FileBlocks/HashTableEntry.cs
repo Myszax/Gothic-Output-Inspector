@@ -1,4 +1,4 @@
-﻿namespace Parser.Helpers
+﻿namespace Parser.FileBlocks
 {
     sealed internal record HashTableEntry
     {

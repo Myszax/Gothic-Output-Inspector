@@ -1,6 +1,6 @@
 ﻿using Parser.Enums;
 
-namespace Parser.Helpers
+namespace Parser.FileBlocks
 {
     sealed internal class ArchiveHeader
     {

@@ -1,5 +1,5 @@
 ﻿using Parser.Enums;
-using Parser.Helpers;
+using Parser.FileBlocks;
 using System.Text;
 
 namespace Parser
