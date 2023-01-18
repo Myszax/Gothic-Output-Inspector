@@ -15,7 +15,7 @@ namespace Parser
                 {
                     ch = reader.ReadChar();
                 }
-                catch (EndOfStreamException ex)
+                catch (EndOfStreamException)
                 {
                     if (result.Length == 0) return null;
                     else break;
