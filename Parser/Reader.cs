@@ -225,7 +225,7 @@ namespace Parser
                 case ArchiveBinSafeType.String:
                 case ArchiveBinSafeType.Raw:
                 case ArchiveBinSafeType.RawFloat:
-                    Skip(_reader.ReadUInt16());
+                    SkipStreamBytesPosition(_reader.ReadUInt16());
                     break;
                 case ArchiveBinSafeType.Enum:
                 case ArchiveBinSafeType.Hash:
@@ -343,7 +343,7 @@ namespace Parser
             return ah;
         }
 
-        private void Skip(int count)
+        private void SkipStreamBytesPosition(int count)
         {
             _reader.BaseStream.Position += count;
         }
@@ -357,7 +357,7 @@ namespace Parser
                 throw new ParserException("Reader_BinSafe: invalid format");
             }
 
-            Skip(1);
+            SkipStreamBytesPosition(1);
             var hash = _reader.ReadUInt32();
 
             return _hashTableEntries[hash].Key;
@@ -375,7 +375,7 @@ namespace Parser
 
             if ((byte)type != tmpType)
             {
-                Skip(size);
+                SkipStreamBytesPosition(size);
                 throw new ParserException($"archive_reader_binsafe: type mismatch expected {type}, got: {tmpType}");
             }
 
