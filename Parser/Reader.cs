@@ -138,7 +138,7 @@ namespace Parser
                 return false;
 
             var mark = _reader.BaseStream.Position;
-            if (_reader.ReadByte() != (byte)ArchiveBinsafeType.bs_string)
+            if (_reader.ReadByte() != (byte)ArchiveBinSafeType.String)
             {
                 ResetStream(mark);
                 return false;
@@ -173,7 +173,7 @@ namespace Parser
                 return false;
 
             var mark = _reader.BaseStream.Position;
-            if (_reader.ReadByte() != (byte)ArchiveBinsafeType.bs_string)
+            if (_reader.ReadByte() != (byte)ArchiveBinSafeType.String)
             {
                 ResetStream(mark);
                 return false;
@@ -218,30 +218,30 @@ namespace Parser
 
         private void SkipEntry()
         {
-            var type = (ArchiveBinsafeType)_reader.ReadByte();
+            var type = (ArchiveBinSafeType)_reader.ReadByte();
 
             switch (type)
             {
-                case ArchiveBinsafeType.bs_string:
-                case ArchiveBinsafeType.bs_raw:
-                case ArchiveBinsafeType.bs_raw_float:
+                case ArchiveBinSafeType.String:
+                case ArchiveBinSafeType.Raw:
+                case ArchiveBinSafeType.RawFloat:
                     Skip(_reader.ReadUInt16());
                     break;
-                case ArchiveBinsafeType.bs_enum:
-                case ArchiveBinsafeType.bs_hash:
-                case ArchiveBinsafeType.bs_int:
-                case ArchiveBinsafeType.bs_float:
-                case ArchiveBinsafeType.bs_bool:
-                case ArchiveBinsafeType.bs_color:
+                case ArchiveBinSafeType.Enum:
+                case ArchiveBinSafeType.Hash:
+                case ArchiveBinSafeType.Int:
+                case ArchiveBinSafeType.Float:
+                case ArchiveBinSafeType.Bool:
+                case ArchiveBinSafeType.Color:
                     _reader.ReadUInt32();
                     break;
-                case ArchiveBinsafeType.bs_byte:
+                case ArchiveBinSafeType.Byte:
                     _reader.ReadByte();
                     break;
-                case ArchiveBinsafeType.bs_word:
+                case ArchiveBinSafeType.Word:
                     _reader.ReadUInt16();
                     break;
-                case ArchiveBinsafeType.bs_vec3:
+                case ArchiveBinSafeType.Vec3:
                     ReadFloat();
                     ReadFloat();
                     ReadFloat();
@@ -352,7 +352,7 @@ namespace Parser
         {
             var peekedByte = _reader.ReadByte();
             _reader.BaseStream.Position--;
-            if (peekedByte != (byte)ArchiveBinsafeType.bs_hash)
+            if (peekedByte != (byte)ArchiveBinSafeType.Hash)
             {
                 throw new ParserException("Reader_BinSafe: invalid format");
             }
@@ -363,14 +363,14 @@ namespace Parser
             return _hashTableEntries[hash].Key;
         }
 
-        private ushort EnsureEntryMeta(ArchiveBinsafeType type)
+        private ushort EnsureEntryMeta(ArchiveBinSafeType type)
         {
             GetEntryKey();
             var tmpType = _reader.ReadByte();
 
-            var size = (tmpType == (byte)ArchiveBinsafeType.bs_string ||
-                tmpType == (byte)ArchiveBinsafeType.bs_raw ||
-                tmpType == (byte)ArchiveBinsafeType.bs_raw_float) ?
+            var size = (tmpType == (byte)ArchiveBinSafeType.String ||
+                tmpType == (byte)ArchiveBinSafeType.Raw ||
+                tmpType == (byte)ArchiveBinSafeType.RawFloat) ?
                 _reader.ReadUInt16() : _typeSizes[tmpType];
 
             if ((byte)type != tmpType)
@@ -384,19 +384,19 @@ namespace Parser
 
         private int ReadInt()
         {
-            EnsureEntryMeta(ArchiveBinsafeType.bs_int);
+            EnsureEntryMeta(ArchiveBinSafeType.Int);
             return _reader.ReadInt32();
         }
 
         private float ReadFloat()
         {
-            EnsureEntryMeta(ArchiveBinsafeType.bs_float);
+            EnsureEntryMeta(ArchiveBinSafeType.Float);
             return _reader.ReadSingle();
         }
 
         private uint ReadEnum()
         {
-            EnsureEntryMeta(ArchiveBinsafeType.bs_enum);
+            EnsureEntryMeta(ArchiveBinSafeType.Enum);
             return _reader.ReadUInt32();
         }
 
@@ -404,7 +404,7 @@ namespace Parser
         {
             if (bytesCount == 0)
             {
-                bytesCount = EnsureEntryMeta(ArchiveBinsafeType.bs_string);
+                bytesCount = EnsureEntryMeta(ArchiveBinSafeType.String);
             }
 
             string ret;
