@@ -11,24 +11,24 @@ namespace Parser
 
         private readonly byte[] _typeSizes = new byte[] {
             0,                        // ?            = 0x00
-	        0,                        // bs_string    = 0x01,
-	        sizeof(int),              // bs_int       = 0x02,
-	        sizeof(float),            // bs_float     = 0x03,
-	        sizeof(byte),             // bs_byte      = 0x04,
-	        sizeof(ushort),           // bs_word      = 0x05,
-	        sizeof(uint),             // bs_bool      = 0x06,
-	        sizeof(float) * 3,        // bs_vec3      = 0x07,
-	        sizeof(byte) * 4,         // bs_color     = 0x08,
-	        0,                        // bs_raw       = 0x09,
+	        0,                        // String       = 0x01,
+	        sizeof(int),              // Int          = 0x02,
+	        sizeof(float),            // Float        = 0x03,
+	        sizeof(byte),             // Byte         = 0x04,
+	        sizeof(ushort),           // Word         = 0x05,
+	        sizeof(uint),             // Bool         = 0x06,
+	        sizeof(float) * 3,        // Vec3         = 0x07,
+	        sizeof(byte) * 4,         // Color        = 0x08,
+	        0,                        // Raw          = 0x09,
 	        0,                        // ?            = 0x0A
 	        0,                        // ?            = 0x0B
 	        0,                        // ?            = 0x0C
 	        0,                        // ?            = 0x0D
 	        0,                        // ?            = 0x0E
 	        0,                        // ?            = 0x0F
-	        0,                        // bs_raw_float = 0x10,
-	        sizeof(uint),             // bs_enum      = 0x11,
-	        sizeof(uint),             // bs_hash      = 0x12,
+	        0,                        // RawFloat     = 0x10,
+	        sizeof(uint),             // Enum         = 0x11,
+	        sizeof(uint),             // Hash         = 0x12,
         };
 
         private BinaryReader _reader;
