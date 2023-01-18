@@ -1,38 +1,41 @@
 ﻿using System.Text;
 
-public static class BinaryReaderExtension
+namespace Parser
 {
-    public static String ReadLine(this BinaryReader reader)
+    public static class BinaryReaderExtension
     {
-        var result = new StringBuilder();
-        var foundEndOfLine = false;
-        char ch;
-        while (!foundEndOfLine)
+        public static string ReadLine(this BinaryReader reader)
         {
-            try
+            var result = new StringBuilder();
+            var foundEndOfLine = false;
+            char ch;
+            while (!foundEndOfLine)
             {
-                ch = reader.ReadChar();
-            }
-            catch (EndOfStreamException ex)
-            {
-                if (result.Length == 0) return null;
-                else break;
-            }
+                try
+                {
+                    ch = reader.ReadChar();
+                }
+                catch (EndOfStreamException ex)
+                {
+                    if (result.Length == 0) return null;
+                    else break;
+                }
 
-            switch (ch)
-            {
-                case '\r':
-                    if (reader.PeekChar() == '\n') reader.ReadChar();
-                    foundEndOfLine = true;
-                    break;
-                case '\n':
-                    foundEndOfLine = true;
-                    break;
-                default:
-                    result.Append(ch);
-                    break;
+                switch (ch)
+                {
+                    case '\r':
+                        if (reader.PeekChar() == '\n') reader.ReadChar();
+                        foundEndOfLine = true;
+                        break;
+                    case '\n':
+                        foundEndOfLine = true;
+                        break;
+                    default:
+                        result.Append(ch);
+                        break;
+                }
             }
+            return result.ToString();
         }
-        return result.ToString();
     }
 }
