@@ -1,6 +1,6 @@
 ﻿namespace Parser.FileBlocks
 {
-    sealed internal record HashTableEntry
+    sealed internal class HashTableEntry
     {
         public string? Key { get; set; }
         public uint Hash { get; set; }
