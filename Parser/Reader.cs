@@ -45,13 +45,11 @@ namespace Parser
 
             _path = path;
             _codePage = codePage;
-            _hashTableEntries = Array.Empty<HashTableEntry>();            
+            _hashTableEntries = Array.Empty<HashTableEntry>();
         }
 
         public List<Dialogue> Parse()
         {
-            var list = new List<Dialogue>();
-
             _reader = new BinaryReader(File.Open(_path, FileMode.Open), Encoding.GetEncoding(1252), false);
             //_reader = new BinaryReader(File.Open(path, FileMode.Open));
 
@@ -67,6 +65,24 @@ namespace Parser
 
             var itemCount = ReadInt(); // NumOfItems
 
+            var listOfDialogues = ParseAllDialogues(itemCount);
+
+            if (!ReadObjectEnd())
+            {
+                SkipObject(true);
+                throw new ParserException("file not fully parsed");
+            }
+
+            _reader.Dispose();
+            _reader.Close();
+
+            return listOfDialogues;
+        }
+
+        private List<Dialogue> ParseAllDialogues(int itemCount)
+        {
+            var list = new List<Dialogue>();
+            var obj = new ArchiveObject();
             for (int i = 0; i < itemCount; i++)
             {
                 if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals("zCCSBlock"))
@@ -117,17 +133,7 @@ namespace Parser
                     SkipObject(true);
                     throw new ParserException("zCCSBlock not fully parsed");
                 }
-
             }
-
-            if (!ReadObjectEnd())
-            {
-                SkipObject(true);
-                throw new ParserException("file not fully parsed");
-            }
-
-            _reader.Dispose();
-            _reader.Close();
 
             return list;
         }
