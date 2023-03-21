@@ -284,58 +284,28 @@ namespace Parser
 
         private ArchiveHeader ParseHeader()
         {
-            var ah = new ArchiveHeader();
+            var header = new ArchiveHeader();
 
             if (_reader.ReadLine() != "ZenGin Archive")
             {
                 throw new ParserException("Header: Missing 'ZenGin Archive' at start.");
             }
 
-            var version = _reader.ReadLine();
-            if (!version.StartsWith("ver "))
-            {
-                throw new ParserException("Header: ver field missing");
-            }
-            ah.Version = int.Parse(version[4..]);
-
-            ah.Archiver = _reader.ReadLine();
-
-            var format = _reader.ReadLine();
-            if (format.Equals("ASCII"))
-            {
-                ah.Format = ArchiveFormat.ASCII;
-            }
-            else if (format.Equals("BINARY"))
-            {
-                ah.Format = ArchiveFormat.Binary;
-            }
-            else if (format.Equals("BIN_SAFE"))
-            {
-                ah.Format = ArchiveFormat.BinSafe;
-            }
-            else
-            {
-                throw new ParserException("Header: Format not match.");
-            }
-
-            var saveGame = _reader.ReadLine();
-            if (!saveGame.StartsWith("saveGame "))
-            {
-                throw new ParserException("Header: saveGame field missing");
-            }
-
-            ah.Save = int.Parse(saveGame.Substring(saveGame.Length - 1)) != 0;
+            header.Version = HeaderGetVersion();
+            header.Archiver = _reader.ReadLine();
+            header.Format = HeaderGetFormat();
+            header.Save = HeaderGetSave();
 
             var optionalLine = _reader.ReadLine();
             if (optionalLine.StartsWith("date "))
             {
-                ah.Date = DateTime.Parse(optionalLine[5..]);
+                header.Date = DateTime.Parse(optionalLine[5..]);
                 optionalLine = _reader.ReadLine();
             }
 
             if (optionalLine.StartsWith("user "))
             {
-                ah.User = optionalLine.Substring(5);
+                header.User = optionalLine.Substring(5);
                 optionalLine = _reader.ReadLine();
             }
 
@@ -346,12 +316,55 @@ namespace Parser
 
             PareseHeaderBinSafe();
 
-            return ah;
+            return header;
+        }
+
+        private int HeaderGetVersion()
+        {
+            var version = _reader.ReadLine();
+            if (!version.StartsWith("ver "))
+            {
+                throw new ParserException("Header: ver field missing");
+            }
+
+            return int.Parse(version[4..]);
         }
 
         private void SkipStreamBytesPosition(int count)
         {
             _reader.BaseStream.Position += count;
+        }
+
+        private ArchiveFormat HeaderGetFormat()
+        {
+            var format = _reader.ReadLine();
+            if (format.Equals("ASCII"))
+            {
+                return ArchiveFormat.ASCII;
+            }
+            else if (format.Equals("BINARY"))
+            {
+                return ArchiveFormat.Binary;
+            }
+            else if (format.Equals("BIN_SAFE"))
+            {
+                return ArchiveFormat.BinSafe;
+            }
+            else
+            {
+                throw new ParserException("Header: Format not match.");
+            }
+        }
+
+        private bool HeaderGetSave()
+        {
+            var saveGame = _reader.ReadLine();
+            if (!saveGame.StartsWith("saveGame "))
+            {
+                throw new ParserException("Header: saveGame field missing");
+            }
+
+            return int.Parse(saveGame.Substring(saveGame.Length - 1)) != 0;
         }
 
         private string GetEntryKey()
