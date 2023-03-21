@@ -387,10 +387,11 @@ namespace Parser
             GetEntryKey();
             var tmpType = _reader.ReadByte();
 
-            var size = (tmpType == (byte)ArchiveBinSafeType.String ||
-                tmpType == (byte)ArchiveBinSafeType.Raw ||
-                tmpType == (byte)ArchiveBinSafeType.RawFloat) ?
-                _reader.ReadUInt16() : _typeSizes[tmpType];
+            var size = (ArchiveBinSafeType)tmpType switch
+            {
+                ArchiveBinSafeType.String or ArchiveBinSafeType.Raw or ArchiveBinSafeType.RawFloat => _reader.ReadUInt16(),
+                _ => _typeSizes[tmpType],
+            };
 
             if ((byte)type != tmpType)
             {
