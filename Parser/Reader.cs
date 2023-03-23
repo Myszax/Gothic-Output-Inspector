@@ -1,12 +1,12 @@
 ﻿using Parser.Enums;
 using Parser.FileBlocks;
 using System.Text;
+using static Parser.Constants;
 
 namespace Parser
 {
     sealed internal class Reader
     {
-
         private HashTableEntry[] _hashTableEntries;
 
         private readonly byte[] _typeSizes = new byte[] {
@@ -58,9 +58,9 @@ namespace Parser
             var obj = new ArchiveObject();
             ReadObjectBegin(ref obj);
 
-            if (!obj.ClassName.Equals("zCCSLib"))
+            if (!obj.ClassName.Equals(zCCSLib))
             {
-                throw new ParserException("root object is not 'zCCSLib'");
+                throw new ParserException($"root object is not '{zCCSLib}'");
             }
 
             var itemCount = ReadInt(); // NumOfItems
@@ -85,28 +85,29 @@ namespace Parser
             var obj = new ArchiveObject();
             for (int i = 0; i < itemCount; i++)
             {
-                if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals("zCCSBlock"))
+                if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals(zCCSBlock))
                 {
-                    throw new ParserException("expected 'zCCSBlock' but didn't find it");
+                    throw new ParserException($"expected '{zCCSBlock}' but didn't find it");
                 }
 
                 var name = ReadString(false);
                 var blockCount = ReadInt();
                 ReadFloat();
 
-                if (blockCount != 1)
+                if (blockCount != MAXIMUM_BLOCK_COUNT_READED)
                 {
                     throw new ParserException($"expected only one block but got {blockCount} for {name}");
                 }
 
-                if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals("zCCSAtomicBlock"))
+                if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals(zCCSAtomicBlock))
                 {
-                    throw new ParserException($"expected atomic block not found for {name}");
+                    throw new ParserException($"expected atomic block, not found for {name}");
                 }
 
-                if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals("oCMsgConversation:oCNpcMessage:zCEventMessage"))
+                if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals(zCEventMessage))
+
                 {
-                    throw new ParserException($"expected oCMsgConversation not found for {name}");
+                    throw new ParserException($"expected {zCEventMessage} not found for {name}");
                 }
 
                 var type = ReadEnum();
@@ -119,19 +120,19 @@ namespace Parser
                 if (!ReadObjectEnd())
                 {
                     SkipObject(true);
-                    throw new ParserException("oCMsgConversation not fully parsed");
+                    throw new ParserException($"{zCEventMessage} not fully parsed");
                 }
 
                 if (!ReadObjectEnd())
                 {
                     SkipObject(true);
-                    throw new ParserException("zCCSAtomicBlock not fully parsed");
+                    throw new ParserException($"{zCCSAtomicBlock} not fully parsed");
                 }
 
                 if (!ReadObjectEnd())
                 {
                     SkipObject(true);
-                    throw new ParserException("zCCSBlock not fully parsed");
+                    throw new ParserException($"{zCCSBlock} not fully parsed");
                 }
             }
 
@@ -140,7 +141,7 @@ namespace Parser
 
         private bool ReadObjectBegin(ref ArchiveObject obj)
         {
-            if (_reader.BaseStream.Length - _reader.BaseStream.Position < 6)
+            if (_reader.BaseStream.Length - _reader.BaseStream.Position < MINIMUM_REMAINING_BYTES_TO_READ_OBJECT)
                 return false;
 
             var mark = _reader.BaseStream.Position;
@@ -152,14 +153,14 @@ namespace Parser
 
             var line = new string(_reader.ReadChars(_reader.ReadUInt16()));
 
-            if (line.Length <= 2)
+            if (line.Length <= MINIMUM_OBJECT_LENGTH)
             {
                 ResetStream(mark);
                 return false;
             }
 
             var parsedElements = line.Split(" ");
-            if (parsedElements.Length != 4)
+            if (parsedElements.Length != PARSED_OBJECT_ELEMENTS_COUNT)
             {
                 ResetStream(mark);
                 return false;
@@ -175,7 +176,7 @@ namespace Parser
 
         private bool ReadObjectEnd()
         {
-            if (_reader.BaseStream.Length - _reader.BaseStream.Position < 6)
+            if (_reader.BaseStream.Length - _reader.BaseStream.Position < MINIMUM_REMAINING_BYTES_TO_READ_OBJECT)
                 return false;
 
             var mark = _reader.BaseStream.Position;
@@ -185,13 +186,13 @@ namespace Parser
                 return false;
             }
 
-            if (_reader.ReadUInt16() != 2)
+            if (_reader.ReadUInt16() != OBJECT_END_LENGTH)
             {
                 ResetStream(mark);
                 return false;
             }
 
-            if (!ReadString(false, 2).Equals("[]"))
+            if (!ReadString(false, OBJECT_END_LENGTH).Equals(OBJECT_END))
             {
                 ResetStream(mark);
                 return false;
@@ -286,9 +287,9 @@ namespace Parser
         {
             var header = new ArchiveHeader();
 
-            if (_reader.ReadLine() != "ZenGin Archive")
+            if (!_reader.ReadLine().Equals(HEADER_ZENGINE_ARCHIVE))
             {
-                throw new ParserException("Header: Missing 'ZenGin Archive' at start.");
+                throw new ParserException($"Header: Missing '{HEADER_ZENGINE_ARCHIVE}' at start.");
             }
 
             header.Version = HeaderGetVersion();
@@ -297,21 +298,21 @@ namespace Parser
             header.Save = HeaderGetSave();
 
             var optionalLine = _reader.ReadLine();
-            if (optionalLine.StartsWith("date "))
+            if (optionalLine.StartsWith(HEADER_DATE))
             {
-                header.Date = DateTime.Parse(optionalLine[5..]);
+                header.Date = DateTime.Parse(optionalLine[HEADER_DATE.Length..]);
                 optionalLine = _reader.ReadLine();
             }
 
-            if (optionalLine.StartsWith("user "))
+            if (optionalLine.StartsWith(HEADER_USER))
             {
-                header.User = optionalLine.Substring(5);
+                header.User = optionalLine.Substring(HEADER_USER.Length);
                 optionalLine = _reader.ReadLine();
             }
 
-            if (!optionalLine.Equals("END"))
+            if (!optionalLine.Equals(HEADER_END))
             {
-                throw new ParserException("Header: first END missing");
+                throw new ParserException($"Header: first '{HEADER_END}' missing");
             }
 
             PareseHeaderBinSafe();
@@ -322,12 +323,12 @@ namespace Parser
         private int HeaderGetVersion()
         {
             var version = _reader.ReadLine();
-            if (!version.StartsWith("ver "))
+            if (!version.StartsWith(HEADER_VER))
             {
-                throw new ParserException("Header: ver field missing");
+                throw new ParserException($"Header: '{HEADER_VER}' field missing");
             }
 
-            return int.Parse(version[4..]);
+            return int.Parse(version[HEADER_VER.Length..]);
         }
 
         private void SkipStreamBytesPosition(int count)
@@ -338,15 +339,15 @@ namespace Parser
         private ArchiveFormat HeaderGetFormat()
         {
             var format = _reader.ReadLine();
-            if (format.Equals("ASCII"))
+            if (format.Equals(ARCHIVE_FORMAT_ASCII))
             {
                 return ArchiveFormat.ASCII;
             }
-            else if (format.Equals("BINARY"))
+            else if (format.Equals(ARCHIVE_FORMAT_BINARY))
             {
                 return ArchiveFormat.Binary;
             }
-            else if (format.Equals("BIN_SAFE"))
+            else if (format.Equals(ARCHIVE_FORMAT_BIN_SAFE))
             {
                 return ArchiveFormat.BinSafe;
             }
@@ -359,9 +360,9 @@ namespace Parser
         private bool HeaderGetSave()
         {
             var saveGame = _reader.ReadLine();
-            if (!saveGame.StartsWith("saveGame "))
+            if (!saveGame.StartsWith(HEADER_SAVEGAME))
             {
-                throw new ParserException("Header: saveGame field missing");
+                throw new ParserException($"Header: `{HEADER_SAVEGAME}` field missing");
             }
 
             return int.Parse(saveGame.Substring(saveGame.Length - 1)) != 0;
