@@ -306,7 +306,7 @@ namespace Parser
 
             if (optionalLine.StartsWith(HEADER_USER))
             {
-                header.User = optionalLine.Substring(HEADER_USER.Length);
+                header.User = optionalLine[HEADER_USER.Length..];
                 optionalLine = _reader.ReadLine();
             }
 
