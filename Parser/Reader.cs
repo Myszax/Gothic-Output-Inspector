@@ -92,7 +92,7 @@ namespace Parser
 
                 var name = ReadString(false);
                 var blockCount = ReadInt();
-                ReadFloat();
+                ReadFloat(); // subBlock0
 
                 if (blockCount != MAXIMUM_BLOCK_COUNT_READED)
                 {
@@ -169,7 +169,7 @@ namespace Parser
             obj.ObjectName = parsedElements[0][1..];
             obj.ClassName = parsedElements[1];
             obj.Version = short.Parse(parsedElements[2]);
-            obj.Index = int.Parse(parsedElements[3].Substring(0, parsedElements[3].Length - 1));
+            obj.Index = int.Parse(parsedElements[3][..^1]);
 
             return true;
         }
@@ -278,7 +278,7 @@ namespace Parser
                 var hashValue = _reader.ReadUInt32();
                 var key = _reader.ReadChars(keyLength);
 
-                _hashTableEntries[insertionIndex] = new HashTableEntry { Hash = hashValue, Key = new String(key) };
+                _hashTableEntries[insertionIndex] = new HashTableEntry { Hash = hashValue, Key = new string(key) };
             }
             _reader.BaseStream.Position = markPos;
         }
@@ -365,7 +365,7 @@ namespace Parser
                 throw new ParserException($"Header: `{HEADER_SAVEGAME}` field missing");
             }
 
-            return int.Parse(saveGame.Substring(saveGame.Length - 1)) != 0;
+            return int.Parse(saveGame[^1..]) != 0;
         }
 
         private string GetEntryKey()
@@ -438,7 +438,7 @@ namespace Parser
             else
             {
                 var charsArray = _reader.ReadChars(bytesCount);
-                ret = new String(charsArray);
+                ret = new string(charsArray);
             }
 
             return ret;
