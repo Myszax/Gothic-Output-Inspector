@@ -17,8 +17,10 @@ namespace Parser
                 }
                 catch (EndOfStreamException)
                 {
-                    if (result.Length == 0) return null;
-                    else break;
+                    if (result.Length == 0)
+                        return string.Empty;
+                    else
+                        break;
                 }
 
                 switch (ch)
@@ -35,6 +37,7 @@ namespace Parser
                         break;
                 }
             }
+
             return result.ToString();
         }
     }
