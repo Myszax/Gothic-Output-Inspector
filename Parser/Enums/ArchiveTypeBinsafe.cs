@@ -1,6 +1,6 @@
 ﻿namespace Parser.Enums
 {
-    public enum ArchiveTypeBinSafe
+    internal enum ArchiveTypeBinSafe
     {
         String = 0x1,
         Int = 0x2,

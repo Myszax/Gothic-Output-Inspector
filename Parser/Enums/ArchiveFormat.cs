@@ -1,6 +1,6 @@
 ﻿namespace Parser.Enums
 {
-    public enum ArchiveFormat
+    internal enum ArchiveFormat
     {
         Binary,
         BinSafe,

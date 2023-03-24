@@ -1,6 +1,6 @@
 ﻿namespace Parser
 {
-    internal sealed record Dialogue
+    public sealed record Dialogue
     {
         public string? Name { get; set; }
         public string? Text { get; set; }
