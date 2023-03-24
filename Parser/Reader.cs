@@ -31,9 +31,9 @@ namespace Parser
 	        sizeof(uint),             // Hash         = 0x12,
         };
 
-        private BinaryReader? _reader;
+        private BinaryReader _reader;
 
-        private ArchiveHeader? _header;
+        private ArchiveHeader _header;
 
         private readonly string _path;
 
