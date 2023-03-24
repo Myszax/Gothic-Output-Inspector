@@ -2,7 +2,7 @@
 
 namespace Parser.FileBlocks
 {
-    sealed internal class ArchiveHeader
+    internal sealed class ArchiveHeader
     {
         public int Version { get; set; }
         public string Archiver { get; set; }

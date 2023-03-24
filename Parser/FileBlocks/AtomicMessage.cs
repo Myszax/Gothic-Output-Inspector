@@ -1,6 +1,6 @@
 ﻿namespace Parser.FileBlocks
 {
-    sealed internal class AtomicMessage
+    internal sealed class AtomicMessage
     {
         public uint Type { get; set; } = 0;
         public string Text { get; set; }

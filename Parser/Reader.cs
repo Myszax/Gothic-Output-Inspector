@@ -5,7 +5,7 @@ using static Parser.Constants;
 
 namespace Parser
 {
-    sealed internal class Reader
+    internal sealed class Reader
     {
         private HashTableEntry[] _hashTableEntries;
 

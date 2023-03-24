@@ -1,6 +1,6 @@
 ﻿namespace Parser.FileBlocks
 {
-    sealed internal class ArchiveObject
+    internal sealed class ArchiveObject
     {
         public string ObjectName { get; set; }
         public string ClassName { get; set; }

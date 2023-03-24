@@ -1,6 +1,6 @@
 ﻿namespace Parser
 {
-    sealed internal class ParserException : Exception
+    internal sealed class ParserException : Exception
     {
         public ParserException(string message) : base(message) { }
         public ParserException() { }
