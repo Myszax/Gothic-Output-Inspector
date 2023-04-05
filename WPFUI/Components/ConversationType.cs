@@ -1,6 +1,6 @@
 ﻿namespace WPFUI.Components;
 
-internal enum ConversationType
+public enum ConversationType
 {
     Dialogue,
     Svm,
