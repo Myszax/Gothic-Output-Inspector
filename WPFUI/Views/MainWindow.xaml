@@ -9,6 +9,14 @@
         FontSize="16"
         Title="Gothic OU Inspector" Height="450" Width="800">
 
+    <Window.Resources>
+        <!-- Bind the control's SelectedTreeViewItem property to the DataContext -->
+        <Style TargetType="local:MainWindow">
+            <Setter Property="SelectedTreeViewItem"
+              Value="{Binding SelectedDataItem}" />
+        </Style>
+    </Window.Resources>
+
     <Grid Background="#27282C">
 
         <Grid.ColumnDefinitions>

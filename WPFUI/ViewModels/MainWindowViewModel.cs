@@ -4,4 +4,6 @@ namespace WPFUI.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
+    [ObservableProperty]
+    private object _selectedTreeItem;
 }
