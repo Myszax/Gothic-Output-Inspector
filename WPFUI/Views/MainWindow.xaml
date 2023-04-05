@@ -3,10 +3,161 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:WPFUI.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         xmlns:local="clr-namespace:WPFUI"
         mc:Ignorable="d"
-        Title="Gothic Output Inspector" Height="450" Width="800">
-    <Grid>
+        FontSize="16"
+        Title="Gothic OU Inspector" Height="450" Width="800">
+
+    <Grid Background="#27282C">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Grid.ColumnSpan="3">
+            <DockPanel>
+                <Menu DockPanel.Dock="Top">
+                    <MenuItem Header="_File">
+                        <MenuItem Header="_Open" />
+                        <MenuItem Header="_Save" />
+                        <Separator />
+                        <MenuItem Header="_Exit" />
+                    </MenuItem>
+                </Menu>
+            </DockPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <TextBox Text="Filter by..." />
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="1" Background="DarkGreen">
+            <DataGrid x:Name="Grid_Upper" Grid.Row="2"
+                AlternatingRowBackground="#2F3136"
+                HeadersVisibility="Column"  AutoGenerateColumns="False"
+                CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
+                CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
+                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling">
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Audio">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button>Play</Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Name" />
+                    <DataGridTemplateColumn Header="Text">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Padding="10,10,10,10" MinWidth="100" Width="300" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+
+                <DataGrid.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding Name}"
+                                       Background="#27282C" Foreground="white"
+                                       BorderBrush="Orange" BorderThickness="1"
+                                       FontWeight="Bold"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+
+            </DataGrid>
+        </Grid>
+
+
+        <Grid Grid.Row="2" Grid.RowSpan="2">
+            <TreeView x:Name="TreeViewMyModelList"                     
+                VirtualizingStackPanel.IsVirtualizing="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling"
+                ScrollViewer.VerticalScrollBarVisibility="Visible">
+
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Path=Items}">
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Path=Name}"></TextBlock>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+
+            </TreeView>
+        </Grid>
+
+        <Grid Grid.Row="3" Grid.Column="1" Background="LightBlue">
+            <DataGrid x:Name="Grid_Lower" Grid.Row="2"
+                AlternatingRowBackground="#2F3136"
+                HeadersVisibility="Column"  AutoGenerateColumns="False"
+                CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
+                CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
+                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling">
+
+                <DataGrid.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Label Content="{Binding Name}"
+                                       Background="#27282C" Foreground="white"
+                                       BorderBrush="Orange" BorderThickness="1"
+                                       FontWeight="Bold"/>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Audio">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button>Play</Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                    <DataGridTemplateColumn Header="Text">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Padding="10,10,10,10" MinWidth="100" Width="300" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+
+            </DataGrid>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="2" Background="green" Grid.RowSpan="2">
+            <TextBlock>Detailed Conversation Info</TextBlock>
+        </Grid>
+
+        <Grid Grid.Row="4">
+            <TextBlock>Player</TextBlock>
+        </Grid>
+
+        <Grid Grid.Row="5" Grid.ColumnSpan="3" Background="Gray">
+            <TextBlock>Footer</TextBlock>
+        </Grid>
 
     </Grid>
 </Window>
