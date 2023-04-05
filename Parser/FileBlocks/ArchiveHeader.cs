@@ -1,14 +1,13 @@
 ﻿using Parser.Enums;
 
-namespace Parser.FileBlocks
+namespace Parser.FileBlocks;
+
+internal sealed class ArchiveHeader
 {
-    internal sealed class ArchiveHeader
-    {
-        public int Version { get; set; }
-        public string Archiver { get; set; }
-        public ArchiveFormat Format { get; set; }
-        public bool Save { get; set; } = false;
-        public string User { get; set; }
-        public DateTime Date { get; set; }
-    }
+    public int Version { get; set; }
+    public string Archiver { get; set; }
+    public ArchiveFormat Format { get; set; }
+    public bool Save { get; set; } = false;
+    public string User { get; set; }
+    public DateTime Date { get; set; }
 }

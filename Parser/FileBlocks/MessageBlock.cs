@@ -1,8 +1,7 @@
-﻿namespace Parser.FileBlocks
+﻿namespace Parser.FileBlocks;
+
+internal sealed class MessageBlock
 {
-    internal sealed class MessageBlock
-    {
-        public string Name { get; set; }
-        public AtomicMessage Message { get; set; }
-    }
+    public string Name { get; set; }
+    public AtomicMessage Message { get; set; }
 }
