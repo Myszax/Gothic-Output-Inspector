@@ -7,11 +7,11 @@ namespace WPFUI.Models;
 
 public sealed class Conversation
 {
-    public string Name { get; set; }
-    public string Text { get; set; }
-    public string Sound { get; set; }
-    public string Context { get; set; }
-    public string NpcName { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Text { get; set; } = string.Empty;
+    public string Sound { get; set; } = string.Empty;
+    public string Context { get; set; } = string.Empty;
+    public string NpcName { get; set; } = string.Empty;
     public ConversationType Type { get; set; }
     public int Voice { get; set; }
     public int Number { get; set; }
