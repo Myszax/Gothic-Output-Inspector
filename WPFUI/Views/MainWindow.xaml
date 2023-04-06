@@ -74,7 +74,7 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <TextBox Text="Filter by..." />
+            <TextBox x:Name="ConversationCollectionFilter" Text="{Binding FilterValue, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="1" Background="DarkGreen">

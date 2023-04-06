@@ -15,6 +15,9 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private object _selectedTreeItem;
 
+    [ObservableProperty]
+    private string _filterValue = string.Empty;
+
     private List<Conversation> _conversationList = new();
 
     private List<Dialogue> _parsedDialogues = new();
@@ -39,8 +42,21 @@ public partial class MainWindowViewModel : ObservableObject
 
         ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
         SetGroupingAndSortingOnConversationCollection();
+        ConversationCollection.Filter = FilterCollection;
     }
+
+    partial void OnFilterValueChanged(string value) => ConversationCollection.Refresh();
+
+    private bool FilterCollection(object obj)
+    {
+        if (obj is not Conversation)
+        {
+            return false;
     }
+
+        var conversation = (Conversation)obj;
+
+        return conversation.Name.Contains(FilterValue, StringComparison.OrdinalIgnoreCase);
 }
 
     private void SetGroupingAndSortingOnConversationCollection()
