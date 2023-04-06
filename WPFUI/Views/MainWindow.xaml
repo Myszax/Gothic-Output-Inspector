@@ -13,7 +13,7 @@
         <!-- Bind the control's SelectedTreeViewItem property to the DataContext -->
         <Style TargetType="local:MainWindow">
             <Setter Property="SelectedTreeViewItem"
-              Value="{Binding SelectedDataItem}" />
+              Value="{Binding SelectedTreeItem}" />
         </Style>
 
         <!-- Label that enable using `_` at the beginning -->
@@ -125,14 +125,15 @@
 
 
         <Grid Grid.Row="2" Grid.RowSpan="2">
-            <TreeView x:Name="TreeViewMyModelList"                     
+            <TreeView x:Name="TreeViewMyConversationCollection" ItemsSource="{Binding ConversationCollection.Groups}"
                 VirtualizingStackPanel.IsVirtualizing="True"
+                VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 ScrollViewer.VerticalScrollBarVisibility="Visible">
 
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Path=Items}">
-                        <TextBlock VerticalAlignment="Center" Text="{Binding Path=Name}"></TextBlock>
+                        <TextBlock VerticalAlignment="Center" Text="{Binding Path=Name}" />
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
 
