@@ -89,7 +89,7 @@
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="1" Background="DarkGreen">
-            <DataGrid x:Name="Grid_Upper" Grid.Row="2"
+            <DataGrid x:Name="DataGrid_Upper" Grid.Row="2"
                 ItemsSource="{Binding ConversationCollection}"
                 AlternatingRowBackground="#2F3136"
                 HeadersVisibility="Column"  AutoGenerateColumns="False"
@@ -153,7 +153,7 @@
         </Grid>
 
         <Grid Grid.Row="3" Grid.Column="1" Background="LightBlue">
-            <DataGrid x:Name="Grid_Lower" Grid.Row="2"
+            <DataGrid x:Name="DataGrid_Lower" Grid.Row="2"
                 ItemsSource="{Binding Source={StaticResource LowerDataGridCVS}}"
                 AlternatingRowBackground="#2F3136"
                 HeadersVisibility="Column"  AutoGenerateColumns="False"
