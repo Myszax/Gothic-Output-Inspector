@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Data;
 using WPFUI.Models;
 
@@ -19,6 +20,9 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private string _filterValue = string.Empty;
+
+    [ObservableProperty]
+    private Conversation _selectedConversation = new();
 
     private List<Conversation> _conversationList = new();
 
@@ -48,6 +52,29 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     partial void OnFilterValueChanged(string value) => ConversationCollection.Refresh();
+
+    partial void OnSelectedTreeItemChanged(object value)
+    {
+        if (value is null || value is not Conversation)
+            return;
+
+        var previousNpcName = SelectedConversation.NpcName;
+        SelectedConversation = (Conversation)value;
+
+        if (!SelectedConversation.NpcName.Equals(previousNpcName))
+            FillLowerDataGrid();
+    }
+
+    private void FillLowerDataGrid()
+    {
+        var filteredByNpcName = _conversationList.Where(x => x.NpcName.Equals(SelectedConversation.NpcName));
+        SelectedConversations.Clear();
+        foreach (var conversation in filteredByNpcName)
+        {
+            SelectedConversations.Add(conversation);
+            // TODO: AddRange to avoid firing INotifyCollectionChanged on every Add method
+        }
+    }
 
     private bool FilterCollection(object obj)
     {

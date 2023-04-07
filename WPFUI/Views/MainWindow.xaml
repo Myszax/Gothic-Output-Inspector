@@ -137,6 +137,7 @@
 
         <Grid Grid.Row="2" Grid.RowSpan="2">
             <TreeView x:Name="TreeViewMyConversationCollection" ItemsSource="{Binding ConversationCollection.Groups}"
+                SelectedItemChanged="TreeView_SelectedItemChanged"
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
