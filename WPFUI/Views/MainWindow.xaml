@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:WPFUI.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
         xmlns:local="clr-namespace:WPFUI"
         mc:Ignorable="d"
         FontSize="16"
@@ -15,6 +17,15 @@
             <Setter Property="SelectedTreeViewItem"
               Value="{Binding SelectedTreeItem}" />
         </Style>
+
+        <CollectionViewSource Source="{Binding SelectedConversations}" x:Key="LowerDataGridCVS">
+            <CollectionViewSource.GroupDescriptions>
+                <dat:PropertyGroupDescription PropertyName="Context"/>
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Number"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
 
         <!-- Label that enable using `_` at the beginning -->
         <Style x:Key="LabelDisabledAccessKey"  TargetType="{x:Type Label}">
@@ -142,6 +153,7 @@
 
         <Grid Grid.Row="3" Grid.Column="1" Background="LightBlue">
             <DataGrid x:Name="Grid_Lower" Grid.Row="2"
+                ItemsSource="{Binding Source={StaticResource LowerDataGridCVS}}"
                 AlternatingRowBackground="#2F3136"
                 HeadersVisibility="Column"  AutoGenerateColumns="False"
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"

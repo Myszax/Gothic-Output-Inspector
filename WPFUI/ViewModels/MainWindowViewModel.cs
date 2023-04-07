@@ -2,6 +2,7 @@
 using Parser;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
 using WPFUI.Models;
@@ -10,6 +11,7 @@ namespace WPFUI.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
+    public ObservableCollection<Conversation> SelectedConversations { get; } = new();
     public ICollectionView ConversationCollection { get; set; }
 
     [ObservableProperty]
