@@ -198,8 +198,51 @@
             </DataGrid>
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="2" Background="green" Grid.RowSpan="2">
-            <TextBlock>Detailed Conversation Info</TextBlock>
+        <Grid Grid.Row="2" Grid.Column="2" x:Name="DetailedPanel" Grid.RowSpan="2" Background="green">
+            <StackPanel Margin="5 5 5 5">
+                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
+                    <TextBlock>Type</TextBlock>
+                    <TextBox Margin="15 0 0 0" IsReadOnly="True" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Type}"/>
+                </WrapPanel>
+                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                    <TextBlock>Name</TextBlock>
+                    <TextBox Margin="15 0 0 0" IsReadOnly="True" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Name}" />
+                </WrapPanel>
+                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" >
+                    <TextBlock>Sound</TextBlock>
+                    <TextBox Margin="15 0 0 0" IsReadOnly="True" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Sound}"/>
+                </WrapPanel>
+                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                    <TextBlock>NPC Name</TextBlock>
+                    <TextBox Margin="15 0 0 0" IsReadOnly="True" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.NpcName}"/>
+                </WrapPanel>
+                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                    <TextBlock>Context</TextBlock>
+                    <TextBox Margin="15 0 0 0" IsReadOnly="True" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Context}"/>
+                </WrapPanel>
+                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                    <TextBlock>Voice</TextBlock>
+                    <TextBox Margin="15 0 0 0" IsReadOnly="True" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Voice}"/>
+                </WrapPanel>
+                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                    <TextBlock>Number</TextBlock>
+                    <TextBox Margin="15 0 0 0" IsReadOnly="True" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Number}"/>
+                </WrapPanel>
+                <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Center">Original Text</TextBlock>
+                    <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
+                             IsReadOnly="True"
+                             Text="{Binding SelectedConversation.Text}"/>
+                </StackPanel>
+                <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                    <TextBlock HorizontalAlignment="Center">Edited Text</TextBlock>
+                    <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
+                             SpellCheck.IsEnabled="True" Language="pl-PL"
+                             Text="{Binding SelectedConversation.Text, Mode=OneWay}" />
+                </StackPanel>
+            </StackPanel>
         </Grid>
 
         <Grid Grid.Row="4">
