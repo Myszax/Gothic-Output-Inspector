@@ -27,4 +27,13 @@ public partial class MainWindow : Window
         var treeView = sender as System.Windows.Controls.TreeView;
         SelectedTreeViewItem = treeView!.SelectedItem;
     }
+
+    private void TextBox_CopyToClipboard(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        var textBox = sender as System.Windows.Controls.TextBox;
+        if (textBox is null || string.IsNullOrEmpty(textBox.Text))
+            return;
+
+        Clipboard.SetText(textBox.Text);
+    }
 }
