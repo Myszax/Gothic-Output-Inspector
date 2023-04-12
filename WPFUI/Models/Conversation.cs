@@ -9,12 +9,14 @@ public sealed class Conversation
 {
     public string Name { get; set; } = string.Empty;
     public string OriginalText { get; set; } = string.Empty;
+    public string EditedText { get; set; } = string.Empty;
     public string Sound { get; set; } = string.Empty;
     public string Context { get; set; } = string.Empty;
     public string NpcName { get; set; } = string.Empty;
     public ConversationType Type { get; set; }
     public int Voice { get; set; }
     public int Number { get; set; }
+    public bool IsEdited { get; set; } = false;
 
     public static Conversation CreateConversationFromDialogue(Dialogue dialogue)
     {
@@ -27,7 +29,7 @@ public sealed class Conversation
         conversation.Context = GetContextFromName(conversation.Type, nameParts);
         conversation.Number = GetNumberFromName(nameParts[^1]);
         conversation.Name = dialogue.Name;
-        conversation.OriginalText = dialogue.Text;
+        conversation.OriginalText = conversation.EditedText = dialogue.Text;
         conversation.Sound = dialogue.Sound;
 
         return conversation;

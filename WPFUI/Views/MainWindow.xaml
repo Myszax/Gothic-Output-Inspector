@@ -228,6 +228,10 @@
                     <TextBlock>Number</TextBlock>
                     <TextBox Margin="15 0 0 0" IsReadOnly="True" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Number}"/>
                 </WrapPanel>
+                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                    <TextBlock>Edited</TextBlock>
+                    <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversation.IsEdited}" />
+                </WrapPanel>
                 <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
                     <TextBlock HorizontalAlignment="Center">Original Text</TextBlock>
                     <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
@@ -240,7 +244,7 @@
                     <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              SpellCheck.IsEnabled="True" Language="pl-PL"
-                             Text="{Binding SelectedConversation.OriginalText, Mode=OneWay}" />
+                             Text="{Binding SelectedConversation.EditedText, Mode=OneWay}" />
                 </StackPanel>
             </StackPanel>
         </Grid>
