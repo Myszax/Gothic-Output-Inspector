@@ -111,7 +111,7 @@
                     <DataGridTemplateColumn Header="Text">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Padding="10,10,10,10" MinWidth="100" Width="300" />
+                                <TextBlock Text="{Binding OriginalText}" TextWrapping="Wrap" Padding="10,10,10,10" MinWidth="100" Width="300" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -189,7 +189,7 @@
                     <DataGridTemplateColumn Header="Text">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Padding="10,10,10,10" MinWidth="100" Width="300" />
+                                <TextBlock Text="{Binding OriginalText}" TextWrapping="Wrap" Padding="10,10,10,10" MinWidth="100" Width="300" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -233,14 +233,14 @@
                     <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              IsReadOnly="True"
-                             Text="{Binding SelectedConversation.Text}"/>
+                             Text="{Binding SelectedConversation.OriginalText}"/>
                 </StackPanel>
                 <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
                     <TextBlock HorizontalAlignment="Center">Edited Text</TextBlock>
                     <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              SpellCheck.IsEnabled="True" Language="pl-PL"
-                             Text="{Binding SelectedConversation.Text, Mode=OneWay}" />
+                             Text="{Binding SelectedConversation.OriginalText, Mode=OneWay}" />
                 </StackPanel>
             </StackPanel>
         </Grid>

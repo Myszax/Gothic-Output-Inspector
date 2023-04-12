@@ -8,7 +8,7 @@ namespace WPFUI.Models;
 public sealed class Conversation
 {
     public string Name { get; set; } = string.Empty;
-    public string Text { get; set; } = string.Empty;
+    public string OriginalText { get; set; } = string.Empty;
     public string Sound { get; set; } = string.Empty;
     public string Context { get; set; } = string.Empty;
     public string NpcName { get; set; } = string.Empty;
@@ -27,7 +27,7 @@ public sealed class Conversation
         conversation.Context = GetContextFromName(conversation.Type, nameParts);
         conversation.Number = GetNumberFromName(nameParts[^1]);
         conversation.Name = dialogue.Name;
-        conversation.Text = dialogue.Text;
+        conversation.OriginalText = dialogue.Text;
         conversation.Sound = dialogue.Sound;
 
         return conversation;
