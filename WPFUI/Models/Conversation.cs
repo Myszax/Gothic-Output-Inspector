@@ -2,10 +2,11 @@
 using System.Text;
 using System;
 using WPFUI.Components;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WPFUI.Models;
 
-public sealed class Conversation
+public partial class Conversation : ObservableObject
 {
     public string Name { get; set; } = string.Empty;
     public string OriginalText { get; set; } = string.Empty;
@@ -16,7 +17,9 @@ public sealed class Conversation
     public ConversationType Type { get; set; }
     public int Voice { get; set; }
     public int Number { get; set; }
-    public bool IsEdited { get; set; } = false;
+
+    [ObservableProperty]
+    private bool _isEdited = false;
 
     public static Conversation CreateConversationFromDialogue(Dialogue dialogue)
     {
