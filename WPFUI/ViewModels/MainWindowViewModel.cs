@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Parser;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 using WPFUI.Models;
 
 namespace WPFUI.ViewModels;
@@ -14,6 +16,7 @@ public partial class MainWindowViewModel : ObservableObject
 {
     public ObservableCollection<Conversation> SelectedConversations { get; } = new();
     public ICollectionView ConversationCollection { get; set; }
+    public ICommand CompareOriginalAndEditedTextCommand { get; }
 
     [ObservableProperty]
     private object _selectedTreeItem;
@@ -49,6 +52,8 @@ public partial class MainWindowViewModel : ObservableObject
         ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
         SetGroupingAndSortingOnConversationCollection();
         ConversationCollection.Filter = FilterCollection;
+
+        CompareOriginalAndEditedTextCommand = new RelayCommand(CompareOriginalAndEditedText);
     }
 
     partial void OnFilterValueChanged(string value) => ConversationCollection.Refresh();
@@ -97,5 +102,10 @@ public partial class MainWindowViewModel : ObservableObject
         ConversationCollection.GroupDescriptions.Add(pgd);
 
         ConversationCollection.SortDescriptions.Add(new SortDescription(nameof(Conversation.Number), ListSortDirection.Ascending));
+    }
+
+    private void CompareOriginalAndEditedText()
+    {
+        SelectedConversation.IsEdited = !SelectedConversation.EditedText.Equals(SelectedConversation.OriginalText);
     }
 }

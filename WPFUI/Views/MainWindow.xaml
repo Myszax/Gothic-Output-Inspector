@@ -245,7 +245,13 @@
                     <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              SpellCheck.IsEnabled="True" Language="pl-PL"
-                             Text="{Binding SelectedConversation.EditedText, Mode=OneWay}" />
+                             Text="{Binding SelectedConversation.EditedText, UpdateSourceTrigger=PropertyChanged}" >
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="TextChanged">
+                                <i:InvokeCommandAction Command="{Binding CompareOriginalAndEditedTextCommand}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </TextBox>
                 </StackPanel>
             </StackPanel>
         </Grid>
