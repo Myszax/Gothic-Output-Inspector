@@ -22,7 +22,7 @@ public partial class Conversation : ObservableObject
     private bool _isEdited = false;
 
     [ObservableProperty]
-    private bool _isIsnpected = false;
+    private bool _isInspected = false;
 
     public static Conversation CreateConversationFromDialogue(Dialogue dialogue)
     {
