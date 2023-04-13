@@ -109,6 +109,13 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                    <DataGridTemplateColumn Header="Inspected">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  IsChecked="{Binding IsInspected}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Text">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -187,6 +194,13 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                    <DataGridTemplateColumn Header="Inspected">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  IsChecked="{Binding IsInspected}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Text">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -229,10 +243,16 @@
                     <TextBlock>Number</TextBlock>
                     <TextBox Margin="15 0 0 0" IsReadOnly="True" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Number}"/>
                 </WrapPanel>
-                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                    <TextBlock>Edited</TextBlock>
-                    <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversation.IsEdited}" />
-                </WrapPanel>
+                <DockPanel LastChildFill="False">
+                    <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
+                        <TextBlock>Inspected</TextBlock>
+                        <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversation.IsInspected}"/>
+                    </WrapPanel>
+                    <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
+                        <TextBlock>Edited</TextBlock>
+                        <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversation.IsEdited}"/>
+                    </WrapPanel>
+                </DockPanel>
                 <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
                     <TextBlock HorizontalAlignment="Center">Original Text</TextBlock>
                     <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
@@ -253,6 +273,7 @@
                         </i:Interaction.Triggers>
                     </TextBox>
                 </StackPanel>
+
             </StackPanel>
         </Grid>
 
