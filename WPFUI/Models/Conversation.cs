@@ -21,6 +21,9 @@ public partial class Conversation : ObservableObject
     [ObservableProperty]
     private bool _isEdited = false;
 
+    [ObservableProperty]
+    private bool _isIsnpected = false;
+
     public static Conversation CreateConversationFromDialogue(Dialogue dialogue)
     {
         var conversation = new Conversation();
