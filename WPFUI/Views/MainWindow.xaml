@@ -97,7 +97,7 @@
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
                 CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
-                SelectedItem="{Binding SelectedConversation}"
+                SelectedItem="{Binding SelectedGridRow}"
                 VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling">
 
@@ -169,7 +169,7 @@
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
                 CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
-                SelectedItem="{Binding SelectedConversation}"
+                SelectedItem="{Binding SelectedGridRow}"
                 VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling">
 

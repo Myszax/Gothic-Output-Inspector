@@ -25,6 +25,9 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     private Conversation _selectedConversation = new();
 
+    [ObservableProperty]
+    private Conversation? _selectedGridRow = new();
+
     private List<Conversation> _conversationList = new();
 
     private List<Dialogue> _parsedDialogues = new();
@@ -64,6 +67,14 @@ public partial class MainWindowViewModel : ObservableObject
 
         if (!SelectedConversation.NpcName.Equals(previousNpcName))
             FillLowerDataGrid();
+    }
+
+    partial void OnSelectedGridRowChanged(Conversation? value)
+    {
+        if (value is null)
+            return;
+
+        SelectedConversation = value;
     }
 
     private void FillLowerDataGrid()
