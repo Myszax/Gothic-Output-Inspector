@@ -32,6 +32,8 @@ public partial class MainWindowViewModel : ObservableObject
 
     private List<Dialogue> _parsedDialogues = new();
 
+    private string _previousNpcName = string.Empty;
+
     public MainWindowViewModel()
     {
         var path = @"../../../../Parser/g2nk_ou.bin";
@@ -62,11 +64,7 @@ public partial class MainWindowViewModel : ObservableObject
         if (value is null || value is not Conversation)
             return;
 
-        var previousNpcName = SelectedConversation.NpcName;
         SelectedConversation = (Conversation)value;
-
-        if (!SelectedConversation.NpcName.Equals(previousNpcName))
-            FillLowerDataGrid();
     }
 
     partial void OnSelectedGridRowChanged(Conversation? value)
@@ -77,8 +75,15 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedConversation = value;
     }
 
+    partial void OnSelectedConversationChanging(Conversation value) => _previousNpcName = SelectedConversation.NpcName;
+
+    partial void OnSelectedConversationChanged(Conversation value) => FillLowerDataGrid();
+
     private void FillLowerDataGrid()
     {
+        if (SelectedConversation.NpcName.Equals(_previousNpcName))
+            return;
+
         var filteredByNpcName = _conversationList.Where(x => x.NpcName.Equals(SelectedConversation.NpcName));
         SelectedConversations.Clear();
         foreach (var conversation in filteredByNpcName)
