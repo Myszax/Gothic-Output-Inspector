@@ -86,7 +86,7 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <TextBox x:Name="ConversationCollectionFilter" Text="{Binding FilterValue, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox x:Name="ConversationCollectionFilter" Text="{Binding FilterValue, UpdateSourceTrigger=PropertyChanged, Delay=250}" />
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="1" Background="DarkGreen">
