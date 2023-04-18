@@ -68,7 +68,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="4*" />
             <RowDefinition Height="4*" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
@@ -279,8 +279,37 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="4">
-            <TextBlock>Player</TextBlock>
+        <Grid Grid.Row="4" Grid.ColumnSpan="3">
+            <StackPanel Margin="5">
+                <DockPanel LastChildFill="False">
+                    <TextBlock DockPanel.Dock="Left" Text="Audio Path:"/>
+                    <TextBlock DockPanel.Dock="Left" Margin="3 0 0 0" Text="Some Audio"/>
+                    <TextBlock DockPanel.Dock="Right" Text="Length"/>
+                    <TextBlock DockPanel.Dock="Right" Margin="3 0 3 0" Text=":"/>
+                    <TextBlock DockPanel.Dock="Right" Text="Position"/>
+                </DockPanel>
+
+                <DockPanel LastChildFill="True" Margin="0 3 0 0">
+                    <Slider x:Name="SeekbarControl" Minimum="0" Maximum="{Binding AudioLength, Mode=OneWay}" Value="{Binding AudioPosition, Mode=TwoWay}"
+                        IsMoveToPointEnabled="True" SmallChange="0.01"/>
+                </DockPanel>
+
+                <DockPanel LastChildFill="True" Margin="0 3 0 0">
+                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Volume:"/>
+                    <!-- TODO: Converter to show % -->
+                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5 0 0 0" Text="{Binding AudioVolume, StringFormat=N3}"/>
+                    <Button DockPanel.Dock="Left" Margin="5 0 0 0" Content="Mute"/>
+                    <Slider x:Name="VolumeControl" DockPanel.Dock="Right" Margin="5 0 0 0" Minimum="0" Maximum="1" Value="{Binding AudioVolume, Mode=OneWayToSource}"
+                        VerticalAlignment="Center" IsMoveToPointEnabled="True">
+                    </Slider>
+                </DockPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="Play/Pause"/>
+                    <Separator Margin="3 0 3 0"/>
+                    <Button Content="Stop"/>
+                </StackPanel>
+            </StackPanel>
         </Grid>
 
         <Grid Grid.Row="5" Grid.ColumnSpan="3" Background="Gray">
