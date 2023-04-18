@@ -50,6 +50,7 @@ public class AudioPlayer
         {
             DesiredLatency = 50,
             NumberOfBuffers = 25, // if less latency then more buffers are needed to avoid clipping sound as I observed
+            Volume = volume,
         };
 
         _output.PlaybackStopped += OutputPlaybackStopped;
@@ -57,7 +58,6 @@ public class AudioPlayer
         var wc = new WaveChannel32(_waveFileReader)
         {
             PadWithZeroes = false,
-            Volume = volume
         };
 
         if (position > 0)
