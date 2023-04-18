@@ -84,7 +84,7 @@ public class AudioPlayer
         }
     }
 
-    public double GetLenghtInSeconds() => _waveFileReader is not null ? _waveFileReader.TotalTime.TotalSeconds : 0d;
+    public double GetLengthInSeconds() => _waveFileReader is not null ? _waveFileReader.TotalTime.TotalSeconds : 0d;
 
     public double GetPositionInSeconds() => _waveFileReader is not null ? _waveFileReader.CurrentTime.TotalSeconds : 0d;
 
