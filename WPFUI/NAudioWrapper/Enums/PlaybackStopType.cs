@@ -1,4 +1,4 @@
-﻿namespace WPFUI.AudioPlayer.Enums;
+﻿namespace WPFUI.NAudioWrapper.Enums;
 
 public enum PlaybackStopType
 {

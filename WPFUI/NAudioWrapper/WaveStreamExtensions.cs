@@ -1,7 +1,7 @@
 ﻿using NAudio.Wave;
 using System;
 
-namespace WPFUI.AudioPlayer;
+namespace WPFUI.NAudioWrapper;
 
 public static class WaveStreamExtensions
 {

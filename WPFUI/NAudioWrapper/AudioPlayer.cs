@@ -2,9 +2,9 @@
 using NAudio.Wave;
 using System;
 using System.IO;
-using WPFUI.AudioPlayer.Enums;
+using WPFUI.NAudioWrapper.Enums;
 
-namespace WPFUI.AudioPlayer;
+namespace WPFUI.NAudioWrapper;
 
 public class AudioPlayer
 {
