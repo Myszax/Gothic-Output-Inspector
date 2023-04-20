@@ -135,7 +135,7 @@ public class AudioPlayer
             Play(_output.PlaybackState, currentVolumeLevel);
     }
 
-    private void OutputPlaybackStopped(object sender, StoppedEventArgs e)
+    private void OutputPlaybackStopped(object? sender, StoppedEventArgs e)
     {
         Dispose();
         PlaybackStopped?.Invoke(PlaybackStopType);
