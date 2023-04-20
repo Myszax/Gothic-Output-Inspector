@@ -1,13 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NAudio.Wave;
 using Parser;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Data;
 using WPFUI.Models;
+using WPFUI.NAudioWrapper;
+using WPFUI.NAudioWrapper.Enums;
 
 namespace WPFUI.ViewModels;
 
@@ -27,6 +32,27 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private Conversation? _selectedGridRow = new();
+
+    [ObservableProperty]
+    private double _currentAudioLength;
+
+    [ObservableProperty]
+    private double _currentAudioPosition;
+
+    [ObservableProperty]
+    private float _currentVolume = 1f;
+
+    [ObservableProperty]
+    private string _currentlyPlayingAudioName = string.Empty;
+
+    [ObservableProperty]
+    private string _currentlySelectedAudioName = string.Empty;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(StopPlaybackCommand))]
+    private PlaybackState _stateOfPlayback = PlaybackState.Stopped;
+
+    private AudioPlayer? _audioPlayer;
 
     private List<Conversation> _conversationList = new();
 
@@ -55,6 +81,9 @@ public partial class MainWindowViewModel : ObservableObject
         ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
         SetGroupingAndSortingOnConversationCollection();
         ConversationCollection.Filter = FilterCollection;
+
+        var refreshAudioPosition = new Task(new Action(RefreshAudioPosition));
+        refreshAudioPosition.Start();
     }
 
     partial void OnFilterValueChanged(string value) => ConversationCollection.Refresh();
@@ -77,7 +106,11 @@ public partial class MainWindowViewModel : ObservableObject
 
     partial void OnSelectedConversationChanging(Conversation value) => _previousNpcName = SelectedConversation.NpcName;
 
-    partial void OnSelectedConversationChanged(Conversation value) => FillLowerDataGrid();
+    partial void OnSelectedConversationChanged(Conversation value)
+    {
+        CurrentlySelectedAudioName = SelectedConversation.Sound;
+        FillLowerDataGrid();
+    }
 
     private void FillLowerDataGrid()
     {
@@ -120,5 +153,95 @@ public partial class MainWindowViewModel : ObservableObject
     private void CompareOriginalAndEditedText()
     {
         SelectedConversation.IsEdited = !SelectedConversation.EditedText.Equals(SelectedConversation.OriginalText);
+    }
+
+    [RelayCommand]
+    private void StartPlayback()
+    {
+        if (string.IsNullOrEmpty(CurrentlySelectedAudioName))
+            return;
+
+        if (!CurrentlyPlayingAudioName.Equals(CurrentlySelectedAudioName) && _audioPlayer is not null)
+        {
+            _audioPlayer.PlaybackStopType = PlaybackStopType.BySelectingNewFileWhilePlaying;
+            _audioPlayer.Stop();
+            CurrentAudioPosition = 0;
+        }
+
+        var realState = _audioPlayer?.GetPlaybackState ?? PlaybackState.Stopped;
+
+        if (realState == PlaybackState.Stopped)
+        {
+            _audioPlayer = new AudioPlayer(CurrentlySelectedAudioName, CurrentVolume, CurrentAudioPosition);
+            _audioPlayer.PlaybackPaused += AudioPlayer_PlaybackPaused;
+            _audioPlayer.PlaybackResumed += AudioPlayer_PlaybackResumed;
+            _audioPlayer.PlaybackStopped += AudioPlayer_PlaybackStopped;
+            CurrentAudioLength = _audioPlayer.GetLengthInSeconds();
+            CurrentlyPlayingAudioName = CurrentlySelectedAudioName;
+        }
+        _audioPlayer?.TogglePlayPause(CurrentVolume, CurrentAudioPosition);
+    }
+
+    [RelayCommand(CanExecute = nameof(CanStopPlayback))]
+    private void StopPlayback()
+    {
+        if (_audioPlayer is null)
+            return;
+
+        _audioPlayer.PlaybackStopType = PlaybackStopType.ByUser;
+        _audioPlayer.Stop();
+    }
+    private bool CanStopPlayback() => StateOfPlayback == PlaybackState.Playing || StateOfPlayback == PlaybackState.Paused;
+
+    [RelayCommand]
+    private void TrackControlMouseDown()
+    {
+        if (_audioPlayer is null)
+            return;
+
+        if (StateOfPlayback == PlaybackState.Playing)
+            _audioPlayer.Pause();
+    }
+
+
+    [RelayCommand]
+    private void TrackControlMouseUp()
+    {
+        if (_audioPlayer is null)
+            return;
+
+        _audioPlayer.Play(PlaybackState.Paused, CurrentVolume, CurrentAudioPosition);
+    }
+
+    [RelayCommand]
+    private void VolumeControlValueChanged() => _audioPlayer?.SetVolume(CurrentVolume);
+
+    private void AudioPlayer_PlaybackStopped(PlaybackStopType playbackStopType)
+    {
+        // when it occurs I don't have to change UI because it is in same state, just new audio is playing
+        if (playbackStopType == PlaybackStopType.BySelectingNewFileWhilePlaying)
+            return;
+
+        StateOfPlayback = PlaybackState.Stopped;
+        CurrentAudioPosition = 0;
+    }
+
+    private void AudioPlayer_PlaybackResumed() => StateOfPlayback = PlaybackState.Playing;
+
+    private void AudioPlayer_PlaybackPaused() => StateOfPlayback = PlaybackState.Paused;
+
+    private void RefreshAudioPosition()
+    {
+        // i know it drains unnecessary resources
+        // should be running only when `PlaybackState.Playing`
+        // eg. in play and resume method and stopped in stop method
+        // but for now i am leaving it like that: TODO
+        while (true)
+        {
+            if (_audioPlayer is not null && StateOfPlayback == PlaybackState.Playing)
+                CurrentAudioPosition = _audioPlayer.CurrentTime;
+
+            Thread.Sleep(20);
+        }
     }
 }
