@@ -12,11 +12,11 @@ public class AudioPlayer
 
     public double CurrentTime => _waveFileReader!.CurrentTime.TotalSeconds;
 
+    public event Action PlaybackPaused;
+
     public event Action PlaybackResumed;
 
-    public event Action PlaybackStopped;
-
-    public event Action PlaybackPaused;
+    public event Action<PlaybackStopType> PlaybackStopped;
 
     private WaveFileReader? _waveFileReader;
 
@@ -141,6 +141,6 @@ public class AudioPlayer
     private void OutputPlaybackStopped(object sender, StoppedEventArgs e)
     {
         Dispose();
-        PlaybackStopped?.Invoke();
+        PlaybackStopped?.Invoke(PlaybackStopType);
     }
 }
