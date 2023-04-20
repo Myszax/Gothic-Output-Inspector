@@ -49,6 +49,9 @@ public partial class MainWindowViewModel : ObservableObject
     private string _currentlySelectedAudioName = string.Empty;
 
     [ObservableProperty]
+    private bool _isMuted = false;
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(StopPlaybackCommand))]
     private PlaybackState _stateOfPlayback = PlaybackState.Stopped;
 
@@ -59,6 +62,8 @@ public partial class MainWindowViewModel : ObservableObject
     private List<Dialogue> _parsedDialogues = new();
 
     private string _previousNpcName = string.Empty;
+
+    private float _previousVolume = 0f;
 
     public MainWindowViewModel()
     {
@@ -214,7 +219,11 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void VolumeControlValueChanged() => _audioPlayer?.SetVolume(CurrentVolume);
+    private void VolumeControlValueChanged()
+    {
+        _audioPlayer?.SetVolume(CurrentVolume);
+        IsMuted = false;
+    }
 
     private void AudioPlayer_PlaybackStopped(PlaybackStopType playbackStopType)
     {
@@ -224,6 +233,25 @@ public partial class MainWindowViewModel : ObservableObject
 
         StateOfPlayback = PlaybackState.Stopped;
         CurrentAudioPosition = 0;
+    }
+    [RelayCommand]
+    private void ToggleMute()
+    {
+        if (IsMuted) UnMuteSound();
+        else MuteSound();
+    }
+
+    private void MuteSound()
+    {
+        _previousVolume = CurrentVolume;
+        CurrentVolume = 0;
+        IsMuted = true;
+    }
+
+    private void UnMuteSound()
+    {
+        CurrentVolume = _previousVolume;
+        IsMuted = false;
     }
 
     private void AudioPlayer_PlaybackResumed() => StateOfPlayback = PlaybackState.Playing;
