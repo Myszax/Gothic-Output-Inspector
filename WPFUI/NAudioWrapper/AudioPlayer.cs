@@ -55,15 +55,10 @@ public class AudioPlayer
 
         _output.PlaybackStopped += OutputPlaybackStopped;
 
-        var wc = new WaveChannel32(_waveFileReader)
-        {
-            PadWithZeroes = false,
-        };
-
         if (position > 0)
             SetPosition(position);
 
-        _output.Init(wc);
+        _output.Init(_waveFileReader);
     }
 
     public void Dispose()
