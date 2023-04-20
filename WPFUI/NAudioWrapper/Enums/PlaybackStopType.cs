@@ -3,5 +3,6 @@
 public enum PlaybackStopType
 {
     ByUser,
-    ByReachingEndOfFile
+    ByReachingEndOfFile,
+    BySelectingNewFileWhilePlaying,
 }
