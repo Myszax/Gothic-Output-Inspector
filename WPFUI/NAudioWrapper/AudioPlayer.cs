@@ -83,6 +83,8 @@ public class AudioPlayer
 
     public double GetPositionInSeconds() => _waveFileReader is not null ? _waveFileReader.CurrentTime.TotalSeconds : 0d;
 
+    public PlaybackState GetPlaybackState => _output is not null ? _output.PlaybackState : PlaybackState.Stopped;
+
     public float GetVolume() => _output is not null ? _output.Volume : 1f;
 
     public void Pause()
