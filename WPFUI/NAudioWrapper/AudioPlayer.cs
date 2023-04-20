@@ -97,16 +97,16 @@ public class AudioPlayer
         PlaybackPaused?.Invoke();
     }
 
-    public void Play(PlaybackState playbackState, double currentVolumeLevel)
+    public void Play(PlaybackState playbackState, double currentVolumeLevel, double desiredPosition)
     {
-        if (_waveFileReader is null || _output is null)
+        if (_waveFileReader is null || _output is null || playbackState == PlaybackState.Playing)
             return;
 
-        if (playbackState == PlaybackState.Stopped || playbackState == PlaybackState.Paused)
-            _output.Play();
+        if (playbackState == PlaybackState.Paused && GetPositionInSeconds() != desiredPosition)
+            _waveFileReader.SetPosition(desiredPosition);
 
+        _output.Play();
         _output.Volume = (float)currentVolumeLevel;
-
         PlaybackResumed?.Invoke();
     }
 
@@ -120,11 +120,11 @@ public class AudioPlayer
 
     public void Stop() => _output?.Stop();
 
-    public void TogglePlayPause(double currentVolumeLevel)
+    public void TogglePlayPause(double currentVolumeLevel, double desiredPosition)
     {
         if (_output is null)
         {
-            Play(PlaybackState.Stopped, currentVolumeLevel);
+            Play(PlaybackState.Stopped, currentVolumeLevel, desiredPosition);
 
             return;
         }
@@ -132,7 +132,7 @@ public class AudioPlayer
         if (_output.PlaybackState == PlaybackState.Playing)
             Pause();
         else
-            Play(_output.PlaybackState, currentVolumeLevel);
+            Play(_output.PlaybackState, currentVolumeLevel, desiredPosition);
     }
 
     private void OutputPlaybackStopped(object? sender, StoppedEventArgs e)
