@@ -81,6 +81,9 @@
                         <Separator />
                         <MenuItem Header="_Exit" />
                     </MenuItem>
+                    <MenuItem Header="S_ettings">
+                        <MenuItem Header="Path to audio files..." Command="{Binding SetPathToAudioFilesCommand}" />
+                    </MenuItem>
                 </Menu>
             </DockPanel>
         </Grid>

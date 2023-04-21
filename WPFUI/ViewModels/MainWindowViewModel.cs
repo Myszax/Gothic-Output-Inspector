@@ -49,6 +49,9 @@ public partial class MainWindowViewModel : ObservableObject
     private string _currentlySelectedAudioName = string.Empty;
 
     [ObservableProperty]
+    private string _pathToAudioFiles = string.Empty;
+
+    [ObservableProperty]
     private bool _isMuted = false;
 
     [ObservableProperty]
@@ -113,9 +116,11 @@ public partial class MainWindowViewModel : ObservableObject
 
     partial void OnSelectedConversationChanged(Conversation value)
     {
-        CurrentlySelectedAudioName = SelectedConversation.Sound;
+        CurrentlySelectedAudioName = PathToAudioFiles + SelectedConversation.Sound;
         FillLowerDataGrid();
     }
+
+    partial void OnPathToAudioFilesChanged(string value) => CurrentlySelectedAudioName = value + SelectedConversation.Sound;
 
     private void FillLowerDataGrid()
     {
@@ -154,6 +159,18 @@ public partial class MainWindowViewModel : ObservableObject
         ConversationCollection.SortDescriptions.Add(new SortDescription(nameof(Conversation.Number), ListSortDirection.Ascending));
     }
 
+    [RelayCommand]
+    private void SetPathToAudioFiles()
+    {
+        var fbd = new System.Windows.Forms.FolderBrowserDialog();
+
+        if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+            PathToAudioFiles = fbd.SelectedPath + '\\';
+        else
+            AudioPathNotSpecified();
+
+        fbd.Dispose();
+    }
     [RelayCommand]
     private void CompareOriginalAndEditedText()
     {
