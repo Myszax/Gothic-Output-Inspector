@@ -108,7 +108,9 @@
                     <DataGridTemplateColumn Header="Audio">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button>Play</Button>
+                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                    AncestorType={x:Type Window}},
+                                    Path=DataContext.StartPlaybackCommand}">Play</Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -194,7 +196,9 @@
                     <DataGridTemplateColumn Header="Audio">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button>Play</Button>
+                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                    AncestorType={x:Type Window}},
+                                    Path=DataContext.StartPlaybackCommand}">Play</Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
