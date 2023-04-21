@@ -13,6 +13,8 @@ using System.Windows.Data;
 using WPFUI.Models;
 using WPFUI.NAudioWrapper;
 using WPFUI.NAudioWrapper.Enums;
+using System.IO;
+using static WPFUI.Components.Messages;
 
 namespace WPFUI.ViewModels;
 
@@ -171,6 +173,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         fbd.Dispose();
     }
+
     [RelayCommand]
     private void CompareOriginalAndEditedText()
     {
@@ -182,6 +185,18 @@ public partial class MainWindowViewModel : ObservableObject
     {
         if (string.IsNullOrEmpty(CurrentlySelectedAudioName))
             return;
+
+        if (string.IsNullOrEmpty(PathToAudioFiles))
+        {
+            AudioPathNotSpecified();
+            return;
+        }
+
+        if (!File.Exists(CurrentlySelectedAudioName))
+        {
+            FileNotFound();
+            return;
+        }
 
         if (!CurrentlyPlayingAudioName.Equals(CurrentlySelectedAudioName) && _audioPlayer is not null)
         {
