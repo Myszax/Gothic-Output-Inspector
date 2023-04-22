@@ -6,6 +6,7 @@
         xmlns:viewmodels="clr-namespace:WPFUI.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
+        xmlns:cc = "clr-namespace:WPFUI.Controls"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:WPFUI"
         mc:Ignorable="d"
@@ -105,7 +106,7 @@
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="1" Background="DarkGreen">
-            <DataGrid x:Name="DataGrid_Upper" Grid.Row="2"
+            <cc:DataGrid x:Name="DataGrid_Upper" Grid.Row="2"
                 ItemsSource="{Binding ConversationCollection}"
                 AlternatingRowBackground="#2F3136"
                       HeadersVisibility="Column" AutoGenerateColumns="False"
@@ -157,7 +158,7 @@
                     </GroupStyle>
                 </DataGrid.GroupStyle>
 
-            </DataGrid>
+            </cc:DataGrid>
         </Grid>
 
 
@@ -179,7 +180,7 @@
         </Grid>
 
         <Grid Grid.Row="3" Grid.Column="1" Background="LightBlue">
-            <DataGrid x:Name="DataGrid_Lower" Grid.Row="2"
+            <cc:DataGrid x:Name="DataGrid_Lower" Grid.Row="2"
                 ItemsSource="{Binding Source={StaticResource LowerDataGridCVS}}"
                 AlternatingRowBackground="#2F3136"
                       HeadersVisibility="Column" AutoGenerateColumns="False"
@@ -231,7 +232,7 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
 
-            </DataGrid>
+            </cc:DataGrid>
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="2" x:Name="DetailedPanel" Grid.RowSpan="2" Background="green">
