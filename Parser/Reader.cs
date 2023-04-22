@@ -37,21 +37,21 @@ public sealed class Reader
 
     private readonly string _path;
 
-    private readonly int _codePage;
+    private readonly Encoding _encoding;
 
-    public Reader(string path, int codePage)
+    public Reader(string path, Encoding encoding)
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
         _path = path;
-        _codePage = codePage;
+        _encoding = encoding;
         _hashTableEntries = Array.Empty<HashTableEntry>();
     }
 
     public List<Dialogue> Parse()
     {
-        _reader = new BinaryReader(File.Open(_path, FileMode.Open), Encoding.GetEncoding(1252), false);
-        //_reader = new BinaryReader(File.Open(path, FileMode.Open));
+        _reader = new BinaryReader(File.Open(_path, FileMode.Open), _encoding, false);
+        //_reader = new BinaryReader(File.Open(_path, FileMode.Open), );
 
         _header = ParseHeader();
 
@@ -432,7 +432,7 @@ public sealed class Reader
         if (encode)
         {
             var bytesArray = _reader.ReadBytes(bytesCount);
-            ret = Encoding.GetEncoding(_codePage).GetString(bytesArray);
+            ret = _encoding.GetString(bytesArray);
         }
         else
         {
