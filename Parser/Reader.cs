@@ -7,7 +7,7 @@ namespace Parser;
 
 public sealed class Reader
 {
-    private HashTableEntry[] _hashTableEntries;
+    private HashTableEntry[] _hashTableEntries = Array.Empty<HashTableEntry>();
 
     private readonly byte[] _typeSizes = new byte[] {
         0,                        // ?            = 0x00
@@ -41,17 +41,13 @@ public sealed class Reader
 
     public Reader(string path, Encoding encoding)
     {
-        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-
         _path = path;
         _encoding = encoding;
-        _hashTableEntries = Array.Empty<HashTableEntry>();
     }
 
     public List<Dialogue> Parse()
     {
         _reader = new BinaryReader(File.Open(_path, FileMode.Open), _encoding, false);
-        //_reader = new BinaryReader(File.Open(_path, FileMode.Open), );
 
         _header = ParseHeader();
 
