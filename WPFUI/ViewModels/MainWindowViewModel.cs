@@ -15,6 +15,7 @@ using WPFUI.NAudioWrapper;
 using WPFUI.NAudioWrapper.Enums;
 using System.IO;
 using static WPFUI.Components.Messages;
+using System.Text;
 
 namespace WPFUI.ViewModels;
 
@@ -22,6 +23,7 @@ public partial class MainWindowViewModel : ObservableObject
 {
     public ObservableCollection<Conversation> SelectedConversations { get; } = new();
     public ICollectionView ConversationCollection { get; set; }
+    public List<EncodingMenuItem> Encodings { get; }
 
     [ObservableProperty]
     private object _selectedTreeItem;
@@ -57,6 +59,12 @@ public partial class MainWindowViewModel : ObservableObject
     private bool _isMuted = false;
 
     [ObservableProperty]
+    private Encoding _selectedEncoding;
+
+    [ObservableProperty]
+    private Encoding _usedEncoding;
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(StopPlaybackCommand))]
     private PlaybackState _stateOfPlayback = PlaybackState.Stopped;
 
@@ -72,8 +80,21 @@ public partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel()
     {
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // need to register to be able to use Encoding.GetEncoding()
         var path = @"../../../../Parser/g2nk_ou.bin";
-        var parser = new Reader(path, 1250);
+        
+        Encodings = Encoding.GetEncodings()
+            .Select(x => x.GetEncoding())
+            .Where(x => x.EncodingName
+            .Contains("windows", StringComparison.OrdinalIgnoreCase))
+            .OrderBy(x => x.CodePage)
+            .Select(x => new EncodingMenuItem { Encoding = x, IsChecked = false })
+            .ToList();
+
+        Encodings[1].IsChecked = true;
+        SelectedEncoding = Encodings[1].Encoding;
+
+        var parser = new Reader(path, SelectedEncoding);
 
         try
         {
