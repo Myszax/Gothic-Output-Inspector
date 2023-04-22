@@ -76,7 +76,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     private string _previousNpcName = string.Empty;
 
-    private float _previousVolume = 0f;
+    private float _previousVolume = 0f;    
 
     public MainWindowViewModel()
     {
@@ -199,6 +199,16 @@ public partial class MainWindowViewModel : ObservableObject
     private void CompareOriginalAndEditedText()
     {
         SelectedConversation.IsEdited = !SelectedConversation.EditedText.Equals(SelectedConversation.OriginalText);
+    }
+
+    [RelayCommand]
+    private void ChangeEncoding(EncodingMenuItem value)
+    {
+        foreach (var encodingMenuItem in Encodings)
+            encodingMenuItem.IsChecked = false;
+
+        value.IsChecked = true;
+        SelectedEncoding = value.Encoding;
     }
 
     [RelayCommand]

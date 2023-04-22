@@ -83,6 +83,18 @@
                     </MenuItem>
                     <MenuItem Header="S_ettings">
                         <MenuItem Header="Path to audio files..." Command="{Binding SetPathToAudioFilesCommand}" />
+                        <MenuItem Header="Encoding" ItemsSource="{Binding Encodings}">
+                            <MenuItem.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="MenuItem.Header" Value="{Binding Encoding.HeaderName}" />
+                                    <Setter Property="MenuItem.Command"
+                                        Value="{Binding DataContext.ChangeEncodingCommand, RelativeSource={RelativeSource AncestorType=MenuItem}}" />
+                                    <Setter Property="MenuItem.CommandParameter" Value="{Binding}" />
+                                    <Setter Property="MenuItem.IsCheckable" Value="True" />
+                                    <Setter Property="MenuItem.IsChecked" Value="{Binding IsChecked}" />
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
+                        </MenuItem>
                     </MenuItem>
                 </Menu>
             </DockPanel>
