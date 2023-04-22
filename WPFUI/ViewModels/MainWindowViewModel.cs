@@ -6,16 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using WPFUI.Models;
 using WPFUI.NAudioWrapper;
 using WPFUI.NAudioWrapper.Enums;
-using System.IO;
 using static WPFUI.Components.Messages;
-using System.Text;
 
 namespace WPFUI.ViewModels;
 
@@ -196,10 +196,7 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void CompareOriginalAndEditedText()
-    {
-        SelectedConversation.IsEdited = !SelectedConversation.EditedText.Equals(SelectedConversation.OriginalText);
-    }
+    private void CompareOriginalAndEditedText() => SelectedConversation.IsEdited = !SelectedConversation.EditedText.Equals(SelectedConversation.OriginalText);
 
     [RelayCommand]
     private void ChangeEncoding(EncodingMenuItem value)
