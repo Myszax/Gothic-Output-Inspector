@@ -108,7 +108,7 @@
         <Grid Grid.Row="2" Grid.Column="1" Background="DarkGreen">
             <cc:DataGrid x:Name="DataGrid_Upper" Grid.Row="2"
                 ItemsSource="{Binding ConversationCollection}"
-                AlternatingRowBackground="#2F3136"
+                AlternatingRowBackground="#2F3136" SelectionMode="Single"
                       HeadersVisibility="Column" AutoGenerateColumns="False"
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
                 CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
@@ -182,7 +182,7 @@
         <Grid Grid.Row="3" Grid.Column="1" Background="LightBlue">
             <cc:DataGrid x:Name="DataGrid_Lower" Grid.Row="2"
                 ItemsSource="{Binding Source={StaticResource LowerDataGridCVS}}"
-                AlternatingRowBackground="#2F3136"
+                AlternatingRowBackground="#2F3136" SelectionMode="Single"
                       HeadersVisibility="Column" AutoGenerateColumns="False"
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
                 CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
