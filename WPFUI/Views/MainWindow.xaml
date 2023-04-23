@@ -131,7 +131,7 @@
                     <DataGridTemplateColumn Header="Inspected">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsInspected}" />
+                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsInspected, UpdateSourceTrigger=PropertyChanged}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -219,7 +219,7 @@
                     <DataGridTemplateColumn Header="Inspected">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsInspected}" />
+                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsInspected, UpdateSourceTrigger=PropertyChanged}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
