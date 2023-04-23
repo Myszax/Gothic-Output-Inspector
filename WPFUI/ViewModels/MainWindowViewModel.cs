@@ -4,7 +4,6 @@ using NAudio.Wave;
 using Parser;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -25,6 +24,11 @@ public partial class MainWindowViewModel : ObservableObject
     public RangeObservableCollection<Conversation> SelectedConversations { get; } = new();
     public ICollectionView ConversationCollection { get; set; }
     public List<EncodingMenuItem> Encodings { get; }
+    public int LoadedConversationsCount => _conversationList.Count;
+    public int LoadedNPCsCount => ConversationCollection.Groups.Count;
+    public int EditedConversationsCount => _conversationList.Where(x => x.IsEdited).Count();
+    public int InspectedConversationsCount => _conversationList.Where(x => x.IsInspected).Count();
+    public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();    
 
     [ObservableProperty]
     private object _selectedTreeItem;
@@ -33,6 +37,8 @@ public partial class MainWindowViewModel : ObservableObject
     private string _filterValue = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(EditedConversationsCount))]
+    [NotifyPropertyChangedFor(nameof(InspectedConversationsCount))]
     private Conversation _selectedConversation = new();
 
     [ObservableProperty]
@@ -113,12 +119,18 @@ public partial class MainWindowViewModel : ObservableObject
         ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
         SetGroupingAndSortingOnConversationCollection();
         ConversationCollection.Filter = FilterCollection;
+        OnPropertyChanged(nameof(LoadedConversationsCount));
+        OnPropertyChanged(nameof(LoadedNPCsCount));
 
         var refreshAudioPosition = new Task(new Action(RefreshAudioPosition));
         refreshAudioPosition.Start();
     }
 
-    partial void OnFilterValueChanged(string value) => ConversationCollection.Refresh();
+    partial void OnFilterValueChanged(string value)
+    {
+        ConversationCollection.Refresh();
+        OnPropertyChanged(nameof(FilteredConversationsCount));
+    }
 
     partial void OnSelectedTreeItemChanged(object value)
     {
@@ -152,7 +164,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         SelectedConversations.Clear();
-        SelectedConversations.AddRange(ConversationList.Where(x => x.NpcName.Equals(SelectedConversation.NpcName)));
+        SelectedConversations.AddRange(_conversationList.Where(x => x.NpcName.Equals(SelectedConversation.NpcName)));
     }
 
     private bool FilterCollection(object obj)

@@ -109,7 +109,7 @@
             <cc:DataGrid x:Name="DataGrid_Upper" Grid.Row="2"
                 ItemsSource="{Binding ConversationCollection}"
                 AlternatingRowBackground="#2F3136" SelectionMode="Single"
-                      HeadersVisibility="Column" AutoGenerateColumns="False"
+                HeadersVisibility="Column" AutoGenerateColumns="False"                         
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
                 CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -183,7 +183,7 @@
             <cc:DataGrid x:Name="DataGrid_Lower" Grid.Row="2"
                 ItemsSource="{Binding Source={StaticResource LowerDataGridCVS}}"
                 AlternatingRowBackground="#2F3136" SelectionMode="Single"
-                      HeadersVisibility="Column" AutoGenerateColumns="False"
+                HeadersVisibility="Column" AutoGenerateColumns="False"
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
                 CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -338,7 +338,26 @@
         </Grid>
 
         <Grid Grid.Row="5" Grid.ColumnSpan="3" Background="Gray">
-            <TextBlock>Footer</TextBlock>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Margin="3 0 0 0" Text="{Binding FilteredConversationsCount, StringFormat=Filtered: {0:N0}/}" />
+                    <TextBlock Text="{Binding LoadedConversationsCount, StringFormat={}{0:N0}}" />
+                </StackPanel>
+                <TextBlock Grid.Column="1" HorizontalAlignment="Center" Text="{Binding LoadedNPCsCount, StringFormat=NPCs: {0:N0}}" />
+                <TextBlock Grid.Column="2" HorizontalAlignment="Center" Text="{Binding InspectedConversationsCount, StringFormat=Inspected: {0:N0}}" />
+                <TextBlock Grid.Column="3" HorizontalAlignment="Center" Text="{Binding EditedConversationsCount, StringFormat=Edited: {0:N0}}" />
+                <TextBlock Grid.Column="4" HorizontalAlignment="Center" Text="{Binding SelectedConversations.Count, StringFormat=Current NPC: {0:N0}}" />
+                <TextBlock Grid.Column="5" Margin="0 0 3 0" HorizontalAlignment="Right" Text="{Binding UsedEncoding, StringFormat=Encoding: {0:N0}}" />
+            </Grid>
         </Grid>
 
     </Grid>
