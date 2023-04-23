@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using WPFUI.Components;
 using WPFUI.Models;
 using WPFUI.NAudioWrapper;
 using WPFUI.NAudioWrapper.Enums;
@@ -21,7 +22,7 @@ namespace WPFUI.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    public ObservableCollection<Conversation> SelectedConversations { get; } = new();
+    public RangeObservableCollection<Conversation> SelectedConversations { get; } = new();
     public ICollectionView ConversationCollection { get; set; }
     public List<EncodingMenuItem> Encodings { get; }
 
@@ -150,13 +151,8 @@ public partial class MainWindowViewModel : ObservableObject
         if (SelectedConversation.NpcName.Equals(_previousNpcName))
             return;
 
-        var filteredByNpcName = _conversationList.Where(x => x.NpcName.Equals(SelectedConversation.NpcName));
         SelectedConversations.Clear();
-        foreach (var conversation in filteredByNpcName)
-        {
-            SelectedConversations.Add(conversation);
-            // TODO: AddRange to avoid firing INotifyCollectionChanged on every Add method
-        }
+        SelectedConversations.AddRange(ConversationList.Where(x => x.NpcName.Equals(SelectedConversation.NpcName)));
     }
 
     private bool FilterCollection(object obj)
