@@ -12,6 +12,14 @@ public class AudioPlayer
 
     public double CurrentTime => _waveFileReader!.CurrentTime.TotalSeconds;
 
+    public double GetLengthInSeconds() => _waveFileReader is not null ? _waveFileReader.TotalTime.TotalSeconds : 0d;
+
+    public double GetPositionInSeconds() => _waveFileReader is not null ? _waveFileReader.CurrentTime.TotalSeconds : 0d;
+
+    public PlaybackState GetPlaybackState => _output is not null ? _output.PlaybackState : PlaybackState.Stopped;
+
+    public float GetVolume() => _output is not null ? _output.Volume : 1f;
+
     public event Action PlaybackPaused;
 
     public event Action PlaybackResumed;
@@ -78,14 +86,6 @@ public class AudioPlayer
             _waveFileReader = null;
         }
     }
-
-    public double GetLengthInSeconds() => _waveFileReader is not null ? _waveFileReader.TotalTime.TotalSeconds : 0d;
-
-    public double GetPositionInSeconds() => _waveFileReader is not null ? _waveFileReader.CurrentTime.TotalSeconds : 0d;
-
-    public PlaybackState GetPlaybackState => _output is not null ? _output.PlaybackState : PlaybackState.Stopped;
-
-    public float GetVolume() => _output is not null ? _output.Volume : 1f;
 
     public void Pause()
     {
