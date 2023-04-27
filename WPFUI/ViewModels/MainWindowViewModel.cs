@@ -72,6 +72,27 @@ public partial class MainWindowViewModel : ObservableObject
     private Encoding _usedEncoding;
 
     [ObservableProperty]
+    private StringComparison _selectedComparisonMethod = StringComparison.Ordinal;
+
+    [ObservableProperty]
+    private FilterType _selectedFilterType = FilterType.HideAll;
+
+    [ObservableProperty]
+    private bool _isEnabledFilterName = true;
+
+    [ObservableProperty]
+    private bool _isEnabledFilterOriginalText = true;
+
+    [ObservableProperty]
+    private bool _isEnabledFilterEditedText = false;
+
+    [ObservableProperty]
+    private bool _isEnabledFilterIsEdited = true;
+
+    [ObservableProperty]
+    private bool _isEnabledFilterIsInspected = true;
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(StopPlaybackCommand))]
     private PlaybackState _stateOfPlayback = PlaybackState.Stopped;
 
@@ -174,7 +195,23 @@ public partial class MainWindowViewModel : ObservableObject
 
         var conversation = (Conversation)obj;
 
-        return conversation.Name.Contains(FilterValue, StringComparison.OrdinalIgnoreCase);
+        if (SelectedFilterType == FilterType.HideAll)
+        {
+            if (IsEnabledFilterIsInspected && conversation.IsInspected) return false;
+            if (IsEnabledFilterIsEdited && conversation.IsEdited) return false;
+        }
+        else
+        {
+            if (IsEnabledFilterIsInspected && !conversation.IsInspected) return false;
+            if (IsEnabledFilterIsEdited && !conversation.IsEdited) return false;
+        }
+
+        if (IsEnabledFilterName && conversation.Name.Contains(FilterValue, SelectedComparisonMethod)) return true;
+        if (IsEnabledFilterOriginalText && conversation.OriginalText.Contains(FilterValue, SelectedComparisonMethod)) return true;
+        if (IsEnabledFilterEditedText && conversation.EditedText.Contains(FilterValue, SelectedComparisonMethod)) return true;
+
+        // this check prevents returning false if every search checkbox is unchecked
+        return !IsEnabledFilterName && !IsEnabledFilterOriginalText && !IsEnabledFilterEditedText;
     }
 
     private void SetGroupingAndSortingOnConversationCollection()
@@ -188,6 +225,16 @@ public partial class MainWindowViewModel : ObservableObject
         ConversationCollection.GroupDescriptions.Add(pgd);
 
         ConversationCollection.SortDescriptions.Add(new SortDescription(nameof(Conversation.Number), ListSortDirection.Ascending));
+    }
+
+    [RelayCommand]
+    private void RefreshConversationCollection(bool checkForEmptyFilterValue = true)
+    {
+        if (checkForEmptyFilterValue && string.IsNullOrEmpty(FilterValue))
+            return;
+
+        ConversationCollection.Refresh();
+        OnPropertyChanged(nameof(FilteredConversationsCount));
     }
 
     [RelayCommand]
