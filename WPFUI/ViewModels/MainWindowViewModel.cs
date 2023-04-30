@@ -290,8 +290,8 @@ public partial class MainWindowViewModel : ObservableObject
 
         ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
         OnPropertyChanged(nameof(LoadedConversationsCount));
-        OnPropertyChanged(nameof(LoadedNPCsCount));
         ConversationCollection.Refresh();
+        OnPropertyChanged(nameof(LoadedNPCsCount));
         OnPropertyChanged(nameof(FilteredConversationsCount));
     }
 
