@@ -99,7 +99,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     private AudioPlayer? _audioPlayer;
 
-    private List<Conversation> _conversationList = new();
+    private readonly List<Conversation> _conversationList = new();
 
     private List<Dialogue> _parsedDialogues = new();
 
