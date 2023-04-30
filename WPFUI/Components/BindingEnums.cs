@@ -3,7 +3,7 @@ using System.Windows.Markup;
 
 namespace WPFUI.Components;
 
-class BindingEnums : MarkupExtension
+public sealed class BindingEnums : MarkupExtension
 {
     public Type EnumType { get; }
 

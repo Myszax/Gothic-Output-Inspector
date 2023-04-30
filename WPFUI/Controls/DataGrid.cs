@@ -11,7 +11,7 @@ namespace WPFUI.Controls;
 // So I have to use other derived class with same exact name
 // Code by `vasiliy-vdovichenko` from https://github.com/dotnet/wpf/issues/4279#issuecomment-1068216694
 // Thanks!
-public class DataGrid : System.Windows.Controls.DataGrid
+public sealed class DataGrid : System.Windows.Controls.DataGrid
 {
     /// <summary>
     /// Turn off UI Automation
@@ -19,7 +19,7 @@ public class DataGrid : System.Windows.Controls.DataGrid
     protected override AutomationPeer OnCreateAutomationPeer() => new CustomDataGridExAutomationPeer(this);
 }
 
-public class CustomDataGridExAutomationPeer : FrameworkElementAutomationPeer
+public sealed class CustomDataGridExAutomationPeer : FrameworkElementAutomationPeer
 {
     public CustomDataGridExAutomationPeer(FrameworkElement owner)
         : base(owner) { }

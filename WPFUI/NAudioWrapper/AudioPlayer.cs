@@ -6,7 +6,7 @@ using WPFUI.NAudioWrapper.Enums;
 
 namespace WPFUI.NAudioWrapper;
 
-public class AudioPlayer
+public sealed class AudioPlayer
 {
     public PlaybackStopType PlaybackStopType { get; set; }
 

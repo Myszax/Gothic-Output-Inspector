@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 
 namespace WPFUI.Components;
 
-public class RangeObservableCollection<T> : ObservableCollection<T>
+public sealed class RangeObservableCollection<T> : ObservableCollection<T>
 {
     private bool _suppressNotification = false;
 

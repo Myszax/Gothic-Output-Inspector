@@ -3,12 +3,12 @@ using System.Windows.Markup;
 
 namespace WPFUI.Components;
 
-public class TrueExtension : MarkupExtension
+public sealed class TrueExtension : MarkupExtension
 {
     public override object ProvideValue(IServiceProvider serviceProvider) => true;
 }
 
-public class FalseExtension : MarkupExtension
+public sealed class FalseExtension : MarkupExtension
 {
     public override object ProvideValue(IServiceProvider serviceProvider) => false;
 }
