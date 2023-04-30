@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Forms;
 using WPFUI.Components;
 using WPFUI.Models;
 using WPFUI.NAudioWrapper;
@@ -109,7 +110,6 @@ public partial class MainWindowViewModel : ObservableObject
     public MainWindowViewModel()
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // need to register to be able to use Encoding.GetEncoding()
-        var path = @"../../../../Parser/g2nk_ou.bin";
         
         Encodings = Encoding.GetEncodings()
             .Select(x => x.GetEncoding())
@@ -121,21 +121,6 @@ public partial class MainWindowViewModel : ObservableObject
 
         Encodings[1].IsChecked = true;
         SelectedEncoding = Encodings[1].Encoding;
-
-        var parser = new Reader(path, SelectedEncoding);
-
-        try
-        {
-            _parsedDialogues = parser.Parse();
-        }
-        catch (Exception)
-        {
-        }
-
-        foreach (var dialogue in _parsedDialogues)
-        {
-            _conversationList.Add(Conversation.CreateConversationFromDialogue(dialogue));
-        }
 
         ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
         SetGroupingAndSortingOnConversationCollection();
@@ -261,6 +246,53 @@ public partial class MainWindowViewModel : ObservableObject
 
         value.IsChecked = true;
         SelectedEncoding = value.Encoding;
+    }
+
+    [RelayCommand]
+    private void ImportFile()
+    {
+        var odf = new OpenFileDialog()
+        {
+            Filter = "Binary files (*.bin)|*.bin|All files (*.*)|*.*",
+        };
+
+        if (odf.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(odf.FileName))
+        {
+            odf.Dispose();
+            return;
+        }
+
+        var parser = new Reader(odf.FileName, SelectedEncoding);
+
+        try
+        {
+            _parsedDialogues = parser.Parse();
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+        finally
+        {
+            odf.Dispose();
+        }
+
+        UsedEncoding = SelectedEncoding;
+
+        if (_conversationList.Any())
+            _conversationList.Clear();
+
+        foreach (var dialogue in _parsedDialogues)
+        {
+            _conversationList.Add(Conversation.CreateConversationFromDialogue(dialogue));
+        }
+
+        ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
+        OnPropertyChanged(nameof(LoadedConversationsCount));
+        OnPropertyChanged(nameof(LoadedNPCsCount));
+        ConversationCollection.Refresh();
+        OnPropertyChanged(nameof(FilteredConversationsCount));
     }
 
     [RelayCommand]

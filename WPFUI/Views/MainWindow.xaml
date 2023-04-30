@@ -82,6 +82,8 @@
                         <MenuItem Header="_Open" />
                         <MenuItem Header="_Save" />
                         <Separator />
+                        <MenuItem Header="_Import OU File" Command="{Binding ImportFileCommand}" />
+                        <Separator />
                         <MenuItem Header="_Exit" />
                     </MenuItem>
                     <MenuItem Header="S_ettings">
