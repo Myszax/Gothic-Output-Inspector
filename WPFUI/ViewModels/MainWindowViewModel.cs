@@ -29,7 +29,7 @@ public partial class MainWindowViewModel : ObservableObject
     public int LoadedNPCsCount => ConversationCollection.Groups.Count;
     public int EditedConversationsCount => _conversationList.Where(x => x.IsEdited).Count();
     public int InspectedConversationsCount => _conversationList.Where(x => x.IsInspected).Count();
-    public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();    
+    public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
 
     [ObservableProperty]
     private object _selectedTreeItem;
@@ -105,12 +105,12 @@ public partial class MainWindowViewModel : ObservableObject
 
     private string _previousNpcName = string.Empty;
 
-    private float _previousVolume = 0f;    
+    private float _previousVolume = 0f;
 
     public MainWindowViewModel()
     {
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // need to register to be able to use Encoding.GetEncoding()
-        
+
         Encodings = Encoding.GetEncodings()
             .Select(x => x.GetEncoding())
             .Where(x => x.EncodingName
@@ -225,9 +225,9 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void SetPathToAudioFiles()
     {
-        var fbd = new System.Windows.Forms.FolderBrowserDialog();
+        var fbd = new FolderBrowserDialog();
 
-        if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+        if (fbd.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
             PathToAudioFiles = fbd.SelectedPath + '\\';
         else
             AudioPathNotSpecified();
