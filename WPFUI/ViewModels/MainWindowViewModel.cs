@@ -94,6 +94,9 @@ public partial class MainWindowViewModel : ObservableObject
     private bool _isEnabledFilterIsInspected = true;
 
     [ObservableProperty]
+    private bool _isOuFileImported = false;
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(StopPlaybackCommand))]
     private PlaybackState _stateOfPlayback = PlaybackState.Stopped;
 
@@ -212,6 +215,22 @@ public partial class MainWindowViewModel : ObservableObject
         ConversationCollection.SortDescriptions.Add(new SortDescription(nameof(Conversation.Number), ListSortDirection.Ascending));
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator",
+        "MVVMTK0034:Direct field reference to [ObservableProperty] backing field", Justification = "Avoid call to OnFilterValueChanged() in this case.")]
+    private void CleanReloadRefreshConversationCollection()
+    {
+        _filterValue = string.Empty; // _filterValue has to accessed directly to avoid unnecessary Refresh() on ConversationCollection        
+        OnPropertyChanged(nameof(FilterValue)); // then call OnPropertyChanged on FilterValue, it speed ups loading/importing
+        SelectedGridRow = null;
+        SelectedConversation = new();
+        FillLowerDataGrid();
+        ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
+        OnPropertyChanged(nameof(LoadedConversationsCount));
+        ConversationCollection.Refresh();
+        OnPropertyChanged(nameof(LoadedNPCsCount));
+        OnPropertyChanged(nameof(FilteredConversationsCount));
+    }
+
     [RelayCommand]
     private void RefreshConversationCollection(bool checkForEmptyFilterValue = true)
     {
@@ -288,11 +307,8 @@ public partial class MainWindowViewModel : ObservableObject
             _conversationList.Add(Conversation.CreateConversationFromDialogue(dialogue));
         }
 
-        ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
-        OnPropertyChanged(nameof(LoadedConversationsCount));
-        ConversationCollection.Refresh();
-        OnPropertyChanged(nameof(LoadedNPCsCount));
-        OnPropertyChanged(nameof(FilteredConversationsCount));
+        CleanReloadRefreshConversationCollection();
+        IsOuFileImported = true;
     }
 
     [RelayCommand]
