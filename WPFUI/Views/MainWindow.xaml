@@ -79,7 +79,7 @@
             <DockPanel>
                 <Menu DockPanel.Dock="Top">
                     <MenuItem Header="_File">
-                        <MenuItem Header="_Open" />
+                        <MenuItem Header="_Open Project" Command="{Binding OpenProjectCommand}" />
                         <MenuItem Header="_Save" Command="{Binding SaveProjectCommand}" />
                         <MenuItem Header="S_ave As..." Command="{Binding SaveProjectAsCommand}" />
                         <Separator />

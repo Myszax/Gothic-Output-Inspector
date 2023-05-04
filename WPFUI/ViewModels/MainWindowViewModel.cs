@@ -380,6 +380,81 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void OpenProject()
+    {
+        var odf = new OpenFileDialog()
+        {
+            Filter = "Gothic Output Inspector (*.goi)|*.goi",
+        };
+
+        if (odf.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(odf.FileName))
+        {
+            odf.Dispose();
+            return;
+        }
+
+        SaveFile? projectFile;
+        string pathToSaveFile;
+
+        try
+        {
+            var saveFile = File.ReadAllText(odf.FileName);
+            projectFile = JsonSerializer.Deserialize(saveFile, SaveFileJsonContext.Default.SaveFile);
+            pathToSaveFile = odf.FileName;
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+        finally
+        {
+            odf.Dispose();
+        }
+
+        if (projectFile is null)
+            return; // TODO: info about it
+
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(projectFile.ChosenEncoding))
+                SelectedEncoding = Encoding.GetEncoding(projectFile.ChosenEncoding);
+
+            if (!string.IsNullOrWhiteSpace(projectFile.OriginalEncoding))
+                UsedEncoding = Encoding.GetEncoding(projectFile.OriginalEncoding);
+            else
+                UsedEncoding = Encoding.GetEncoding(1250);
+
+            if (Enum.IsDefined(typeof(FilterType), projectFile.FilterType))
+                SelectedFilterType = projectFile.FilterType;
+
+            if (Enum.IsDefined(typeof(StringComparison), projectFile.ComparisonMethod))
+                SelectedComparisonMethod = projectFile.ComparisonMethod;
+
+            IsEnabledFilterName = projectFile.EnabledFilterName;
+            IsEnabledFilterOriginalText = projectFile.EnabledFilterOriginalText;
+            IsEnabledFilterEditedText = projectFile.EnabledFilterEditedText;
+            IsEnabledFilterIsInspected = projectFile.EnabledFilterIsInspected;
+            IsEnabledFilterIsEdited = projectFile.EnabledFilterIsEdited;
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        if (_conversationList.Any())
+            _conversationList.Clear();
+
+        if (projectFile.Conversations is not null)
+            _conversationList.AddRange(projectFile.Conversations);
+
+        CleanReloadRefreshConversationCollection();
+        IsOuFileImported = true;
+        PathToSaveFile = pathToSaveFile;
+    }
+
+    [RelayCommand]
     private void StartPlayback()
     {
         if (string.IsNullOrEmpty(CurrentlySelectedAudioName))
