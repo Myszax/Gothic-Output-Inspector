@@ -318,6 +318,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         CleanReloadRefreshConversationCollection();
         IsOuFileImported = true;
+        Title = TITLE + " - NewProject";
     }
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
@@ -379,6 +380,7 @@ public partial class MainWindowViewModel : ObservableObject
         File.WriteAllText(sfd.FileName, JsonSerializer.Serialize(save, SaveFileJsonContext.Default.SaveFile));
 
         PathToSaveFile = sfd.FileName;
+        Title = TITLE + " - " + sfd.FileName;
         sfd.Dispose();
     }
 
@@ -455,6 +457,7 @@ public partial class MainWindowViewModel : ObservableObject
         CleanReloadRefreshConversationCollection();
         IsOuFileImported = true;
         PathToSaveFile = pathToSaveFile;
+        Title = TITLE + " - " + pathToSaveFile;
     }
 
     [RelayCommand]
