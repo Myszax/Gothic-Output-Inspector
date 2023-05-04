@@ -98,6 +98,9 @@ public partial class MainWindowViewModel : ObservableObject
     private string _pathToSaveFile = string.Empty;
 
     [ObservableProperty]
+    private string _title = TITLE
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveProjectCommand))]
     [NotifyCanExecuteChangedFor(nameof(SaveProjectAsCommand))]
     private bool _isOuFileImported = false;
