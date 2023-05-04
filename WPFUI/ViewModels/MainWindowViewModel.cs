@@ -98,7 +98,7 @@ public partial class MainWindowViewModel : ObservableObject
     private string _pathToSaveFile = string.Empty;
 
     [ObservableProperty]
-    private string _title = TITLE
+    private string _title = TITLE;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveProjectCommand))]
