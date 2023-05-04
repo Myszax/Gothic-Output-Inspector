@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
@@ -94,6 +95,11 @@ public partial class MainWindowViewModel : ObservableObject
     private bool _isEnabledFilterIsInspected = true;
 
     [ObservableProperty]
+    private string _pathToSaveFile = string.Empty;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(SaveProjectCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveProjectAsCommand))]
     private bool _isOuFileImported = false;
 
     [ObservableProperty]
@@ -309,6 +315,68 @@ public partial class MainWindowViewModel : ObservableObject
 
         CleanReloadRefreshConversationCollection();
         IsOuFileImported = true;
+    }
+
+    [RelayCommand(CanExecute = nameof(IsOuFileImported))]
+    private void SaveProject()
+    {
+        if (string.IsNullOrWhiteSpace(PathToSaveFile))
+        {
+            SaveProjectAs();
+            return;
+        }
+
+        var save = new SaveFile()
+        {
+            Conversations = _conversationList,
+            OriginalEncoding = UsedEncoding.HeaderName,
+            ChosenEncoding = SelectedEncoding.HeaderName,
+            AudioPath = PathToAudioFiles,
+            ComparisonMethod = SelectedComparisonMethod,
+            EnabledFilterName = IsEnabledFilterName,
+            EnabledFilterOriginalText = IsEnabledFilterOriginalText,
+            EnabledFilterEditedText = IsEnabledFilterEditedText,
+            FilterType = SelectedFilterType,
+            EnabledFilterIsEdited = IsEnabledFilterIsEdited,
+            EnabledFilterIsInspected = IsEnabledFilterIsInspected,
+        };
+
+        File.WriteAllText(PathToSaveFile, JsonSerializer.Serialize(save, SaveFileJsonContext.Default.SaveFile));
+    }
+
+    [RelayCommand(CanExecute = nameof(IsOuFileImported))]
+    private void SaveProjectAs()
+    {
+        var sfd = new SaveFileDialog()
+        {
+            Filter = "Gothic Output Inspector (*.goi)|*.goi",
+        };
+
+        if (sfd.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(sfd.FileName))
+        {
+            sfd.Dispose();
+            return;
+        }
+
+        var save = new SaveFile()
+        {
+            Conversations = _conversationList,
+            OriginalEncoding = UsedEncoding.HeaderName,
+            ChosenEncoding = SelectedEncoding.HeaderName,
+            AudioPath = PathToAudioFiles,
+            ComparisonMethod = SelectedComparisonMethod,
+            EnabledFilterName = IsEnabledFilterName,
+            EnabledFilterOriginalText = IsEnabledFilterOriginalText,
+            EnabledFilterEditedText = IsEnabledFilterEditedText,
+            FilterType = SelectedFilterType,
+            EnabledFilterIsEdited = IsEnabledFilterIsEdited,
+            EnabledFilterIsInspected = IsEnabledFilterIsInspected,
+        };
+
+        File.WriteAllText(sfd.FileName, JsonSerializer.Serialize(save, SaveFileJsonContext.Default.SaveFile));
+
+        PathToSaveFile = sfd.FileName;
+        sfd.Dispose();
     }
 
     [RelayCommand]

@@ -80,7 +80,8 @@
                 <Menu DockPanel.Dock="Top">
                     <MenuItem Header="_File">
                         <MenuItem Header="_Open" />
-                        <MenuItem Header="_Save" />
+                        <MenuItem Header="_Save" Command="{Binding SaveProjectCommand}" />
+                        <MenuItem Header="S_ave As..." Command="{Binding SaveProjectAsCommand}" />
                         <Separator />
                         <MenuItem Header="_Import OU File" Command="{Binding ImportFileCommand}" />
                         <Separator />
