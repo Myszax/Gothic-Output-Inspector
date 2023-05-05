@@ -274,6 +274,7 @@ public partial class MainWindowViewModel : ObservableObject
             Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
         };
         File.WriteAllText(path, JsonSerializer.Serialize(save, opt));
+        _projectWasEdited = false;
     }
 
     [RelayCommand]
@@ -393,7 +394,10 @@ public partial class MainWindowViewModel : ObservableObject
         catch (Exception e)
         {
             MessageBox.Show(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
         }
+
+        Title = TITLE + " - " + PathToSaveFile;
     }
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
