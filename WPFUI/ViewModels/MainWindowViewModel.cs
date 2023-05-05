@@ -105,6 +105,7 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveProjectCommand))]
     [NotifyCanExecuteChangedFor(nameof(SaveProjectAsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SetPathToAudioFilesCommand))]
     private bool _isOuFileImported = false;
 
     [ObservableProperty]
@@ -285,7 +286,7 @@ public partial class MainWindowViewModel : ObservableObject
         OnPropertyChanged(nameof(FilteredConversationsCount));
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(IsOuFileImported))]
     private void SetPathToAudioFiles()
     {
         var fbd = new FolderBrowserDialog();
