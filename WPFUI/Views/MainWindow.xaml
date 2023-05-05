@@ -201,7 +201,9 @@
                     <DataGridTemplateColumn Header="Inspected">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsInspected, UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                    IsChecked="{Binding IsInspected, UpdateSourceTrigger=PropertyChanged}"
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ProjectFileChangedCommand}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -289,7 +291,9 @@
                     <DataGridTemplateColumn Header="Inspected">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsChecked="{Binding IsInspected, UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                                    IsChecked="{Binding IsInspected, UpdateSourceTrigger=PropertyChanged}"
+                                    Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ProjectFileChangedCommand}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -338,7 +342,8 @@
                 <DockPanel LastChildFill="False">
                     <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
                         <TextBlock>Inspected</TextBlock>
-                        <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversation.IsInspected}" />
+                        <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversation.IsInspected}"
+                            Command="{Binding ProjectFileChangedCommand}"/>
                     </WrapPanel>
                     <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
                         <TextBlock>Edited</TextBlock>

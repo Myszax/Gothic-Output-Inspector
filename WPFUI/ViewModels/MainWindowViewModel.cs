@@ -119,6 +119,8 @@ public partial class MainWindowViewModel : ObservableObject
 
     private string _previousNpcName = string.Empty;
 
+    private bool _projectWasEdited = false;
+
     private float _previousVolume = 0f;
 
     public MainWindowViewModel()
@@ -243,6 +245,7 @@ public partial class MainWindowViewModel : ObservableObject
         ConversationCollection.Refresh();
         OnPropertyChanged(nameof(LoadedNPCsCount));
         OnPropertyChanged(nameof(FilteredConversationsCount));
+        _projectWasEdited = false;
     }
 
     private void SaveFileToDisk(string path)
@@ -288,7 +291,10 @@ public partial class MainWindowViewModel : ObservableObject
         var fbd = new FolderBrowserDialog();
 
         if (fbd.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+        {
             PathToAudioFiles = fbd.SelectedPath + '\\';
+            ProjectFileChanged();
+        }
         else
             AudioPathNotSpecified();
 
@@ -296,7 +302,14 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void CompareOriginalAndEditedText() => SelectedConversation.IsEdited = !SelectedConversation.EditedText.Equals(SelectedConversation.OriginalText);
+    private void CompareOriginalAndEditedText()
+    {
+        var edited = !SelectedConversation.EditedText.Equals(SelectedConversation.OriginalText);
+        SelectedConversation.IsEdited = edited;
+
+        if (edited)
+            ProjectFileChanged();
+    }
 
     [RelayCommand]
     private void ChangeEncoding(EncodingMenuItem value)
@@ -351,6 +364,7 @@ public partial class MainWindowViewModel : ObservableObject
         CleanReloadRefreshConversationCollection();
         IsOuFileImported = true;
         Title = TITLE + " - NewProject";
+        ProjectFileChanged();
     }
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
@@ -486,6 +500,16 @@ public partial class MainWindowViewModel : ObservableObject
         IsOuFileImported = true;
         PathToSaveFile = pathToSaveFile;
         Title = TITLE + " - " + pathToSaveFile;
+    }
+
+    [RelayCommand]
+    private void ProjectFileChanged()
+    {
+        if (_projectWasEdited)
+            return;
+
+        Title += '*';
+        _projectWasEdited = true;
     }
 
     [RelayCommand]
