@@ -230,6 +230,9 @@ public partial class MainWindowViewModel : ObservableObject
         "MVVMTK0034:Direct field reference to [ObservableProperty] backing field", Justification = "Avoid call to OnFilterValueChanged() in this case.")]
     private void CleanReloadRefreshConversationCollection()
     {
+        StopPlayback();
+        _audioPlayer = null;
+        CurrentlyPlayingAudioName = string.Empty;
         _filterValue = string.Empty; // _filterValue has to accessed directly to avoid unnecessary Refresh() on ConversationCollection        
         OnPropertyChanged(nameof(FilterValue)); // then call OnPropertyChanged on FilterValue, it speed ups loading/importing
         SelectedGridRow = null;
