@@ -8,7 +8,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
@@ -345,7 +347,11 @@ public partial class MainWindowViewModel : ObservableObject
             EnabledFilterIsInspected = IsEnabledFilterIsInspected,
         };
 
-        File.WriteAllText(PathToSaveFile, JsonSerializer.Serialize(save, SaveFileJsonContext.Default.SaveFile));
+        var opt = new JsonSerializerOptions()
+        {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+        };        
+        File.WriteAllText(PathToSaveFile, JsonSerializer.Serialize(save, opt));
     }
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
@@ -377,7 +383,11 @@ public partial class MainWindowViewModel : ObservableObject
             EnabledFilterIsInspected = IsEnabledFilterIsInspected,
         };
 
-        File.WriteAllText(sfd.FileName, JsonSerializer.Serialize(save, SaveFileJsonContext.Default.SaveFile));
+        var opt = new JsonSerializerOptions()
+        {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+        };
+        File.WriteAllText(PathToSaveFile, JsonSerializer.Serialize(save, opt));
 
         PathToSaveFile = sfd.FileName;
         Title = TITLE + " - " + sfd.FileName;
@@ -404,7 +414,7 @@ public partial class MainWindowViewModel : ObservableObject
         try
         {
             var saveFile = File.ReadAllText(odf.FileName);
-            projectFile = JsonSerializer.Deserialize(saveFile, SaveFileJsonContext.Default.SaveFile);
+            projectFile = JsonSerializer.Deserialize<SaveFile>(saveFile);
             pathToSaveFile = odf.FileName;
         }
         catch (Exception e)
