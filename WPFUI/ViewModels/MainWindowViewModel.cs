@@ -356,7 +356,14 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        SaveFileToDisk(PathToSaveFile);
+        try
+        {
+            SaveFileToDisk(PathToSaveFile);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
@@ -372,12 +379,21 @@ public partial class MainWindowViewModel : ObservableObject
             sfd.Dispose();
             return;
         }
-
-        SaveFileToDisk(sfd.FileName);
-
-        PathToSaveFile = sfd.FileName;
-        Title = TITLE + " - " + sfd.FileName;
+        string path = sfd.FileName;
         sfd.Dispose();
+
+        try
+        {
+            SaveFileToDisk(path);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+
+        PathToSaveFile = path;
+        Title = TITLE + " - " + path;
     }
 
     [RelayCommand]
