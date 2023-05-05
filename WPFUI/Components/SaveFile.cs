@@ -29,4 +29,10 @@ public sealed class SaveFile
     public bool EnabledFilterIsInspected { get; set; } = true;
 
     public bool EnabledFilterIsEdited { get; set; } = true;
+
+    public float AudioPlayerVolume { get; set; } = 1.0f;
+
+    public float AudioPlayerPreviousVolume { get; set; } = 0f;
+
+    public bool AudioPlayerMuted { get; set; } = false;
 }

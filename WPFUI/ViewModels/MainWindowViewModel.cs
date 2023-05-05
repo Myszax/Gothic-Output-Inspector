@@ -257,6 +257,9 @@ public partial class MainWindowViewModel : ObservableObject
             FilterType = SelectedFilterType,
             EnabledFilterIsEdited = IsEnabledFilterIsEdited,
             EnabledFilterIsInspected = IsEnabledFilterIsInspected,
+            AudioPlayerVolume = CurrentVolume,
+            AudioPlayerPreviousVolume = _previousVolume,
+            AudioPlayerMuted = IsMuted,
         };
 
         var opt = new JsonSerializerOptions()
@@ -448,11 +451,18 @@ public partial class MainWindowViewModel : ObservableObject
             if (Enum.IsDefined(typeof(StringComparison), projectFile.ComparisonMethod))
                 SelectedComparisonMethod = projectFile.ComparisonMethod;
 
+            if (projectFile.AudioPlayerVolume >= 0f && projectFile.AudioPlayerVolume <= 1f)
+                CurrentVolume = projectFile.AudioPlayerVolume;
+
+            if (projectFile.AudioPlayerPreviousVolume >= 0f && projectFile.AudioPlayerPreviousVolume <= 1f)
+                _previousVolume = projectFile.AudioPlayerPreviousVolume;
+
             IsEnabledFilterName = projectFile.EnabledFilterName;
             IsEnabledFilterOriginalText = projectFile.EnabledFilterOriginalText;
             IsEnabledFilterEditedText = projectFile.EnabledFilterEditedText;
             IsEnabledFilterIsInspected = projectFile.EnabledFilterIsInspected;
             IsEnabledFilterIsEdited = projectFile.EnabledFilterIsEdited;
+            IsMuted = projectFile.AudioPlayerMuted;
         }
         catch (Exception e)
         {
