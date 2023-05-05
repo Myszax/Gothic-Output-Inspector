@@ -242,6 +242,30 @@ public partial class MainWindowViewModel : ObservableObject
         OnPropertyChanged(nameof(FilteredConversationsCount));
     }
 
+    private void SaveFileToDisk(string path)
+    {
+        var save = new SaveFile()
+        {
+            Conversations = _conversationList,
+            OriginalEncoding = UsedEncoding.HeaderName,
+            ChosenEncoding = SelectedEncoding.HeaderName,
+            AudioPath = PathToAudioFiles,
+            ComparisonMethod = SelectedComparisonMethod,
+            EnabledFilterName = IsEnabledFilterName,
+            EnabledFilterOriginalText = IsEnabledFilterOriginalText,
+            EnabledFilterEditedText = IsEnabledFilterEditedText,
+            FilterType = SelectedFilterType,
+            EnabledFilterIsEdited = IsEnabledFilterIsEdited,
+            EnabledFilterIsInspected = IsEnabledFilterIsInspected,
+        };
+
+        var opt = new JsonSerializerOptions()
+        {
+            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+        };
+        File.WriteAllText(path, JsonSerializer.Serialize(save, opt));
+    }
+
     [RelayCommand]
     private void RefreshConversationCollection(bool checkForEmptyFilterValue = true)
     {
@@ -332,26 +356,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        var save = new SaveFile()
-        {
-            Conversations = _conversationList,
-            OriginalEncoding = UsedEncoding.HeaderName,
-            ChosenEncoding = SelectedEncoding.HeaderName,
-            AudioPath = PathToAudioFiles,
-            ComparisonMethod = SelectedComparisonMethod,
-            EnabledFilterName = IsEnabledFilterName,
-            EnabledFilterOriginalText = IsEnabledFilterOriginalText,
-            EnabledFilterEditedText = IsEnabledFilterEditedText,
-            FilterType = SelectedFilterType,
-            EnabledFilterIsEdited = IsEnabledFilterIsEdited,
-            EnabledFilterIsInspected = IsEnabledFilterIsInspected,
-        };
-
-        var opt = new JsonSerializerOptions()
-        {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
-        };        
-        File.WriteAllText(PathToSaveFile, JsonSerializer.Serialize(save, opt));
+        SaveFileToDisk(PathToSaveFile);
     }
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
@@ -368,26 +373,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        var save = new SaveFile()
-        {
-            Conversations = _conversationList,
-            OriginalEncoding = UsedEncoding.HeaderName,
-            ChosenEncoding = SelectedEncoding.HeaderName,
-            AudioPath = PathToAudioFiles,
-            ComparisonMethod = SelectedComparisonMethod,
-            EnabledFilterName = IsEnabledFilterName,
-            EnabledFilterOriginalText = IsEnabledFilterOriginalText,
-            EnabledFilterEditedText = IsEnabledFilterEditedText,
-            FilterType = SelectedFilterType,
-            EnabledFilterIsEdited = IsEnabledFilterIsEdited,
-            EnabledFilterIsInspected = IsEnabledFilterIsInspected,
-        };
-
-        var opt = new JsonSerializerOptions()
-        {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
-        };
-        File.WriteAllText(PathToSaveFile, JsonSerializer.Serialize(save, opt));
+        SaveFileToDisk(sfd.FileName);
 
         PathToSaveFile = sfd.FileName;
         Title = TITLE + " - " + sfd.FileName;
