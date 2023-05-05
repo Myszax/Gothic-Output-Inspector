@@ -445,6 +445,9 @@ public partial class MainWindowViewModel : ObservableObject
             else
                 UsedEncoding = Encoding.GetEncoding(1250);
 
+            if (!string.IsNullOrWhiteSpace(projectFile.AudioPath))
+                PathToAudioFiles = projectFile.AudioPath;
+
             if (Enum.IsDefined(typeof(FilterType), projectFile.FilterType))
                 SelectedFilterType = projectFile.FilterType;
 
