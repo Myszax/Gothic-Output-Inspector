@@ -325,6 +325,15 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void ImportFile()
     {
+        if (_projectWasEdited)
+        {
+            var result = SaveProjectPrompt();
+            if (result == System.Windows.MessageBoxResult.Yes)
+                SaveProject();
+            else if (result == System.Windows.MessageBoxResult.Cancel)
+                return;
+        }
+
         var odf = new OpenFileDialog()
         {
             Filter = "Binary files (*.bin)|*.bin|All files (*.*)|*.*",
@@ -420,6 +429,15 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void OpenProject()
     {
+        if (_projectWasEdited)
+        {
+            var result = SaveProjectPrompt();
+            if (result == System.Windows.MessageBoxResult.Yes)
+                SaveProject();
+            else if (result == System.Windows.MessageBoxResult.Cancel)
+                return;
+        }
+
         var odf = new OpenFileDialog()
         {
             Filter = "Gothic Output Inspector (*.goi)|*.goi",
