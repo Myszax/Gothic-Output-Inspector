@@ -9,7 +9,10 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = new MainWindowViewModel();
+
+        Closing += ((MainWindowViewModel)DataContext).OnWindowClosing;
     }
+
     public object SelectedTreeViewItem
     {
         get => GetValue(SelectedTreeViewItemProperty);

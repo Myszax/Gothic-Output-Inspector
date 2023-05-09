@@ -149,6 +149,19 @@ public partial class MainWindowViewModel : ObservableObject
         refreshAudioPosition.Start();
     }
 
+    public void OnWindowClosing(object? sender, CancelEventArgs e)
+    {
+        if (!_projectWasEdited)
+            return; // don't have to do anything else, program will close itself because CancelEventArgs.Canel is false
+
+        var result = SaveProjectPrompt();
+
+        if (result == System.Windows.MessageBoxResult.Yes)
+            e.Cancel = !TryToSaveProject();
+        else if (result == System.Windows.MessageBoxResult.Cancel)
+            e.Cancel = true;
+    }
+
     partial void OnFilterValueChanged(string value)
     {
         ConversationCollection.Refresh();
