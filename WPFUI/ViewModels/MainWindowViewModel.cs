@@ -379,56 +379,10 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
-    private void SaveProject()
-    {
-        if (string.IsNullOrWhiteSpace(PathToSaveFile))
-        {
-            SaveProjectAs();
-            return;
-        }
-
-        try
-        {
-            SaveFileToDisk(PathToSaveFile);
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
-        }
-
-        Title = TITLE + " - " + PathToSaveFile;
-    }
+    private void SaveProject() => TryToSaveProject();
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
-    private void SaveProjectAs()
-    {
-        var sfd = new SaveFileDialog()
-        {
-            Filter = "Gothic Output Inspector (*.goi)|*.goi",
-        };
-
-        if (sfd.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(sfd.FileName))
-        {
-            sfd.Dispose();
-            return;
-        }
-        string path = sfd.FileName;
-        sfd.Dispose();
-
-        try
-        {
-            SaveFileToDisk(path);
-        }
-        catch (Exception e)
-        {
-            MessageBox.Show(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
-        }
-
-        PathToSaveFile = path;
-        Title = TITLE + " - " + path;
-    }
+    private void SaveProjectAs() => TryToSaveProjectAs();
 
     [RelayCommand]
     private void OpenProject()
@@ -626,6 +580,55 @@ public partial class MainWindowViewModel : ObservableObject
     {
         if (IsMuted) UnMuteSound();
         else MuteSound();
+    }
+
+    private bool TryToSaveProject()
+    {
+        if (string.IsNullOrWhiteSpace(PathToSaveFile))
+            return TryToSaveProjectAs();
+
+        try
+        {
+            SaveFileToDisk(PathToSaveFile);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+
+        Title = TITLE + " - " + PathToSaveFile;
+        return true;
+    }
+
+    private bool TryToSaveProjectAs()
+    {
+        var sfd = new SaveFileDialog()
+        {
+            Filter = "Gothic Output Inspector (*.goi)|*.goi",
+        };
+
+        if (sfd.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(sfd.FileName))
+        {
+            sfd.Dispose();
+            return false;
+        }
+        string path = sfd.FileName;
+        sfd.Dispose();
+
+        try
+        {
+            SaveFileToDisk(path);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+
+        PathToSaveFile = path;
+        Title = TITLE + " - " + path;
+        return true;
     }
 
     private void MuteSound()
