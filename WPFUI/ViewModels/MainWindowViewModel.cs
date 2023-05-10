@@ -503,6 +503,27 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void ExitApplication()
+    {
+        if (!_projectWasEdited)
+            System.Windows.Application.Current.Shutdown();
+
+        var result = SaveProjectPrompt();
+        bool shouldExit = false;
+
+        if (result == System.Windows.MessageBoxResult.No)
+            shouldExit = true;
+        else if (result == System.Windows.MessageBoxResult.Yes)
+            shouldExit = TryToSaveProject();
+
+        if (shouldExit)
+        {
+            _projectWasEdited = false; // to avoid another SaveProjectPrompt() in Closing event
+            System.Windows.Application.Current.Shutdown();
+        }
+    }
+
+    [RelayCommand]
     private void StartPlayback()
     {
         if (string.IsNullOrEmpty(CurrentlySelectedAudioName))

@@ -85,7 +85,7 @@
                         <Separator />
                         <MenuItem Header="_Import OU File" Command="{Binding ImportFileCommand}" />
                         <Separator />
-                        <MenuItem Header="_Exit" />
+                        <MenuItem Header="_Exit" Command="{Binding ExitApplicationCommand}" />
                     </MenuItem>
                     <MenuItem Header="S_ettings">
                         <MenuItem Header="Path to audio files..." Command="{Binding SetPathToAudioFilesCommand}" />
