@@ -15,6 +15,15 @@
         FontSize="16"
         Title="{Binding Title}" Height="450" Width="800">
 
+    <Window.InputBindings>
+        <KeyBinding x:Name="OpenCommand" Key="O" Modifiers="Control" Command="{Binding OpenProjectCommand}" />
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveProjectCommand}" />
+        <KeyBinding Key="A" Modifiers="Control" Command="{Binding SaveProjectAsCommand}" />
+        <KeyBinding Key="I" Modifiers="Control" Command="{Binding ImportFileCommand}" />
+        <KeyBinding Key="P" Modifiers="Control" Command="{Binding SetPathToAudioFilesCommand}" />
+    </Window.InputBindings>
+
+
     <Window.Resources>
         <!-- Bind the control's SelectedTreeViewItem property to the DataContext -->
         <Style TargetType="local:MainWindow">
@@ -79,16 +88,16 @@
             <DockPanel>
                 <Menu DockPanel.Dock="Top">
                     <MenuItem Header="_File">
-                        <MenuItem Header="_Open Project" Command="{Binding OpenProjectCommand}" />
-                        <MenuItem Header="_Save" Command="{Binding SaveProjectCommand}" />
-                        <MenuItem Header="S_ave As..." Command="{Binding SaveProjectAsCommand}" />
+                        <MenuItem Header="_Open Project" Command="{Binding OpenProjectCommand}" InputGestureText="Ctrl + O" />
+                        <MenuItem Header="_Save" Command="{Binding SaveProjectCommand}" InputGestureText="Ctrl + S" />
+                        <MenuItem Header="S_ave As..." Command="{Binding SaveProjectAsCommand}" InputGestureText="Ctrl + A" />
                         <Separator />
-                        <MenuItem Header="_Import OU File" Command="{Binding ImportFileCommand}" />
+                        <MenuItem Header="_Import OU File" Command="{Binding ImportFileCommand}" InputGestureText="Ctrl + I" />
                         <Separator />
-                        <MenuItem Header="_Exit" Command="{Binding ExitApplicationCommand}" />
+                        <MenuItem Header="_Exit" Command="{Binding ExitApplicationCommand}" InputGestureText="Alt + F4" />
                     </MenuItem>
                     <MenuItem Header="S_ettings">
-                        <MenuItem Header="Path to audio files..." Command="{Binding SetPathToAudioFilesCommand}" />
+                        <MenuItem Header="Path to audio files..." Command="{Binding SetPathToAudioFilesCommand}" InputGestureText="Ctrl + P" />
                         <MenuItem Header="Encoding" ItemsSource="{Binding Encodings}">
                             <MenuItem.ItemContainerStyle>
                                 <Style>
