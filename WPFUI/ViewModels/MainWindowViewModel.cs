@@ -152,7 +152,7 @@ public partial class MainWindowViewModel : ObservableObject
     public void OnWindowClosing(object? sender, CancelEventArgs e)
     {
         if (!_projectWasEdited)
-            return; // don't have to do anything else, program will close itself because CancelEventArgs.Canel is false
+            return; // don't have to do anything else, program will close itself because CancelEventArgs.Cancel is false
 
         var result = SaveProjectPrompt();
 
