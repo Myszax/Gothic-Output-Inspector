@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:WPFUI.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
@@ -13,7 +14,8 @@
         xmlns:components="clr-namespace:WPFUI.Components"
         mc:Ignorable="d"
         FontSize="16"
-        Title="{Binding Title}" Height="450" Width="800">
+        Title="{Binding Title}" Height="450" Width="800"
+        ui:WindowHelper.UseModernWindowStyle="True">
 
     <Window.InputBindings>
         <KeyBinding x:Name="OpenCommand" Key="O" Modifiers="Control" Command="{Binding OpenProjectCommand}" />
