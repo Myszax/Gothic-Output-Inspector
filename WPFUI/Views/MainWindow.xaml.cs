@@ -15,8 +15,7 @@ public partial class MainWindow : Window
 
     private void TextBox_CopyToClipboard(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        var textBox = sender as System.Windows.Controls.TextBox;
-        if (textBox is null || string.IsNullOrEmpty(textBox.Text))
+        if (sender is not System.Windows.Controls.TextBox textBox || string.IsNullOrEmpty(textBox.Text))
             return;
 
         Clipboard.SetText(textBox.Text);
