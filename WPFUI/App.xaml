@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:local="clr-namespace:WPFUI"
+             xmlns:cc = "clr-namespace:WPFUI.Controls"
              StartupUri="Views\MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -10,6 +11,7 @@
                 <ui:ThemeResources RequestedTheme="Dark" AccentColor="DarkCyan" />
                 <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="{x:Type cc:DataGrid}" BasedOn="{StaticResource {x:Type DataGrid}}" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
