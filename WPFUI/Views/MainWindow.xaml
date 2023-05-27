@@ -25,12 +25,6 @@
 
 
     <Window.Resources>
-        <!-- Bind the control's SelectedTreeViewItem property to the DataContext -->
-        <Style TargetType="local:MainWindow">
-            <Setter Property="SelectedTreeViewItem"
-              Value="{Binding SelectedTreeItem}" />
-        </Style>
-
         <CollectionViewSource Source="{Binding SelectedConversations}" x:Key="LowerDataGridCVS">
             <CollectionViewSource.GroupDescriptions>
                 <dat:PropertyGroupDescription PropertyName="Context" />
@@ -245,11 +239,17 @@
 
         <Grid Grid.Row="2" Grid.RowSpan="2">
             <TreeView x:Name="TreeViewMyConversationCollection" ItemsSource="{Binding ConversationCollection.Groups}"
-                SelectedItemChanged="TreeView_SelectedItemChanged"
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 ScrollViewer.VerticalScrollBarVisibility="Visible">
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectedItemChanged">
+                        <i:InvokeCommandAction Command="{Binding SelectedTreeItemChangedCommand}"
+                            CommandParameter="{Binding ElementName=TreeViewMyConversationCollection, Path=SelectedItem}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
 
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Path=Items}">

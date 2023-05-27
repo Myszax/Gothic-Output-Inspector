@@ -35,9 +35,6 @@ public partial class MainWindowViewModel : ObservableObject
     public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
 
     [ObservableProperty]
-    private object _selectedTreeItem;
-
-    [ObservableProperty]
     private string _filterValue = string.Empty;
 
     [ObservableProperty]
@@ -168,14 +165,6 @@ public partial class MainWindowViewModel : ObservableObject
         OnPropertyChanged(nameof(FilteredConversationsCount));
     }
 
-    partial void OnSelectedTreeItemChanged(object value)
-    {
-        if (value is null || value is not Conversation)
-            return;
-
-        SelectedConversation = (Conversation)value;
-    }
-
     partial void OnSelectedGridRowChanged(Conversation? value)
     {
         if (value is null)
@@ -288,6 +277,15 @@ public partial class MainWindowViewModel : ObservableObject
         };
         File.WriteAllText(path, JsonSerializer.Serialize(save, opt));
         _projectWasEdited = false;
+    }
+
+    [RelayCommand]
+    private void SelectedTreeItemChanged(object value)
+    {
+        if (value is null || value is not Conversation)
+            return;
+
+        SelectedConversation = (Conversation)value;
     }
 
     [RelayCommand]
