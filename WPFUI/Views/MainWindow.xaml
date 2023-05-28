@@ -14,7 +14,7 @@
         xmlns:components="clr-namespace:WPFUI.Components"
         mc:Ignorable="d"
         FontSize="16"
-        Title="{Binding Title}" Height="450" Width="800"
+        Title="{Binding Title}" Width="1280" Height="720" 
         ui:WindowHelper.UseModernWindowStyle="True">
 
     <Window.InputBindings>
@@ -77,7 +77,7 @@
             <RowDefinition Height="4*" />
             <RowDefinition Height="4*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Grid.ColumnSpan="3" Background="#AF000000">
@@ -129,7 +129,7 @@
                             <TextBlock VerticalAlignment="Center" Text="Search Mode:" />
                             <!--TODO: Set width by longest item length. Here is workaround for this with Grid & ItemsControl-->
                             <Grid HorizontalAlignment="Left">
-                                <ItemsControl ItemsSource="{components:BindingEnums sys:StringComparison}" Height="0" Margin="15 0" />
+                                <ItemsControl ItemsSource="{components:BindingEnums sys:StringComparison}" Height="0" Margin="15 0" Width="190" />
                                 <ComboBox ItemsSource="{components:BindingEnums sys:StringComparison}" SelectedItem="{Binding SelectedComparisonMethod}" VerticalAlignment="Bottom">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="SelectionChanged">
@@ -173,7 +173,7 @@
                             VerticalContentAlignment="Center" Content="Inspected" />
                         <Rectangle Style="{StaticResource RectangleSeparator}" />
 
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterIsEdited}"
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterIsEdited}" Margin="0 0 3 0"
                             Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:False}"
                             VerticalContentAlignment="Center" Content="Edited" />
                     </StackPanel>
@@ -230,7 +230,7 @@
                                 <Label Style="{StaticResource LabelDisabledAccessKey}"
                                     Content="{Binding Name}"
                                     Foreground="DarkOrange"
-                                       FontWeight="Bold" />
+                                    FontWeight="Bold" />
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>
                     </GroupStyle>
@@ -282,7 +282,7 @@
                                 <Label Style="{StaticResource LabelDisabledAccessKey}"
                                     Content="{Binding Name}"
                                     Foreground="DarkOrange"
-                                       FontWeight="Bold" />
+                                    FontWeight="Bold" />
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>
                     </GroupStyle>
