@@ -12,6 +12,9 @@
                 <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="{x:Type cc:DataGrid}" BasedOn="{StaticResource {x:Type DataGrid}}" />
+            <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource DefaultCheckBoxStyle}">
+                <Setter Property="MinWidth" Value="0" />
+            </Style>
             <Style x:Key="RectangleSeparator" TargetType="Rectangle">
                 <Setter Property="VerticalAlignment" Value="Stretch" />
                 <Setter Property="Margin" Value="4 0 4 0" />
