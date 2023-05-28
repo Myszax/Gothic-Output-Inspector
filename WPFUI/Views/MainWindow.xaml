@@ -72,8 +72,8 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="4*" />
             <RowDefinition Height="4*" />
             <RowDefinition Height="Auto" />
@@ -127,7 +127,7 @@
                             <TextBlock VerticalAlignment="Center" Text="Search Mode:" />
                             <!--TODO: Set width by longest item length. Here is workaround for this with Grid & ItemsControl-->
                             <Grid HorizontalAlignment="Left">
-                                <ItemsControl ItemsSource="{components:BindingEnums sys:StringComparison}" Height="0" Margin="15,0"/>
+                                <ItemsControl ItemsSource="{components:BindingEnums sys:StringComparison}" Height="0" Margin="15 0" />
                                 <ComboBox ItemsSource="{components:BindingEnums sys:StringComparison}" SelectedItem="{Binding SelectedComparisonMethod}" VerticalAlignment="Bottom">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="SelectionChanged">
