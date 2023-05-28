@@ -141,12 +141,12 @@
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterName}"
                             Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:True}"
                             VerticalContentAlignment="Center" Content="Name" />
-                        <Rectangle VerticalAlignment="Stretch" Width="1" Margin="3 0 3 0" Stroke="Black" />
+                        <Rectangle Style="{StaticResource RectangleSeparator}" />
 
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterOriginalText}"
                             Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:True}"
                             VerticalContentAlignment="Center" Content="Original Text" />
-                        <Rectangle VerticalAlignment="Stretch" Width="1" Margin="3 0 3 0" Stroke="Black" />
+                        <Rectangle Style="{StaticResource RectangleSeparator}" />
 
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterEditedText}"
                             Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:True}"
@@ -169,7 +169,7 @@
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterIsInspected}"
                             Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:False}"
                             VerticalContentAlignment="Center" Content="Inspected" />
-                        <Rectangle VerticalAlignment="Stretch" Width="1" Margin="3 0 3 0" Stroke="Black" />
+                        <Rectangle Style="{StaticResource RectangleSeparator}" />
 
                         <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterIsEdited}"
                             Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:False}"

@@ -12,6 +12,12 @@
                 <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="{x:Type cc:DataGrid}" BasedOn="{StaticResource {x:Type DataGrid}}" />
+            <Style x:Key="RectangleSeparator" TargetType="Rectangle">
+                <Setter Property="VerticalAlignment" Value="Stretch" />
+                <Setter Property="Margin" Value="4 0 4 0" />
+                <Setter Property="Stroke" Value="DarkOrange" />
+                <Setter Property="Width" Value="1" />
+            </Style>
             <Style x:Key="SmoothTexBox" BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox">
                 <Setter Property="MinWidth" Value="0" />
                 <Setter Property="Padding" Value="5 3" />
