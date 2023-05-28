@@ -12,6 +12,15 @@
                 <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>
             <Style TargetType="{x:Type cc:DataGrid}" BasedOn="{StaticResource {x:Type DataGrid}}" />
+            <Style x:Key="SmoothTexBox" BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox">
+                <Setter Property="MinWidth" Value="0" />
+                <Setter Property="Padding" Value="5 3" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="TextAlignment" Value="Center" />
+                <Setter Property="Margin" Value="15 0 0 0" />
+                <Setter Property="IsReadOnly" Value="True" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
