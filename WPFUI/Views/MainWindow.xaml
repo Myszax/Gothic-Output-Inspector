@@ -63,7 +63,7 @@
 
     </Window.Resources>
 
-    <Grid Background="#27282C">
+    <Grid Background="#FF27282C">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -80,7 +80,7 @@
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Grid.ColumnSpan="3">
+        <Grid Grid.Row="0" Grid.ColumnSpan="3" Background="#AF000000">
             <DockPanel>
                 <Menu DockPanel.Dock="Top">
                     <MenuItem Header="_File">
@@ -111,7 +111,7 @@
             </DockPanel>
         </Grid>
 
-        <Grid Grid.Row="1" Grid.ColumnSpan="3" Background="Black">
+        <Grid Grid.Row="1" Grid.ColumnSpan="3" Background="#FF18191B">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -121,7 +121,7 @@
 
                 <TextBox Grid.Column="0" x:Name="ConversationCollectionFilter" Text="{Binding FilterValue, UpdateSourceTrigger=PropertyChanged, Delay=250}" />
                 <DockPanel Grid.Column="1" Grid.ColumnSpan="2" LastChildFill="False">
-                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2 0 2 0" Background="Gray">
+                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2 0 2 0">
 
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="3 0 3 0">
                             <TextBlock VerticalAlignment="Center" Text="Search Mode:" />
@@ -154,7 +154,7 @@
 
                     </StackPanel>
 
-                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 2 0" Background="Gray">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 2 0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="3 0 3 0">
                             <TextBlock VerticalAlignment="Center" Text="Filter Mode:" />
                             <!--TODO: Set width by longest item length-->
@@ -180,10 +180,10 @@
             </Grid>
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="1" Background="DarkGreen">
+        <Grid Grid.Row="2" Grid.Column="1">
             <cc:DataGrid x:Name="DataGrid_Upper" Grid.Row="2"
                 ItemsSource="{Binding ConversationCollection}"
-                AlternatingRowBackground="#2F3136" SelectionMode="Single"
+                SelectionMode="Single"
                 HeadersVisibility="Column" AutoGenerateColumns="False"                         
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
                 CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
@@ -227,8 +227,7 @@
                             <DataTemplate>
                                 <Label Style="{StaticResource LabelDisabledAccessKey}"
                                     Content="{Binding Name}"
-                                    Background="#27282C" Foreground="white"
-                                    BorderBrush="Orange" BorderThickness="1"
+                                    Foreground="DarkOrange"
                                        FontWeight="Bold" />
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>
@@ -262,10 +261,10 @@
             </TreeView>
         </Grid>
 
-        <Grid Grid.Row="3" Grid.Column="1" Background="LightBlue">
+        <Grid Grid.Row="3" Grid.Column="1">
             <cc:DataGrid x:Name="DataGrid_Lower" Grid.Row="2"
                 ItemsSource="{Binding Source={StaticResource LowerDataGridCVS}}"
-                AlternatingRowBackground="#2F3136" SelectionMode="Single"
+                SelectionMode="Single"
                 HeadersVisibility="Column" AutoGenerateColumns="False"
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
                 CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
@@ -280,8 +279,7 @@
                             <DataTemplate>
                                 <Label Style="{StaticResource LabelDisabledAccessKey}"
                                     Content="{Binding Name}"
-                                    Background="#27282C" Foreground="white"
-                                    BorderBrush="Orange" BorderThickness="1"
+                                    Foreground="DarkOrange"
                                        FontWeight="Bold" />
                             </DataTemplate>
                         </GroupStyle.HeaderTemplate>
@@ -385,7 +383,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="4" Grid.ColumnSpan="3">
+        <Grid Grid.Row="4" Grid.ColumnSpan="3" Background="#FF18191B">
             <StackPanel Margin="5">
                 <DockPanel LastChildFill="False">
                     <TextBlock DockPanel.Dock="Left" Text="Audio Path:" />
@@ -423,8 +421,8 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="5" Grid.ColumnSpan="3" Background="Gray">
-            <Grid>
+        <Grid Grid.Row="5" Grid.ColumnSpan="3" Background="#AF000000">
+            <Grid Margin="1 0 1 2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
