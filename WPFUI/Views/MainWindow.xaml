@@ -119,7 +119,9 @@
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" x:Name="ConversationCollectionFilter" Text="{Binding FilterValue, UpdateSourceTrigger=PropertyChanged, Delay=250}" />
+                <ui:AutoSuggestBox Grid.Column="0" x:Name="ConversationCollectionFilter"
+                    Text="{Binding FilterValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Delay=250}"
+                    PlaceholderText="Search..." QueryIcon="Find" />
                 <DockPanel Grid.Column="1" Grid.ColumnSpan="2" LastChildFill="False">
                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2 0 2 0">
 
