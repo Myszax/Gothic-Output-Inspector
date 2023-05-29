@@ -402,8 +402,7 @@
 
                 <DockPanel LastChildFill="True" Margin="0 3 0 0">
                     <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Volume:" />
-                    <!-- TODO: Converter to show % -->
-                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5 0 0 0" Text="{Binding CurrentVolume, StringFormat=N3}" />
+                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5 0 0 0" Width="50" Text="{Binding CurrentVolume, Converter={StaticResource VolumeConverter}}" />
                     <Button DockPanel.Dock="Left" Margin="5 0 0 0" Command="{Binding ToggleMuteCommand}">
                         <fa:ImageAwesome Icon="{Binding IsMuted, Converter={StaticResource MuteButtonConverter}}" Height="20" Width="20" PrimaryColor="DarkCyan" />
                     </Button>

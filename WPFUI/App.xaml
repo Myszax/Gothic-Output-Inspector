@@ -33,6 +33,7 @@
             </Style>
             <converters:PlaybackStateConverter x:Key="PlaybackStateConverter" />
             <converters:MuteButtonConverter x:Key="MuteButtonConverter" />
+            <converters:VolumeConverter x:Key="VolumeConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
