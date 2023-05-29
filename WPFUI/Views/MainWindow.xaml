@@ -10,7 +10,7 @@
         xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
         xmlns:cc = "clr-namespace:WPFUI.Controls"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:local="clr-namespace:WPFUI"
+        xmlns:local="clr-namespace:WPFUI" xmlns:fa="http://schemas.fontawesome.com/icons/svg"
         xmlns:components="clr-namespace:WPFUI.Components"
         mc:Ignorable="d"
         FontSize="16"
