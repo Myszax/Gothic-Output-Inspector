@@ -404,7 +404,9 @@
                     <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Volume:" />
                     <!-- TODO: Converter to show % -->
                     <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5 0 0 0" Text="{Binding CurrentVolume, StringFormat=N3}" />
-                    <Button DockPanel.Dock="Left" Margin="5 0 0 0" Content="{Binding IsMuted}" Command="{Binding ToggleMuteCommand}" />
+                    <Button DockPanel.Dock="Left" Margin="5 0 0 0" Command="{Binding ToggleMuteCommand}">
+                        <fa:ImageAwesome Icon="{Binding IsMuted, Converter={StaticResource MuteButtonConverter}}" Height="20" Width="20" PrimaryColor="DarkCyan" />
+                    </Button>
                     <Slider x:Name="VolumeControl" DockPanel.Dock="Right" Margin="5 0 0 0" Minimum="0" Maximum="1" Value="{Binding CurrentVolume, Mode=TwoWay}"
                         VerticalAlignment="Center" IsMoveToPointEnabled="True">
                         <i:Interaction.Triggers>

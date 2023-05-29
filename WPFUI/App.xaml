@@ -32,6 +32,7 @@
                 <Setter Property="IsReadOnly" Value="True" />
             </Style>
             <converters:PlaybackStateConverter x:Key="PlaybackStateConverter" />
+            <converters:MuteButtonConverter x:Key="MuteButtonConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
