@@ -321,68 +321,70 @@
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="2" x:Name="DetailedPanel" Grid.RowSpan="2">
-            <StackPanel Margin="5 5 5 5">
-                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
-                    <TextBlock VerticalAlignment="Center">Type</TextBlock>
-                    <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Type}" />
-                </WrapPanel>
-                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                    <TextBlock VerticalAlignment="Center">Name</TextBlock>
-                    <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Name}" />
-                </WrapPanel>
-                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                    <TextBlock VerticalAlignment="Center">Sound</TextBlock>
-                    <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Sound}" />
-                </WrapPanel>
-                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                    <TextBlock VerticalAlignment="Center">NPC Name</TextBlock>
-                    <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.NpcName}" />
-                </WrapPanel>
-                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                    <TextBlock VerticalAlignment="Center">Context</TextBlock>
-                    <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Context}" />
-                </WrapPanel>
-                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                    <TextBlock VerticalAlignment="Center">Voice</TextBlock>
-                    <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Voice}" />
-                </WrapPanel>
-                <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                    <TextBlock VerticalAlignment="Center">Number</TextBlock>
-                    <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Number}" />
-                </WrapPanel>
-                <DockPanel LastChildFill="False">
-                    <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
-                        <TextBlock VerticalAlignment="Center">Inspected</TextBlock>
-                        <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversation.IsInspected}"
+            <ScrollViewer>
+                <StackPanel Margin="5 5 5 5">
+                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center">Type</TextBlock>
+                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Type}" />
+                    </WrapPanel>
+                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                        <TextBlock VerticalAlignment="Center">Name</TextBlock>
+                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Name}" />
+                    </WrapPanel>
+                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                        <TextBlock VerticalAlignment="Center">Sound</TextBlock>
+                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Sound}" />
+                    </WrapPanel>
+                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                        <TextBlock VerticalAlignment="Center">NPC Name</TextBlock>
+                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.NpcName}" />
+                    </WrapPanel>
+                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                        <TextBlock VerticalAlignment="Center">Context</TextBlock>
+                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Context}" />
+                    </WrapPanel>
+                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                        <TextBlock VerticalAlignment="Center">Voice</TextBlock>
+                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Voice}" />
+                    </WrapPanel>
+                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                        <TextBlock VerticalAlignment="Center">Number</TextBlock>
+                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Number}" />
+                    </WrapPanel>
+                    <DockPanel LastChildFill="False">
+                        <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center">Inspected</TextBlock>
+                            <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversation.IsInspected}"
                             Command="{Binding ProjectFileChangedCommand}"/>
-                    </WrapPanel>
-                    <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
-                        <TextBlock VerticalAlignment="Center">Edited</TextBlock>
-                        <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversation.IsEdited}" />
-                    </WrapPanel>
-                </DockPanel>
-                <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Center">Original Text</TextBlock>
-                    <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                        </WrapPanel>
+                        <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center">Edited</TextBlock>
+                            <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversation.IsEdited}" />
+                        </WrapPanel>
+                    </DockPanel>
+                    <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                        <TextBlock HorizontalAlignment="Center">Original Text</TextBlock>
+                        <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              IsReadOnly="True"
                              Text="{Binding SelectedConversation.OriginalText}" />
-                </StackPanel>
-                <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                    <TextBlock HorizontalAlignment="Center">Edited Text</TextBlock>
-                    <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                    </StackPanel>
+                    <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                        <TextBlock HorizontalAlignment="Center">Edited Text</TextBlock>
+                        <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              SpellCheck.IsEnabled="True" Language="pl-PL"
                              Text="{Binding SelectedConversation.EditedText, UpdateSourceTrigger=PropertyChanged}">
-                        <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="TextChanged">
-                                <i:InvokeCommandAction Command="{Binding CompareOriginalAndEditedTextCommand}" />
-                            </i:EventTrigger>
-                        </i:Interaction.Triggers>
-                    </TextBox>
-                </StackPanel>
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="TextChanged">
+                                    <i:InvokeCommandAction Command="{Binding CompareOriginalAndEditedTextCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                    </StackPanel>
 
-            </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
 
         <Grid Grid.Row="4" Grid.ColumnSpan="3" Background="#FF18191B">
