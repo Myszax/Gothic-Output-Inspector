@@ -416,9 +416,13 @@
                 </DockPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="{Binding StateOfPlayback}" Command="{Binding StartPlaybackCommand}"/>
+                    <Button Command="{Binding StartPlaybackCommand}">
+                        <fa:ImageAwesome Icon="{Binding StateOfPlayback, Converter={StaticResource PlaybackStateConverter}}" Height="20" PrimaryColor="DarkCyan" />
+                    </Button>
                     <Separator Margin="3 0 3 0"/>
-                    <Button Content="Stop" Command="{Binding StopPlaybackCommand}"/>
+                    <Button Command="{Binding StopPlaybackCommand}">
+                        <fa:ImageAwesome Icon="Solid_Stop" Height="20" PrimaryColor="DarkCyan" />
+                    </Button>
                 </StackPanel>
             </StackPanel>
         </Grid>

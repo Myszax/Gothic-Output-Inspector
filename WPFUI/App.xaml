@@ -4,7 +4,8 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:local="clr-namespace:WPFUI"
              xmlns:cc = "clr-namespace:WPFUI.Controls"
-             StartupUri="Views\MainWindow.xaml">
+             StartupUri="Views\MainWindow.xaml"
+             xmlns:converters="clr-namespace:WPFUI.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -30,6 +31,7 @@
                 <Setter Property="Margin" Value="15 0 0 0" />
                 <Setter Property="IsReadOnly" Value="True" />
             </Style>
+            <converters:PlaybackStateConverter x:Key="PlaybackStateConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
