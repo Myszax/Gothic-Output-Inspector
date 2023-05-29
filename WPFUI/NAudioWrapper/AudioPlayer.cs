@@ -30,11 +30,11 @@ public sealed class AudioPlayer
 
     private WaveOutEvent? _output;
 
-    public AudioPlayer(string filepath, float volume, double position = 0d)
+    public AudioPlayer(string filePath, float volume, double position = 0d)
     {
         PlaybackStopType = PlaybackStopType.ByReachingEndOfFile;
 
-        _waveFileReader = new WaveFileReader(filepath);
+        _waveFileReader = new WaveFileReader(filePath);
 
         var outputStream = new MemoryStream();
 
@@ -47,11 +47,11 @@ public sealed class AudioPlayer
         using (var waveFileWriter = new WaveFileWriter(new IgnoreDisposeStream(outputStream), reader.WaveFormat))
         {
             byte[] buffer = new byte[reader.WaveFormat.AverageBytesPerSecond];
-            int readedBytes;
-            while ((readedBytes = reader.Read(buffer, 0, buffer.Length - (buffer.Length % waveFileWriter.WaveFormat.BlockAlign))) > 0)
-                waveFileWriter.Write(buffer, 0, readedBytes);
+            int readBytes;
+            while ((readBytes = reader.Read(buffer, 0, buffer.Length - (buffer.Length % waveFileWriter.WaveFormat.BlockAlign))) > 0)
+                waveFileWriter.Write(buffer, 0, readBytes);
         }
-        outputStream.Position = 0; // must be reseted so WaveFileReader can read headers
+        outputStream.Position = 0; // must be reset so WaveFileReader can read headers
         _waveFileReader = new WaveFileReader(outputStream);
 
         _output = new WaveOutEvent
