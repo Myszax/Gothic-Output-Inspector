@@ -5,9 +5,14 @@
     <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+		<ApplicationIcon>Resources\goi.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+	  <Content Include="Resources\goi.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
     <PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
