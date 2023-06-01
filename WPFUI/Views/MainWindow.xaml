@@ -92,9 +92,9 @@
                         <Separator />
                         <MenuItem Header="_Exit" Command="{Binding ExitApplicationCommand}" InputGestureText="Alt + F4" />
                     </MenuItem>
-                    <MenuItem Header="S_ettings">
-                        <MenuItem Header="Path to audio files..." Command="{Binding SetPathToAudioFilesCommand}" InputGestureText="Ctrl + P" />
-                        <MenuItem Header="Encoding" ItemsSource="{Binding Encodings}">
+                    <MenuItem Header="_Settings">
+                        <MenuItem Header="_Path to audio files..." Command="{Binding SetPathToAudioFilesCommand}" InputGestureText="Ctrl + P" />
+                        <MenuItem Header="_Encoding" ItemsSource="{Binding Encodings}">
                             <MenuItem.ItemContainerStyle>
                                 <Style>
                                     <Setter Property="MenuItem.Header" Value="{Binding Encoding.HeaderName}" />
