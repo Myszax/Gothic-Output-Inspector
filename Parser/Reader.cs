@@ -7,37 +7,37 @@ namespace Parser;
 
 public sealed class Reader
 {
-    private HashTableEntry[] _hashTableEntries = Array.Empty<HashTableEntry>();
-
     private readonly byte[] _typeSizes = new byte[] {
         0,                        // ?            = 0x00
-	        0,                        // String       = 0x01,
-	        sizeof(int),              // Int          = 0x02,
-	        sizeof(float),            // Float        = 0x03,
-	        sizeof(byte),             // Byte         = 0x04,
-	        sizeof(ushort),           // Word         = 0x05,
-	        sizeof(uint),             // Bool         = 0x06,
-	        sizeof(float) * 3,        // Vec3         = 0x07,
-	        sizeof(byte) * 4,         // Color        = 0x08,
-	        0,                        // Raw          = 0x09,
-	        0,                        // ?            = 0x0A
-	        0,                        // ?            = 0x0B
-	        0,                        // ?            = 0x0C
-	        0,                        // ?            = 0x0D
-	        0,                        // ?            = 0x0E
-	        0,                        // ?            = 0x0F
-	        0,                        // RawFloat     = 0x10,
-	        sizeof(uint),             // Enum         = 0x11,
-	        sizeof(uint),             // Hash         = 0x12,
+	    0,                        // String       = 0x01,
+	    sizeof(int),              // Int          = 0x02,
+	    sizeof(float),            // Float        = 0x03,
+	    sizeof(byte),             // Byte         = 0x04,
+	    sizeof(ushort),           // Word         = 0x05,
+	    sizeof(uint),             // Bool         = 0x06,
+	    sizeof(float) * 3,        // Vec3         = 0x07,
+	    sizeof(byte) * 4,         // Color        = 0x08,
+	    0,                        // Raw          = 0x09,
+	    0,                        // ?            = 0x0A
+	    0,                        // ?            = 0x0B
+	    0,                        // ?            = 0x0C
+	    0,                        // ?            = 0x0D
+	    0,                        // ?            = 0x0E
+	    0,                        // ?            = 0x0F
+	    0,                        // RawFloat     = 0x10,
+	    sizeof(uint),             // Enum         = 0x11,
+	    sizeof(uint),             // Hash         = 0x12,
     };
-
-    private BinaryReader _reader;
-
-    private ArchiveHeader _header;
 
     private readonly string _path;
 
     private readonly Encoding _encoding;
+
+    private HashTableEntry[] _hashTableEntries = Array.Empty<HashTableEntry>();
+
+    private BinaryReader _reader;
+
+    private ArchiveHeader _header;    
 
     public Reader(string path, Encoding encoding)
     {
