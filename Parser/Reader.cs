@@ -403,7 +403,7 @@ public sealed class Reader
         if ((byte)type != tmpType)
         {
             SkipStreamBytesPosition(size);
-            throw new ParserException($"archive_reader_binsafe: type mismatch expected {type}, got: {tmpType}");
+            throw new ParserException($"archive_reader_BinSafe: type mismatch expected {type}, got: {tmpType}");
         }
 
         return size;
