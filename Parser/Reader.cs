@@ -37,7 +37,7 @@ public sealed class Reader
 
     private BinaryReader _reader;
 
-    private ArchiveHeader _header;    
+    private ArchiveHeader _header;
 
     public Reader(string path, Encoding encoding)
     {
@@ -81,30 +81,7 @@ public sealed class Reader
         var obj = new ArchiveObject();
         for (int i = 0; i < itemCount; i++)
         {
-            if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals(zCCSBlock))
-            {
-                throw new ParserException($"expected '{zCCSBlock}' but didn't find it");
-            }
-
-            var name = ReadString(false);
-            var blockCount = ReadInt();
-            ReadFloat(); // subBlock0
-
-            if (blockCount != MAXIMUM_BLOCK_COUNT_READED)
-            {
-                throw new ParserException($"expected only one block but got {blockCount} for {name}");
-            }
-
-            if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals(zCCSAtomicBlock))
-            {
-                throw new ParserException($"expected atomic block, not found for {name}");
-            }
-
-            if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals(zCEventMessage))
-            {
-                throw new ParserException($"expected {zCEventMessage} not found for {name}");
-            }
-
+            string name = ValidateObjectBeginAndGetName(ref obj);
             var type = ReadEnum();
             var text = ReadString();
             var soundName = ReadString(false);
@@ -112,26 +89,60 @@ public sealed class Reader
             var dialogue = new Dialogue { Name = name, Text = text, Sound = soundName };
             list.Add(dialogue);
 
-            if (!ReadObjectEnd())
-            {
-                SkipObject(true);
-                throw new ParserException($"{zCEventMessage} not fully parsed");
-            }
-
-            if (!ReadObjectEnd())
-            {
-                SkipObject(true);
-                throw new ParserException($"{zCCSAtomicBlock} not fully parsed");
-            }
-
-            if (!ReadObjectEnd())
-            {
-                SkipObject(true);
-                throw new ParserException($"{zCCSBlock} not fully parsed");
-            }
+            ValidateObjectEnd();
         }
 
         return list;
+    }
+
+    private string ValidateObjectBeginAndGetName(ref ArchiveObject obj)
+    {
+        if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals(zCCSBlock))
+        {
+            throw new ParserException($"expected '{zCCSBlock}' but didn't find it");
+        }
+
+        var name = ReadString(false);
+        var blockCount = ReadInt();
+        ReadFloat(); // subBlock0
+
+        if (blockCount != MAXIMUM_BLOCK_COUNT_READED)
+        {
+            throw new ParserException($"expected only one block but got {blockCount} for {name}");
+        }
+
+        if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals(zCCSAtomicBlock))
+        {
+            throw new ParserException($"expected atomic block, not found for {name}");
+        }
+
+        if (!ReadObjectBegin(ref obj) || !obj.ClassName.Equals(zCEventMessage))
+        {
+            throw new ParserException($"expected {zCEventMessage} not found for {name}");
+        }
+
+        return name;
+    }
+
+    private void ValidateObjectEnd()
+    {
+        if (!ReadObjectEnd())
+        {
+            SkipObject(true);
+            throw new ParserException($"{zCEventMessage} not fully parsed");
+        }
+
+        if (!ReadObjectEnd())
+        {
+            SkipObject(true);
+            throw new ParserException($"{zCCSAtomicBlock} not fully parsed");
+        }
+
+        if (!ReadObjectEnd())
+        {
+            SkipObject(true);
+            throw new ParserException($"{zCCSBlock} not fully parsed");
+        }
     }
 
     private bool ReadObjectBegin(ref ArchiveObject obj)
