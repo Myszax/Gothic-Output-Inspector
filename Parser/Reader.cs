@@ -256,7 +256,7 @@ public sealed class Reader
         _reader.BaseStream.Position = mark;
     }
 
-    private void PareseHeaderBinSafe()
+    private void ParseHeaderBinSafe()
     {
         var version = _reader.ReadUInt32();
         var objCount = _reader.ReadUInt32();
@@ -310,7 +310,7 @@ public sealed class Reader
             throw new ParserException($"Header: first '{HEADER_END}' missing");
         }
 
-        PareseHeaderBinSafe();
+        ParseHeaderBinSafe();
 
         return header;
     }
