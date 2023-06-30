@@ -49,7 +49,7 @@ public sealed class Reader
     {
         _reader = new BinaryReader(File.Open(_path, FileMode.Open), _encoding, false);
 
-        _header = ParseHeader();
+        ParseHeader();
 
         var obj = new ArchiveObject();
         ReadObjectBegin(ref obj);
@@ -289,30 +289,30 @@ public sealed class Reader
         _reader.BaseStream.Position = markPos;
     }
 
-    private ArchiveHeader ParseHeader()
+    private void ParseHeader()
     {
-        var header = new ArchiveHeader();
+        _header = new ArchiveHeader();
 
         if (!_reader.ReadLine().Equals(HEADER_ZENGINE_ARCHIVE))
         {
             throw new ParserException($"Header: Missing '{HEADER_ZENGINE_ARCHIVE}' at start.");
         }
 
-        header.Version = HeaderGetVersion();
-        header.Archiver = _reader.ReadLine();
-        header.Format = HeaderGetFormat();
-        header.Save = HeaderGetSave();
+        _header.Version = HeaderGetVersion();
+        _header.Archiver = _reader.ReadLine();
+        _header.Format = HeaderGetFormat();
+        _header.Save = HeaderGetSave();
 
         var optionalLine = _reader.ReadLine();
         if (optionalLine.StartsWith(HEADER_DATE))
         {
-            header.Date = DateTime.Parse(optionalLine[HEADER_DATE.Length..]);
+            _header.Date = DateTime.Parse(optionalLine[HEADER_DATE.Length..]);
             optionalLine = _reader.ReadLine();
         }
 
         if (optionalLine.StartsWith(HEADER_USER))
         {
-            header.User = optionalLine[HEADER_USER.Length..];
+            _header.User = optionalLine[HEADER_USER.Length..];
             optionalLine = _reader.ReadLine();
         }
 
@@ -322,8 +322,6 @@ public sealed class Reader
         }
 
         ParseHeaderBinSafe();
-
-        return header;
     }
 
     private int HeaderGetVersion()
