@@ -82,7 +82,7 @@ public sealed class Reader
         for (int i = 0; i < itemCount; i++)
         {
             string name = ValidateObjectBeginAndGetName(ref obj);
-            var type = ReadEnum();
+            ReadEnum(); // type
             var text = ReadString();
             var soundName = ReadString(false);
 
@@ -269,8 +269,8 @@ public sealed class Reader
 
     private void ParseHeaderBinSafe()
     {
-        var version = _reader.ReadUInt32();
-        var objCount = _reader.ReadUInt32();
+        _reader.ReadUInt32(); // version
+        _reader.ReadUInt32(); // object count
         var offset = _reader.ReadUInt32();
         var markPos = _reader.BaseStream.Position;
         _reader.BaseStream.Position = offset;
