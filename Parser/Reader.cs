@@ -347,18 +347,18 @@ public sealed class Reader
         {
             return ArchiveFormat.ASCII;
         }
-        else if (format.Equals(ARCHIVE_FORMAT_BINARY))
+
+        if (format.Equals(ARCHIVE_FORMAT_BINARY))
         {
             return ArchiveFormat.Binary;
         }
-        else if (format.Equals(ARCHIVE_FORMAT_BIN_SAFE))
+
+        if (format.Equals(ARCHIVE_FORMAT_BIN_SAFE))
         {
             return ArchiveFormat.BinSafe;
         }
-        else
-        {
-            throw new ParserException("Header: Format not match.");
-        }
+
+        throw new ParserException("Header: Format not match.");
     }
 
     private bool HeaderGetSave()
