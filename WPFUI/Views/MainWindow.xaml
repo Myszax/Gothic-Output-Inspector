@@ -243,16 +243,17 @@
 
 
         <Grid Grid.Row="2" Grid.RowSpan="2">
-            <TreeView x:Name="TreeViewMyConversationCollection" ItemsSource="{Binding ConversationCollection.Groups}"
+            <TreeView x:Name="TreeViewConversationCollection" ItemsSource="{Binding ConversationCollection.Groups}"
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
-                ScrollViewer.VerticalScrollBarVisibility="Visible">
+                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                BorderThickness="0 0 1 0" BorderBrush="Black">
 
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="SelectedItemChanged">
                         <i:InvokeCommandAction Command="{Binding SelectedTreeItemChangedCommand}"
-                            CommandParameter="{Binding ElementName=TreeViewMyConversationCollection, Path=SelectedItem}" />
+                            CommandParameter="{Binding ElementName=TreeViewConversationCollection, Path=SelectedItem}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
@@ -325,7 +326,7 @@
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="2" x:Name="DetailedPanel" Grid.RowSpan="2">
-            <ScrollViewer>
+            <ScrollViewer BorderThickness="1 0 0 0" BorderBrush="Black">
                 <StackPanel Margin="5 5 5 5">
                     <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center">Type</TextBlock>
