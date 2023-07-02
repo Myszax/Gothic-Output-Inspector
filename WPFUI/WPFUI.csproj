@@ -7,7 +7,6 @@
 		<UseWPF>true</UseWPF>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 		<PublishSingleFile>true</PublishSingleFile>
-		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<AssemblyName>Gothic Output Inspector</AssemblyName>
 		<ApplicationIcon>Resources\goi.ico</ApplicationIcon>
 	</PropertyGroup>
