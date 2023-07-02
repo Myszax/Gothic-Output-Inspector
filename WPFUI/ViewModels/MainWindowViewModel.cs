@@ -201,18 +201,25 @@ public partial class MainWindowViewModel : ObservableObject
 
         if (SelectedFilterType == FilterType.HideAll)
         {
-            if (IsEnabledFilterIsInspected && conversation.IsInspected) return false;
-            if (IsEnabledFilterIsEdited && conversation.IsEdited) return false;
+            if (IsEnabledFilterIsInspected && conversation.IsInspected)
+                return false;
+            if (IsEnabledFilterIsEdited && conversation.IsEdited)
+                return false;
         }
         else
         {
-            if (IsEnabledFilterIsInspected && !conversation.IsInspected) return false;
-            if (IsEnabledFilterIsEdited && !conversation.IsEdited) return false;
+            if (IsEnabledFilterIsInspected && !conversation.IsInspected)
+                return false;
+            if (IsEnabledFilterIsEdited && !conversation.IsEdited)
+                return false;
         }
 
-        if (IsEnabledFilterName && conversation.Name.Contains(FilterValue, SelectedComparisonMethod)) return true;
-        if (IsEnabledFilterOriginalText && conversation.OriginalText.Contains(FilterValue, SelectedComparisonMethod)) return true;
-        if (IsEnabledFilterEditedText && conversation.EditedText.Contains(FilterValue, SelectedComparisonMethod)) return true;
+        if (IsEnabledFilterName && conversation.Name.Contains(FilterValue, SelectedComparisonMethod))
+            return true;
+        if (IsEnabledFilterOriginalText && conversation.OriginalText.Contains(FilterValue, SelectedComparisonMethod))
+            return true;
+        if (IsEnabledFilterEditedText && conversation.EditedText.Contains(FilterValue, SelectedComparisonMethod))
+            return true;
 
         // this check prevents returning false if every search checkbox is unchecked
         return !IsEnabledFilterName && !IsEnabledFilterOriginalText && !IsEnabledFilterEditedText;
@@ -610,8 +617,10 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void ToggleMute()
     {
-        if (IsMuted) UnMuteSound();
-        else MuteSound();
+        if (IsMuted)
+            UnMuteSound();
+        else
+            MuteSound();
     }
 
     private bool TryToSaveProject()

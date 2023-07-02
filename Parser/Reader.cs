@@ -55,9 +55,7 @@ public sealed class Reader
         ReadObjectBegin(obj);
 
         if (!obj.ClassName.Equals(zCCSLib))
-        {
             throw new ParserException($"root object is not '{zCCSLib}'");
-        }
 
         var itemCount = ReadInt(); // NumOfItems
 
@@ -98,28 +96,20 @@ public sealed class Reader
     private string ValidateObjectBeginAndGetName(ArchiveObject obj)
     {
         if (!ReadObjectBegin(obj) || !obj.ClassName.Equals(zCCSBlock))
-        {
             throw new ParserException($"expected '{zCCSBlock}' but didn't find it");
-        }
 
         var name = ReadString(false);
         var blockCount = ReadInt();
         ReadFloat(); // subBlock0
 
         if (blockCount != MAXIMUM_BLOCK_COUNT_READED)
-        {
             throw new ParserException($"expected only one block but got {blockCount} for {name}");
-        }
 
         if (!ReadObjectBegin(obj) || !obj.ClassName.Equals(zCCSAtomicBlock))
-        {
             throw new ParserException($"expected atomic block, not found for {name}");
-        }
 
         if (!ReadObjectBegin(obj) || !obj.ClassName.Equals(zCEventMessage))
-        {
             throw new ParserException($"expected {zCEventMessage} not found for {name}");
-        }
 
         return name;
     }
@@ -215,17 +205,11 @@ public sealed class Reader
         do
         {
             if (ReadObjectBegin(tmp))
-            {
                 ++level;
-            }
             else if (ReadObjectEnd())
-            {
                 --level;
-            }
             else
-            {
                 SkipEntry();
-            }
         } while (level > 0);
     }
 
@@ -294,9 +278,7 @@ public sealed class Reader
         _header = new ArchiveHeader();
 
         if (!_reader.ReadLine().Equals(HEADER_ZENGINE_ARCHIVE))
-        {
             throw new ParserException($"Header: Missing '{HEADER_ZENGINE_ARCHIVE}' at start.");
-        }
 
         _header.Version = HeaderGetVersion();
         _header.Archiver = _reader.ReadLine();
@@ -317,9 +299,7 @@ public sealed class Reader
         }
 
         if (!optionalLine.Equals(HEADER_END))
-        {
             throw new ParserException($"Header: first '{HEADER_END}' missing");
-        }
 
         ParseHeaderBinSafe();
     }
@@ -328,9 +308,7 @@ public sealed class Reader
     {
         var version = _reader.ReadLine();
         if (!version.StartsWith(HEADER_VER))
-        {
             throw new ParserException($"Header: '{HEADER_VER}' field missing");
-        }
 
         return int.Parse(version[HEADER_VER.Length..]);
     }
@@ -344,19 +322,13 @@ public sealed class Reader
     {
         var format = _reader.ReadLine();
         if (format.Equals(ARCHIVE_FORMAT_ASCII))
-        {
             return ArchiveFormat.ASCII;
-        }
 
         if (format.Equals(ARCHIVE_FORMAT_BINARY))
-        {
             return ArchiveFormat.Binary;
-        }
 
         if (format.Equals(ARCHIVE_FORMAT_BIN_SAFE))
-        {
             return ArchiveFormat.BinSafe;
-        }
 
         throw new ParserException("Header: Format not match.");
     }
@@ -365,9 +337,7 @@ public sealed class Reader
     {
         var saveGame = _reader.ReadLine();
         if (!saveGame.StartsWith(HEADER_SAVEGAME))
-        {
             throw new ParserException($"Header: `{HEADER_SAVEGAME}` field missing");
-        }
 
         return int.Parse(saveGame[^1..]) != 0;
     }
@@ -376,10 +346,9 @@ public sealed class Reader
     {
         var peekedByte = _reader.ReadByte();
         _reader.BaseStream.Position--;
+
         if (peekedByte != (byte)ArchiveTypeBinSafe.Hash)
-        {
             throw new ParserException("Reader_BinSafe: invalid format");
-        }
 
         SkipStreamBytesPosition(1);
         var hash = _reader.ReadUInt32();
@@ -428,9 +397,7 @@ public sealed class Reader
     private string ReadString(bool encode = true, ushort bytesCount = 0)
     {
         if (bytesCount == 0)
-        {
             bytesCount = EnsureEntryMeta(ArchiveTypeBinSafe.String);
-        }
 
         string ret;
 

@@ -26,7 +26,9 @@ public static class BinaryReaderExtension
             switch (ch)
             {
                 case '\r':
-                    if (reader.PeekChar() == '\n') reader.ReadChar();
+                    if (reader.PeekChar() == '\n')
+                        reader.ReadChar();
+
                     foundEndOfLine = true;
                     break;
                 case '\n':
