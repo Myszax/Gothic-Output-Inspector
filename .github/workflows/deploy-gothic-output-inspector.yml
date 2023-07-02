@@ -7,6 +7,7 @@ on:
 
 env:
   PROJECT_PATH: WPFUI/WPFUI.csproj
+  CONFIGURATION: -p:Configuration=Release -p:IncludeAllContentForSelfExtract=true -p:SelfContained=true -restore -target:publish
 
 jobs:
   Deploy:
@@ -20,14 +21,30 @@ jobs:
         with:
           dotnet-version: 7.0.x
 
-      - name: Restore
-        run: dotnet restore "${{ env.PROJECT_PATH }}"
+      - name: Calculate next version
+        uses: cezarypiatek/NextVersionGeneratorAction@0.4
+        with:
+          major-pattern: 'BREAKING CHANGES:'
+          minor-pattern: '.*'
+          patch-pattern: '.*'
+          output-to-env-variable: 'VersionPrefix'
 
-      - name: Build
-        run: dotnet build "${{ env.PROJECT_PATH }}" -c Release --no-restore
 
-      - name: Publish
-        run: dotnet publish "${{ env.PROJECT_PATH }}" -c Release --self-contained true -r win-x64 -p:PublishSingleFile=true --no-build --no-restore
+      - name: Dotnet Build x64
+        run: dotnet build ${{ env.CONFIGURATION }} -p:Runtimeidentifier=win-x64 "${{ env.PROJECT_PATH }}"
+
+      - name: Dotnet Build x86
+        run: dotnet build ${{ env.CONFIGURATION }} -p:Runtimeidentifier=win-x86 "${{ env.PROJECT_PATH }}"
+
+      - name: Create directory
+        run: md completed
+
+      - name: Copy Exe x64
+        run: copy WPFUI/bin/Release/net7.0-windows/win-x64/publish/*.exe "completed/Gothic_Output_Inspector_${{ env.VersionPrefix }}_x64.exe"
+
+      - name: Copy Exe x86
+        run: copy WPFUI/bin/Release/net7.0-windows/win-x86/publish/*.exe "completed/Gothic_Output_Inspector_${{ env.VersionPrefix }}_x86.exe"
+
 
       - name: Create Release
         uses: actions/create-release@v1
@@ -42,5 +59,5 @@ jobs:
         uses: csexton/release-asset-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          pattern: WPFUI/bin/Release/net7.0-windows/win-x64/publish/*.exe
+          pattern: completed/*.exe
           release-url: ${{ steps.create_release.outputs.upload_url }}
