@@ -160,7 +160,7 @@
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="3 0 3 0">
                             <TextBlock VerticalAlignment="Center" Text="Filter Mode:" />
                             <!--TODO: Set width by longest item length-->
-                            <ComboBox ItemsSource="{components:BindingEnums components:FilterType}" SelectedItem="{Binding SelectedFilterType}" Width="100">
+                            <ComboBox ItemsSource="{components:BindingEnums components:FilterType}" SelectedItem="{Binding SelectedFilterType}" Width="110">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="SelectionChanged">
                                         <i:InvokeCommandAction Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:False}" />
