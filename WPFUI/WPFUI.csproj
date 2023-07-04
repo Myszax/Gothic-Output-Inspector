@@ -29,4 +29,10 @@
 		<ProjectReference Include="..\Parser\Parser.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Page Update="Views\CompareWindow.xaml">
+	    <SubType>Designer</SubType>
+	  </Page>
+	</ItemGroup>
+
 </Project>
