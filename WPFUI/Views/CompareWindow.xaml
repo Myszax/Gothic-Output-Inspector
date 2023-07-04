@@ -17,14 +17,6 @@
         Title="{Binding Title}" Width="1280" Height="720" 
         ui:WindowHelper.UseModernWindowStyle="True">
 
-    <Window.InputBindings>
-        <KeyBinding x:Name="OpenCommand" Key="O" Modifiers="Control" Command="{Binding OpenProjectCommand}" />
-        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveProjectCommand}" />
-        <KeyBinding Key="A" Modifiers="Control" Command="{Binding SaveProjectAsCommand}" />
-        <KeyBinding Key="I" Modifiers="Control" Command="{Binding ImportFileCommand}" />
-        <KeyBinding Key="P" Modifiers="Control" Command="{Binding SetPathToAudioFilesCommand}" />
-    </Window.InputBindings>
-
 
     <Window.Resources>
         <CollectionViewSource Source="{Binding SelectedConversations}" x:Key="LowerDataGridCVS">
