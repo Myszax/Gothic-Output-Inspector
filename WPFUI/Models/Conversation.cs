@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WPFUI.Models;
 
-public partial class Conversation : ObservableObject
+public partial class Conversation : ObservableObject, IEquatable<Conversation>
 {
     public string Name { get; set; } = string.Empty;
     public string OriginalText { get; set; } = string.Empty;
@@ -39,6 +39,43 @@ public partial class Conversation : ObservableObject
         conversation.Sound = dialogue.Sound;
 
         return conversation;
+    }
+
+    public override bool Equals(object? obj) => obj is not null && Equals(obj as Conversation);
+
+    public override int GetHashCode() =>
+        (Name, OriginalText, EditedText, Sound, Context, NpcName, Type, Voice, Number, IsEdited, IsInspected).GetHashCode();
+
+    public bool Equals(Conversation? other)
+    {
+        if (other is null)
+            return false;
+        if (!ReferenceEquals(this, other))
+            return false;
+        if (!Name.Equals(other.Name, StringComparison.Ordinal))
+            return false;
+        if (Voice != other.Voice)
+            return false;
+        if (Number != other.Number)
+            return false;
+        if (Type != other.Type)
+            return false;
+        if (IsEdited != other.IsEdited)
+            return false;
+        if (IsInspected != other.IsInspected)
+            return false;
+        if (!OriginalText.Equals(other.OriginalText, StringComparison.Ordinal))
+            return false;
+        if (!EditedText.Equals(other.EditedText, StringComparison.Ordinal))
+            return false;
+        if (!Sound.Equals(other.Sound, StringComparison.Ordinal))
+            return false;
+        if (!Context.Equals(other.Context, StringComparison.Ordinal))
+            return false;
+        if (!NpcName.Equals(other.NpcName, StringComparison.Ordinal))
+            return false;
+
+        return true;
     }
 
     private static string GetContextFromName(ConversationType type, string[] nameParts)
