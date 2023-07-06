@@ -368,7 +368,7 @@ public partial class MainWindowViewModel : ObservableObject
 
         try
         {
-            _parsedDialogues = parser.Parse();
+            _parsedDialogues = parser.Parse(false);
         }
         catch (Exception e)
         {
