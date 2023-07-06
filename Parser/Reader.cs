@@ -45,7 +45,7 @@ public sealed class Reader
         _encoding = encoding;
     }
 
-    public List<Dialogue> Parse()
+    public List<Dialogue> Parse(bool allowDuplicates)
     {
         _reader = new BinaryReader(File.Open(_path, FileMode.Open), _encoding, false);
 
@@ -59,7 +59,7 @@ public sealed class Reader
 
         var itemCount = ReadInt(); // NumOfItems
 
-        var listOfDialogues = ParseAllDialogues(itemCount);
+        var listOfDialogues = ParseAllDialogues(itemCount, allowDuplicates);
 
         if (!ReadObjectEnd())
         {
@@ -73,21 +73,42 @@ public sealed class Reader
         return listOfDialogues;
     }
 
-    private List<Dialogue> ParseAllDialogues(int itemCount)
+    private List<Dialogue> ParseAllDialogues(int itemCount, bool allowDuplicates)
     {
         var list = new List<Dialogue>();
         var obj = new ArchiveObject();
-        for (int i = 0; i < itemCount; i++)
+
+        if (allowDuplicates)
         {
-            string name = ValidateObjectBeginAndGetName(obj);
-            ReadEnum(); // type
-            var text = ReadString();
-            var soundName = ReadString(false);
+            for (int i = 0; i < itemCount; i++)
+            {
+                string name = ValidateObjectBeginAndGetName(obj);
+                ReadEnum(); // type
+                var text = ReadString();
+                var soundName = ReadString(false);
 
-            var dialogue = new Dialogue { Name = name, Text = text, Sound = soundName };
-            list.Add(dialogue);
+                var dialogue = new Dialogue { Name = name, Text = text, Sound = soundName };
+                list.Add(dialogue);
 
-            ValidateObjectEnd();
+                ValidateObjectEnd();
+            }
+        }
+        else
+        {
+            var hashSet = new HashSet<Dialogue>();
+            for (int i = 0; i < itemCount; i++)
+            {
+                string name = ValidateObjectBeginAndGetName(obj);
+                ReadEnum(); // type
+                var text = ReadString();
+                var soundName = ReadString(false);
+
+                var dialogue = new Dialogue { Name = name, Text = text, Sound = soundName };
+                hashSet.Add(dialogue);
+
+                ValidateObjectEnd();
+            }
+            list = hashSet.ToList();
         }
 
         return list;
