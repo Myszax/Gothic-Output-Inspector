@@ -50,8 +50,8 @@ public partial class Conversation : ObservableObject, IEquatable<Conversation>
     {
         if (other is null)
             return false;
-        if (!ReferenceEquals(this, other))
-            return false;
+        if (ReferenceEquals(this, other))
+            return true;
         if (!Name.Equals(other.Name, StringComparison.Ordinal))
             return false;
         if (Voice != other.Voice)
