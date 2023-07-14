@@ -35,6 +35,7 @@
             <converters:MuteButtonConverter x:Key="MuteButtonConverter" />
             <converters:VolumeConverter x:Key="VolumeConverter" />
             <converters:PercentageCoverageConverter x:Key="PercentageCoverageConverter" />
+            <converters:ComparisonResultTypeConverter x:Key="ComparisonResultTypeConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
