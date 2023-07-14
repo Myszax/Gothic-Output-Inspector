@@ -27,6 +27,7 @@ public partial class MainWindowViewModel : ObservableObject
 {
     public RangeObservableCollection<Conversation> SelectedConversations { get; } = new();
     public ICollectionView ConversationCollection { get; set; }
+    public ICollectionView ConversationDiffCollection { get; set; }
     public List<EncodingMenuItem> Encodings { get; }
     public int LoadedConversationsCount => _conversationList.Count;
     public int LoadedNPCsCount => ConversationCollection.Groups.Count;
@@ -43,7 +44,13 @@ public partial class MainWindowViewModel : ObservableObject
     private Conversation _selectedConversation = new();
 
     [ObservableProperty]
+    private ConversationDiff _selectedConversationDiff = new();
+
+    [ObservableProperty]
     private Conversation? _selectedGridRow = new();
+
+    [ObservableProperty]
+    private ConversationDiff? _selectedGridRowCompareMode = new();
 
     [ObservableProperty]
     private double _currentAudioLength;
@@ -113,6 +120,8 @@ public partial class MainWindowViewModel : ObservableObject
 
     private readonly List<Conversation> _conversationList = new();
 
+    private List<ConversationDiff> _conversationDiffList = new();
+
     private List<Dialogue> _parsedDialogues = new();
 
     private string _previousNpcName = string.Empty;
@@ -171,6 +180,25 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         SelectedConversation = value;
+    }
+
+    partial void OnSelectedGridRowCompareModeChanged(ConversationDiff? value)
+    {
+        if (value is null)
+            return;
+
+        SelectedConversationDiff = value;
+    }
+
+    partial void OnSelectedConversationDiffChanged(ConversationDiff value)
+    {
+        string soundFileName;
+        if (value.Diff.Type == Enums.ComparisonResultType.Removed)
+            soundFileName = value.Diff.Original.Sound;
+        else
+            soundFileName = value.Diff.Compared.Sound;
+
+        CurrentlySelectedAudioName = PathToAudioFiles + soundFileName;
     }
 
     partial void OnSelectedConversationChanging(Conversation value) => _previousNpcName = SelectedConversation.NpcName;

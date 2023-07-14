@@ -152,45 +152,19 @@
 
         <Grid Grid.Row="2" Grid.Column="0" Grid.RowSpan="2">
             <cc:DataGrid x:Name="DataGrid_Upper" Grid.Row="2"
-                ItemsSource="{Binding ConversationCollection}"
-                SelectionMode="Single"
+                ItemsSource="{Binding ConversationDiffCollection}"
+                SelectionMode="Single" IsReadOnly="True"
                 HeadersVisibility="Column" AutoGenerateColumns="False"                         
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
                 CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
-                SelectedItem="{Binding SelectedGridRow}"
+                SelectedItem="{Binding SelectedGridRowCompareMode}"
                 VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling">
 
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Audio">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
-                                    AncestorType={x:Type Window}},
-                                    Path=DataContext.StartPlaybackCommand}" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <fa:ImageAwesome Icon="Solid_Play" Height="12" Width="12" PrimaryColor="White" />
-                                </Button>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                    <DataGridTemplateColumn Header="Inspected">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                                    IsChecked="{Binding IsInspected, UpdateSourceTrigger=PropertyChanged}"
-                                    Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ProjectFileChangedCommand}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Text">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding OriginalText}" TextWrapping="Wrap" Padding="10,10,10,10" MinWidth="100" Width="300" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Type" Binding="{Binding Diff.Type}" />
                 </DataGrid.Columns>
 
                 <DataGrid.GroupStyle>
@@ -218,41 +192,41 @@
                     <StackPanel Margin="5 5 5 5">
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center">Type</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Type}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Type}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Name</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Name}" />
+                            <TextBlock VerticalAlignment="Center" >Name</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Name}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">Sound</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Sound}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Sound}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">NPC Name</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.NpcName}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.NpcName}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">Context</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Context}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Context}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">Voice</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Voice}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Voice}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">Number</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Number}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Number}" />
                         </WrapPanel>
                         <DockPanel LastChildFill="False">
                             <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center">Inspected</TextBlock>
-                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversation.IsInspected}"
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsInspected}"
                             Command="{Binding ProjectFileChangedCommand}"/>
                             </WrapPanel>
                             <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center">Edited</TextBlock>
-                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversation.IsEdited}" />
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsEdited}" />
                             </WrapPanel>
                         </DockPanel>
                         <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
@@ -260,14 +234,14 @@
                             <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              IsReadOnly="True"
-                             Text="{Binding SelectedConversation.OriginalText}" />
+                             Text="{Binding SelectedConversationDiff.Diff.Original.OriginalText}" />
                         </StackPanel>
                         <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
                             <TextBlock HorizontalAlignment="Center">Edited Text</TextBlock>
                             <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              SpellCheck.IsEnabled="True" Language="pl-PL"
-                             Text="{Binding SelectedConversation.EditedText, UpdateSourceTrigger=PropertyChanged}">
+                             Text="{Binding SelectedConversationDiff.Diff.Original.EditedText, UpdateSourceTrigger=PropertyChanged}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="TextChanged">
                                         <i:InvokeCommandAction Command="{Binding CompareOriginalAndEditedTextCommand}" />
@@ -294,41 +268,41 @@
                     <StackPanel Margin="5 5 5 5">
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center">Type</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Type}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Type}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">Name</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Name}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Name}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">Sound</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Sound}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Sound}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">NPC Name</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.NpcName}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.NpcName}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">Context</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Context}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Context}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">Voice</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Voice}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Voice}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
                             <TextBlock VerticalAlignment="Center">Number</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Number}" />
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Number}" />
                         </WrapPanel>
                         <DockPanel LastChildFill="False">
                             <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center">Inspected</TextBlock>
-                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversation.IsInspected}"
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsInspected}"
                             Command="{Binding ProjectFileChangedCommand}"/>
                             </WrapPanel>
                             <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center">Edited</TextBlock>
-                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversation.IsEdited}" />
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsEdited}" />
                             </WrapPanel>
                         </DockPanel>
                         <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
@@ -336,14 +310,14 @@
                             <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              IsReadOnly="True"
-                             Text="{Binding SelectedConversation.OriginalText}" />
+                             Text="{Binding SelectedConversationDiff.Diff.Compared.OriginalText}" />
                         </StackPanel>
                         <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
                             <TextBlock HorizontalAlignment="Center">Edited Text</TextBlock>
                             <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              SpellCheck.IsEnabled="True" Language="pl-PL"
-                             Text="{Binding SelectedConversation.EditedText, UpdateSourceTrigger=PropertyChanged}">
+                             Text="{Binding SelectedConversationDiff.Diff.Compared.EditedText, UpdateSourceTrigger=PropertyChanged}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="TextChanged">
                                         <i:InvokeCommandAction Command="{Binding CompareOriginalAndEditedTextCommand}" />
