@@ -58,9 +58,10 @@
     <Grid Background="#FF27282C">
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="6*" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="6*" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -73,13 +74,13 @@
         </Grid.RowDefinitions>
 
 
-        <Grid Grid.Row="0" Grid.ColumnSpan="3" Background="#AF000000">
+        <Grid Grid.Row="0" Grid.ColumnSpan="10" Background="#AF000000">
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                 FontSize="21"  Foreground="DarkCyan"
                 Padding="0 0 0 5" FontWeight="Heavy">Compare Mode</TextBlock>
         </Grid>
 
-        <Grid Grid.Row="1" Grid.ColumnSpan="3" Background="#FF18191B">
+        <Grid Grid.Row="1" Grid.ColumnSpan="10" Background="#FF18191B">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -255,11 +256,18 @@
             </DockPanel>
         </Grid>
 
-        <Grid Grid.Row="3" Grid.Column="1">         
+        <Grid Grid.Row="2" Grid.Column="2" Grid.RowSpan="2">
+            <StackPanel VerticalAlignment="Center">
+                <Button HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <fa:ImageAwesome Icon="Solid_ArrowLeft" Height="20" PrimaryColor="DarkCyan" />
+                </Button>
+                <TextBlock Text="{Binding SelectedConversationDiff.Diff.Type, Converter={StaticResource ComparisonResultTypeConverter}, FallbackValue=-}"
+                    HorizontalAlignment="Center" />
+            </StackPanel>
             
         </Grid>
 
-        <Grid Grid.Row="2" Grid.Column="2" x:Name="DetailedPanel" Grid.RowSpan="2">
+        <Grid Grid.Row="2" Grid.Column="3" x:Name="DetailedPanel" Grid.RowSpan="2">
             
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0 6"
@@ -331,7 +339,7 @@
             </DockPanel>
         </Grid>
 
-        <Grid Grid.Row="4" Grid.ColumnSpan="3" Background="#FF18191B">
+        <Grid Grid.Row="4" Grid.ColumnSpan="10" Background="#FF18191B">
             <StackPanel Margin="5">
                 <DockPanel LastChildFill="False">
                     <TextBlock DockPanel.Dock="Left" Text="Audio Path:" />
@@ -374,7 +382,7 @@
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="5" Grid.ColumnSpan="3" Background="#AF000000">
+        <Grid Grid.Row="5" Grid.ColumnSpan="10" Background="#AF000000">
             <Grid Margin="1 0 1 2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
