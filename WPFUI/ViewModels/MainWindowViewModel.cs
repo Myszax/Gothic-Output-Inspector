@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Forms;
 using WPFUI.Components;
+using WPFUI.Enums;
 using WPFUI.Models;
 using WPFUI.NAudioWrapper;
 using WPFUI.NAudioWrapper.Enums;
@@ -192,13 +193,16 @@ public partial class MainWindowViewModel : ObservableObject
 
     partial void OnSelectedConversationDiffChanged(ConversationDiff value)
     {
-        string soundFileName;
-        if (value.Diff.Type == Enums.ComparisonResultType.Removed)
-            soundFileName = value.Diff.Original.Sound;
-        else
-            soundFileName = value.Diff.Compared.Sound;
+        if (value.Diff is null)
+            return;
 
-        CurrentlySelectedAudioName = PathToAudioFiles + soundFileName;
+        string? soundFileName;
+        if (value.Diff.Type == ComparisonResultType.Removed)
+            soundFileName = value.Diff.Original?.Sound;
+        else
+            soundFileName = value.Diff.Compared?.Sound;
+
+        CurrentlySelectedAudioName = PathToAudioFiles + (soundFileName ?? string.Empty);
     }
 
     partial void OnSelectedConversationChanging(Conversation value) => _previousNpcName = SelectedConversation.NpcName;
