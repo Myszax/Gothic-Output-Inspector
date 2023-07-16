@@ -17,6 +17,7 @@ using System.Windows.Data;
 using System.Windows.Forms;
 using WPFUI.Components;
 using WPFUI.Enums;
+using WPFUI.Extensions;
 using WPFUI.Models;
 using WPFUI.NAudioWrapper;
 using WPFUI.NAudioWrapper.Enums;
@@ -561,6 +562,32 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void AcceptComparedChanges()
+    {
+        if (SelectedConversationDiff.Diff is null)
+            return;
+
+        switch (SelectedConversationDiff.Diff.Type)
+        {
+            case ComparisonResultType.Removed:
+                if (SelectedConversationDiff.Diff.Original is not null)
+                    _conversationList.Remove(SelectedConversationDiff.Diff.Original);
+                break;
+            case ComparisonResultType.Added:
+                if (SelectedConversationDiff.Diff.Compared is not null)
+                    _conversationList.Add(SelectedConversationDiff.Diff.Compared);
+                break;
+            case ComparisonResultType.Changed:
+                SelectedConversationDiff.Diff.Compared.TransferTo(SelectedConversationDiff.Diff.Original, SelectedConversationDiff.Diff.Variances);
+                break;
+        }
+
+        SelectNextConversationDiffGridItem();
+        ConversationDiffCollection.Refresh();
+        ProjectFileChanged();
+    }
+
+    [RelayCommand]
     private void StartPlayback()
     {
         if (string.IsNullOrEmpty(CurrentlySelectedAudioName))
@@ -702,6 +729,24 @@ public partial class MainWindowViewModel : ObservableObject
         PathToSaveFile = path;
         Title = TITLE + " - " + path;
         return true;
+    }
+
+    private void SelectNextConversationDiffGridItem()
+    {
+        var index = _conversationDiffList.IndexOf(SelectedConversationDiff);
+        _conversationDiffList.Remove(SelectedConversationDiff);
+
+        var count = _conversationDiffList.Count;
+
+        if (count == 0)
+        {
+            SelectedGridRowCompareMode = null;
+            SelectedConversationDiff = new();
+        }
+        else if (index < _conversationDiffList.Count)
+            SelectedGridRowCompareMode = _conversationDiffList[index];
+        else
+            SelectedGridRowCompareMode = _conversationDiffList.Last();
     }
 
     private void MuteSound()

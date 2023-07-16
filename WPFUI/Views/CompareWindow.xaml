@@ -258,7 +258,8 @@
 
         <Grid Grid.Row="2" Grid.Column="2" Grid.RowSpan="2">
             <StackPanel VerticalAlignment="Center">
-                <Button HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Command="{Binding AcceptComparedChangesCommand}">
                     <fa:ImageAwesome Icon="Solid_ArrowLeft" Height="20" PrimaryColor="DarkCyan" />
                 </Button>
                 <TextBlock Text="{Binding SelectedConversationDiff.Diff.Type, Converter={StaticResource ComparisonResultTypeConverter}, FallbackValue=-}"
