@@ -203,8 +203,7 @@
                         <DockPanel LastChildFill="False">
                             <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center" Text="Inspected" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}" />
-                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsInspected}"
-                            Command="{Binding ProjectFileChangedCommand}"/>
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsInspected}" />
                             </WrapPanel>
                             <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Edited, Converter={StaticResource BoolToColorConverter}}">Edited</TextBlock>
@@ -222,13 +221,9 @@
                             <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.EditedText, Converter={StaticResource BoolToColorConverter}}">Edited Text</TextBlock>
                             <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
+                             IsReadOnly="True"
                              SpellCheck.IsEnabled="True" Language="pl-PL"
                              Text="{Binding SelectedConversationDiff.Diff.Original.EditedText, UpdateSourceTrigger=PropertyChanged}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="TextChanged">
-                                        <i:InvokeCommandAction Command="{Binding CompareOriginalAndEditedTextCommand}" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
                             </TextBox>
                         </StackPanel>
 
@@ -288,8 +283,7 @@
                         <DockPanel LastChildFill="False">
                             <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}">Inspected</TextBlock>
-                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsInspected}"
-                            Command="{Binding ProjectFileChangedCommand}"/>
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsInspected}" />
                             </WrapPanel>
                             <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Edited, Converter={StaticResource BoolToColorConverter}}">Edited</TextBlock>
@@ -308,12 +302,8 @@
                             <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              SpellCheck.IsEnabled="True" Language="pl-PL"
+                             IsReadOnly="True"
                              Text="{Binding SelectedConversationDiff.Diff.Compared.EditedText, UpdateSourceTrigger=PropertyChanged}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="TextChanged">
-                                        <i:InvokeCommandAction Command="{Binding CompareOriginalAndEditedTextCommand}" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
                             </TextBox>
                         </StackPanel>
 
