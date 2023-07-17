@@ -38,6 +38,9 @@ public partial class MainWindowViewModel : ObservableObject
     public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
 
     [ObservableProperty]
+    private ColoredText _propertyColor = new();
+
+    [ObservableProperty]
     private string _filterValue = string.Empty;
 
     [ObservableProperty]
@@ -204,6 +207,7 @@ public partial class MainWindowViewModel : ObservableObject
             soundFileName = value.Diff.Compared?.Sound;
 
         CurrentlySelectedAudioName = PathToAudioFiles + (soundFileName ?? string.Empty);
+        PropertyColor = ColoredText.Create(value.Diff.Variances);
     }
 
     partial void OnSelectedConversationChanging(Conversation value) => _previousNpcName = SelectedConversation.NpcName;
