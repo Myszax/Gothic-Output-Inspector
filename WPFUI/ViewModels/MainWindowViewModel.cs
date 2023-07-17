@@ -79,6 +79,9 @@ public partial class MainWindowViewModel : ObservableObject
     private bool _isMuted = false;
 
     [ObservableProperty]
+    private bool _isEnabledIgnoreInspected = true;
+
+    [ObservableProperty]
     private Encoding _selectedEncoding;
 
     [ObservableProperty]
@@ -582,6 +585,9 @@ public partial class MainWindowViewModel : ObservableObject
                     _conversationList.Add(SelectedConversationDiff.Diff.Compared);
                 break;
             case ComparisonResultType.Changed:
+                if (IsEnabledIgnoreInspected && SelectedConversationDiff.Diff.Variances.ContainsKey("IsInspected"))
+                    SelectedConversationDiff.Diff.Variances.Remove("IsInspected");
+
                 SelectedConversationDiff.Diff.Compared.TransferTo(SelectedConversationDiff.Diff.Original, SelectedConversationDiff.Diff.Variances);
                 break;
         }

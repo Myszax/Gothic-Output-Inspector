@@ -257,15 +257,15 @@
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="2" Grid.RowSpan="2">
-            <StackPanel VerticalAlignment="Center">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Button HorizontalAlignment="Center" VerticalAlignment="Center"
                     Command="{Binding AcceptComparedChangesCommand}">
                     <fa:ImageAwesome Icon="Solid_ArrowLeft" Height="20" PrimaryColor="DarkCyan" />
                 </Button>
                 <TextBlock Text="{Binding SelectedConversationDiff.Diff.Type, Converter={StaticResource ComparisonResultTypeConverter}, FallbackValue=-}"
                     HorizontalAlignment="Center" />
+                <CheckBox Margin="0 15 0 0" FontSize="10" Content="Ignore Inspected" IsChecked="{Binding IsEnabledIgnoreInspected}" />
             </StackPanel>
-            
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="3" x:Name="DetailedPanel" Grid.RowSpan="2">
