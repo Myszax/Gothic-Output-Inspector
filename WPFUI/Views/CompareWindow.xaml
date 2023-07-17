@@ -189,7 +189,7 @@
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0 6"
                     FontWeight="Bold" Foreground="DarkOrange">Original</TextBlock>
-                <ScrollViewer BorderThickness="1 0 0 0" BorderBrush="Black">
+                <ScrollViewer BorderThickness="1 0 1 0" BorderBrush="Black">
                     <StackPanel Margin="5 5 5 5">
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Type, Converter={StaticResource BoolToColorConverter}}">Type</TextBlock>
@@ -221,7 +221,7 @@
                         </WrapPanel>
                         <DockPanel LastChildFill="False">
                             <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
-                                <TextBlock VerticalAlignment="Center" Text="Inspected" FontWeight="Medium" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}" />
+                                <TextBlock VerticalAlignment="Center" Text="Inspected" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}" />
                                 <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsInspected}"
                             Command="{Binding ProjectFileChangedCommand}"/>
                             </WrapPanel>
