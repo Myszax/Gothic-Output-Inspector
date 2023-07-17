@@ -44,6 +44,9 @@ public partial class MainWindowViewModel : ObservableObject
     private string _filterValue = string.Empty;
 
     [ObservableProperty]
+    private string _filterValueCompareMode = string.Empty;
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EditedConversationsCount))]
     [NotifyPropertyChangedFor(nameof(InspectedConversationsCount))]
     private Conversation _selectedConversation = new();
@@ -94,6 +97,9 @@ public partial class MainWindowViewModel : ObservableObject
     private FilterType _selectedFilterType = FilterType.HideAll;
 
     [ObservableProperty]
+    private FilterType _selectedFilterTypeCompareMode = FilterType.HideAll;
+
+    [ObservableProperty]
     private bool _isEnabledFilterName = true;
 
     [ObservableProperty]
@@ -107,6 +113,9 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _isEnabledFilterIsInspected = true;
+
+    [ObservableProperty]
+    private bool _isEnabledFilterCompareModeIsInspected = true;
 
     [ObservableProperty]
     private string _pathToSaveFile = string.Empty;
@@ -181,6 +190,8 @@ public partial class MainWindowViewModel : ObservableObject
         ConversationCollection.Refresh();
         OnPropertyChanged(nameof(FilteredConversationsCount));
     }
+
+    partial void OnFilterValueCompareModeChanged(string value) => ConversationDiffCollection.Refresh();
 
     partial void OnSelectedGridRowChanged(Conversation? value)
     {
@@ -265,6 +276,31 @@ public partial class MainWindowViewModel : ObservableObject
         return !IsEnabledFilterName && !IsEnabledFilterOriginalText && !IsEnabledFilterEditedText;
     }
 
+    private bool FilterCollectionCompareMode(object obj)
+    {
+        if (obj is null || obj is not ConversationDiff conversationDiff)
+            return false;
+
+        if (conversationDiff.Diff.Compared is not null)
+        {
+            if (SelectedFilterTypeCompareMode == FilterType.HideAll)
+            {
+                if (IsEnabledFilterCompareModeIsInspected && conversationDiff.Diff.Variances.Count == 1 && conversationDiff.Diff.Compared.IsInspected)
+                    return false;
+            }
+            else
+            {
+                if (IsEnabledFilterCompareModeIsInspected && !conversationDiff.Diff.Compared.IsInspected)
+                    return false;
+            }
+        }
+
+        if (FilterValueCompareMode.Length > 0 && conversationDiff.Name.Contains(FilterValueCompareMode, SelectedComparisonMethod))
+            return true;
+
+        return true;
+    }
+
     private void SetGroupingAndSortingOnConversationCollection()
     {
         var pgd = new PropertyGroupDescription(nameof(Conversation.NpcName));
@@ -343,6 +379,15 @@ public partial class MainWindowViewModel : ObservableObject
 
         ConversationCollection.Refresh();
         OnPropertyChanged(nameof(FilteredConversationsCount));
+    }
+
+    [RelayCommand]
+    private void RefreshConversationDiffCollection(bool checkForEmptyFilterValue = true)
+    {
+        if (checkForEmptyFilterValue && string.IsNullOrEmpty(FilterValueCompareMode))
+            return;
+
+        ConversationDiffCollection.Refresh();
     }
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]

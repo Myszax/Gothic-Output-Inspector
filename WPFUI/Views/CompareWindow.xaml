@@ -88,8 +88,8 @@
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
 
-                <ui:AutoSuggestBox Grid.Column="0" x:Name="ConversationCollectionFilter"
-                    Text="{Binding FilterValue, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Delay=250}"
+                <ui:AutoSuggestBox Grid.Column="0" x:Name="ConversationDiffCollectionFilter"
+                    Text="{Binding FilterValueCompareMode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Delay=250}"
                     PlaceholderText="Search..." QueryIcon="Find" />
                 <DockPanel Grid.Column="1" Grid.ColumnSpan="2" LastChildFill="False">
                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2 0 2 0">
@@ -102,26 +102,12 @@
                                 <ComboBox ItemsSource="{components:BindingEnums sys:StringComparison}" SelectedItem="{Binding SelectedComparisonMethod}" VerticalAlignment="Bottom">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="SelectionChanged">
-                                            <i:InvokeCommandAction Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:True}" />
+                                            <i:InvokeCommandAction Command="{Binding RefreshConversationDiffCollectionCommand}" CommandParameter="{components:True}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </ComboBox>
                             </Grid>
                         </StackPanel>
-
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterName}"
-                            Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:True}"
-                            VerticalContentAlignment="Center" Content="Name" />
-                        <Rectangle Style="{StaticResource RectangleSeparator}" />
-
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterOriginalText}"
-                            Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:True}"
-                            VerticalContentAlignment="Center" Content="Original Text" />
-                        <Rectangle Style="{StaticResource RectangleSeparator}" />
-
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterEditedText}"
-                            Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:True}"
-                            VerticalContentAlignment="Center" Content="Edited Text" />
 
                     </StackPanel>
 
@@ -129,22 +115,17 @@
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="3 0 3 0">
                             <TextBlock VerticalAlignment="Center" Text="Filter Mode:" />
                             <!--TODO: Set width by longest item length-->
-                            <ComboBox ItemsSource="{components:BindingEnums components:FilterType}" SelectedItem="{Binding SelectedFilterType}" Width="110">
+                            <ComboBox ItemsSource="{components:BindingEnums components:FilterType}" SelectedItem="{Binding SelectedFilterTypeCompareMode}" Width="110">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="SelectionChanged">
-                                        <i:InvokeCommandAction Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:False}" />
+                                        <i:InvokeCommandAction Command="{Binding RefreshConversationDiffCollectionCommand}" CommandParameter="{components:False}" />
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </ComboBox>
                         </StackPanel>
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterIsInspected}"
-                            Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:False}"
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterCompareModeIsInspected}"
+                            Command="{Binding RefreshConversationDiffCollectionCommand}" CommandParameter="{components:False}"
                             VerticalContentAlignment="Center" Content="Inspected" />
-                        <Rectangle Style="{StaticResource RectangleSeparator}" />
-
-                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterIsEdited}" Margin="0 0 3 0"
-                            Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:False}"
-                            VerticalContentAlignment="Center" Content="Edited" />
                     </StackPanel>
 
                 </DockPanel>
