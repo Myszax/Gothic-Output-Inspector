@@ -304,8 +304,8 @@ public partial class MainWindowViewModel : ObservableObject
             }
         }
 
-        if (FilterValueCompareMode.Length > 0 && conversationDiff.Name.Contains(FilterValueCompareMode, SelectedComparisonMethod))
-            return true;
+        if (FilterValueCompareMode.Length > 0 && !conversationDiff.Name.Contains(FilterValueCompareMode, SelectedComparisonMethod))
+            return false;
 
         return true;
     }
