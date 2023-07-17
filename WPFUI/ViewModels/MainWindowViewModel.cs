@@ -650,6 +650,11 @@ public partial class MainWindowViewModel : ObservableObject
         SelectNextConversationDiffGridItem();
         ConversationDiffCollection.Refresh();
         ProjectFileChanged();
+        OnPropertyChanged(nameof(LoadedConversationsDiffCount));
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
+        OnPropertyChanged(nameof(AddedConversationsDiffCount));
+        OnPropertyChanged(nameof(ChangedConversationsDiffCount));
+        OnPropertyChanged(nameof(RemovedConversationsDiffCount));
     }
 
     [RelayCommand]
