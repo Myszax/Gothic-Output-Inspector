@@ -264,12 +264,13 @@
                 </Button>
                 <TextBlock Text="{Binding SelectedConversationDiff.Diff.Type, Converter={StaticResource ComparisonResultTypeConverter}, FallbackValue=-}"
                     HorizontalAlignment="Center" />
-                <CheckBox Margin="0 15 0 0" FontSize="10" Content="Ignore Inspected" IsChecked="{Binding IsEnabledIgnoreInspected}" />
+                <CheckBox Visibility="{Binding SelectedConversationDiff.Diff.Type, Converter={StaticResource ComparisonResultTypeToVisibilityConverter}, FallbackValue=Hidden}"
+                    Margin="0 15 0 0" FontSize="10" Content="Ignore Inspected" IsChecked="{Binding IsEnabledIgnoreInspected}" />
             </StackPanel>
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="3" x:Name="DetailedPanel" Grid.RowSpan="2">
-            
+
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0 6"
                     FontWeight="Bold" Foreground="DarkOrange">Imported</TextBlock>
