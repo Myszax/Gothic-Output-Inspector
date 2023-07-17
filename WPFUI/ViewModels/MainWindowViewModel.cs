@@ -32,10 +32,15 @@ public partial class MainWindowViewModel : ObservableObject
     public ICollectionView ConversationDiffCollection { get; set; }
     public List<EncodingMenuItem> Encodings { get; }
     public int LoadedConversationsCount => _conversationList.Count;
+    public int LoadedConversationsDiffCount => _conversationDiffList.Count;
     public int LoadedNPCsCount => ConversationCollection.Groups.Count;
     public int EditedConversationsCount => _conversationList.Where(x => x.IsEdited).Count();
     public int InspectedConversationsCount => _conversationList.Where(x => x.IsInspected).Count();
     public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
+    public int FilteredConversationsDiffCount => ConversationDiffCollection.Cast<object>().Count();
+    public int AddedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Added).Count();
+    public int ChangedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Changed).Count();
+    public int RemovedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Removed).Count();
 
     [ObservableProperty]
     private ColoredText _propertyColor = new();
@@ -191,7 +196,11 @@ public partial class MainWindowViewModel : ObservableObject
         OnPropertyChanged(nameof(FilteredConversationsCount));
     }
 
-    partial void OnFilterValueCompareModeChanged(string value) => ConversationDiffCollection.Refresh();
+    partial void OnFilterValueCompareModeChanged(string value)
+    {
+        ConversationDiffCollection.Refresh();
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
+    }
 
     partial void OnSelectedGridRowChanged(Conversation? value)
     {
@@ -388,6 +397,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         ConversationDiffCollection.Refresh();
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
     }
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]

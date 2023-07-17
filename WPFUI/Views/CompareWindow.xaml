@@ -371,34 +371,37 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <TextBlock Margin="3 0 0 0" Text="{Binding FilteredConversationsCount, StringFormat=Filtered: {0:N0}/}" />
-                    <TextBlock Text="{Binding LoadedConversationsCount, StringFormat={}{0:N0}}" />
+                    <TextBlock Margin="3 0 0 0" Text="{Binding FilteredConversationsDiffCount, StringFormat=Filtered: {0:N0}/}" />
+                    <TextBlock Text="{Binding LoadedConversationsDiffCount, StringFormat={}{0:N0}}" />
                 </StackPanel>
-                <TextBlock Grid.Column="1" HorizontalAlignment="Center" Text="{Binding LoadedNPCsCount, StringFormat=NPCs: {0:N0}}" />
+                <TextBlock Grid.Column="1" HorizontalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource PercentageCoverageConverter}" StringFormat="Changed: {0}">
+                            <Binding Path="ChangedConversationsDiffCount" />
+                            <Binding Path="LoadedConversationsDiffCount" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
                 <TextBlock Grid.Column="2" HorizontalAlignment="Center">
                     <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource PercentageCoverageConverter}" StringFormat="Inspected: {0}">
-                            <Binding Path="InspectedConversationsCount" />
-                            <Binding Path="LoadedConversationsCount" />
+                        <MultiBinding Converter="{StaticResource PercentageCoverageConverter}" StringFormat="Added: {0}">
+                            <Binding Path="AddedConversationsDiffCount" />
+                            <Binding Path="LoadedConversationsDiffCount" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <TextBlock Grid.Column="3" HorizontalAlignment="Center">
+                <TextBlock Margin="0 0 3 0" Grid.Column="3" HorizontalAlignment="Right">
                     <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource PercentageCoverageConverter}" StringFormat="Edited: {0}">
-                            <Binding Path="EditedConversationsCount" />
-                            <Binding Path="LoadedConversationsCount" />
+                        <MultiBinding Converter="{StaticResource PercentageCoverageConverter}" StringFormat="Removed: {0}">
+                            <Binding Path="RemovedConversationsDiffCount" />
+                            <Binding Path="LoadedConversationsDiffCount" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                <TextBlock Grid.Column="4" HorizontalAlignment="Center" Text="{Binding SelectedConversations.Count, StringFormat=Current NPC: {0:N0}}" />
-                <TextBlock Grid.Column="5" Margin="0 0 3 0" HorizontalAlignment="Right" Text="{Binding UsedEncoding.HeaderName, StringFormat=Encoding: {0}}" />
             </Grid>
         </Grid>
 
