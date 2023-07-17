@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Reflection;
 using WPFUI.Comparer;
 
@@ -9,7 +10,7 @@ public static class TransferToExtension
 {
     public static void TransferTo<T>(this T source, T target, IDictionary<string, ComparisonVariance> values)
     {
-        if (values is null)
+        if (values is null || !values.Any())
             return;
 
         var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
