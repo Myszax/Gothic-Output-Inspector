@@ -294,12 +294,12 @@ public partial class MainWindowViewModel : ObservableObject
         {
             if (SelectedFilterTypeCompareMode == FilterType.HideAll)
             {
-                if (IsEnabledFilterCompareModeIsInspected && conversationDiff.Diff.Variances.Count == 1 && conversationDiff.Diff.Compared.IsInspected)
+                if (IsEnabledFilterCompareModeIsInspected && conversationDiff.Diff.Variances.Count == 1 && conversationDiff.Diff.Variances.ContainsKey("IsInspected"))
                     return false;
             }
             else
             {
-                if (IsEnabledFilterCompareModeIsInspected && !conversationDiff.Diff.Compared.IsInspected)
+                if (IsEnabledFilterCompareModeIsInspected && conversationDiff.Diff.Variances.ContainsKey("IsInspected"))
                     return false;
             }
         }
