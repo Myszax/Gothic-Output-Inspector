@@ -192,53 +192,53 @@
                 <ScrollViewer BorderThickness="1 0 0 0" BorderBrush="Black">
                     <StackPanel Margin="5 5 5 5">
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
-                            <TextBlock VerticalAlignment="Center">Type</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Type, Converter={StaticResource BoolToColorConverter}}">Type</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Type}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" >Name</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Name, Converter={StaticResource BoolToColorConverter}}">Name</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Name}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Sound</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Sound, Converter={StaticResource BoolToColorConverter}}">Sound</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Sound}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">NPC Name</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.NpcName, Converter={StaticResource BoolToColorConverter}}">NPC Name</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.NpcName}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Context</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Context, Converter={StaticResource BoolToColorConverter}}">Context</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Context}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Voice</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Voice, Converter={StaticResource BoolToColorConverter}}">Voice</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Voice}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Number</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Number, Converter={StaticResource BoolToColorConverter}}">Number</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Number}" />
                         </WrapPanel>
                         <DockPanel LastChildFill="False">
                             <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
-                                <TextBlock VerticalAlignment="Center">Inspected</TextBlock>
+                                <TextBlock VerticalAlignment="Center" Text="Inspected" FontWeight="Medium" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}" />
                                 <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsInspected}"
                             Command="{Binding ProjectFileChangedCommand}"/>
                             </WrapPanel>
                             <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
-                                <TextBlock VerticalAlignment="Center">Edited</TextBlock>
+                                <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Edited, Converter={StaticResource BoolToColorConverter}}">Edited</TextBlock>
                                 <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsEdited}" />
                             </WrapPanel>
                         </DockPanel>
                         <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                            <TextBlock HorizontalAlignment="Center">Original Text</TextBlock>
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.OriginalText, Converter={StaticResource BoolToColorConverter}}">Original Text</TextBlock>
                             <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              IsReadOnly="True"
                              Text="{Binding SelectedConversationDiff.Diff.Original.OriginalText}" />
                         </StackPanel>
                         <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                            <TextBlock HorizontalAlignment="Center">Edited Text</TextBlock>
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.EditedText, Converter={StaticResource BoolToColorConverter}}">Edited Text</TextBlock>
                             <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              SpellCheck.IsEnabled="True" Language="pl-PL"
@@ -276,53 +276,53 @@
                 <ScrollViewer BorderThickness="1 0 0 0" BorderBrush="Black">
                     <StackPanel Margin="5 5 5 5">
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
-                            <TextBlock VerticalAlignment="Center">Type</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Type, Converter={StaticResource BoolToColorConverter}}">Type</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Type}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Name</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Name, Converter={StaticResource BoolToColorConverter}}">Name</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Name}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Sound</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Sound, Converter={StaticResource BoolToColorConverter}}">Sound</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Sound}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">NPC Name</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.NpcName, Converter={StaticResource BoolToColorConverter}}">NPC Name</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.NpcName}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Context</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Context, Converter={StaticResource BoolToColorConverter}}">Context</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Context}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Voice</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Voice, Converter={StaticResource BoolToColorConverter}}">Voice</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Voice}" />
                         </WrapPanel>
                         <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Number</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Number, Converter={StaticResource BoolToColorConverter}}">Number</TextBlock>
                             <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Number}" />
                         </WrapPanel>
                         <DockPanel LastChildFill="False">
                             <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
-                                <TextBlock VerticalAlignment="Center">Inspected</TextBlock>
+                                <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}">Inspected</TextBlock>
                                 <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsInspected}"
                             Command="{Binding ProjectFileChangedCommand}"/>
                             </WrapPanel>
                             <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
-                                <TextBlock VerticalAlignment="Center">Edited</TextBlock>
+                                <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Edited, Converter={StaticResource BoolToColorConverter}}">Edited</TextBlock>
                                 <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsEdited}" />
                             </WrapPanel>
                         </DockPanel>
                         <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                            <TextBlock HorizontalAlignment="Center">Original Text</TextBlock>
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.OriginalText, Converter={StaticResource BoolToColorConverter}}">Original Text</TextBlock>
                             <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              IsReadOnly="True"
                              Text="{Binding SelectedConversationDiff.Diff.Compared.OriginalText}" />
                         </StackPanel>
                         <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                            <TextBlock HorizontalAlignment="Center">Edited Text</TextBlock>
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.EditedText, Converter={StaticResource BoolToColorConverter}}">Edited Text</TextBlock>
                             <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
                              TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
                              SpellCheck.IsEnabled="True" Language="pl-PL"
