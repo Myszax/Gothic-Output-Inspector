@@ -248,7 +248,7 @@
                     HorizontalAlignment="Center" />
                 
                 <CheckBox Visibility="{Binding SelectedConversationDiff.Diff.Type, Converter={StaticResource ComparisonResultTypeToVisibilityConverter}, FallbackValue=Hidden}"
-                    Margin="0 15 0 0" FontSize="10" Content="Ignore Inspected" IsChecked="{Binding IsEnabledIgnoreInspected}" />
+                    Margin="0 15 0 0" FontSize="10" Content="Ignore Inspected" IsChecked="{Binding IsEnabledIgnoreInspectedWhileTransfer}" />
             </StackPanel>
         </Grid>
 

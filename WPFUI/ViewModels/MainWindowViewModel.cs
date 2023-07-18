@@ -87,7 +87,7 @@ public partial class MainWindowViewModel : ObservableObject
     private bool _isMuted = false;
 
     [ObservableProperty]
-    private bool _isEnabledIgnoreInspected = true;
+    private bool _isEnabledIgnoreInspectedWhileTransfer = true;
 
     [ObservableProperty]
     private Encoding _selectedEncoding;
@@ -377,7 +377,7 @@ public partial class MainWindowViewModel : ObservableObject
             EnabledFilterIsEdited = IsEnabledFilterIsEdited,
             EnabledFilterIsInspected = IsEnabledFilterIsInspected,
             EnabledFilterCompareModeIsInspected = IsEnabledFilterCompareModeIsInspected,
-            EnabledIgnoreInspectedWhileTransfer = IsEnabledIgnoreInspected,
+            EnabledIgnoreInspectedWhileTransfer = IsEnabledIgnoreInspectedWhileTransfer,
             AudioPlayerVolume = CurrentVolume,
             AudioPlayerPreviousVolume = _previousVolume,
             AudioPlayerMuted = IsMuted,
@@ -649,7 +649,7 @@ public partial class MainWindowViewModel : ObservableObject
             IsEnabledFilterIsInspected = projectFile.EnabledFilterIsInspected;
             IsEnabledFilterIsEdited = projectFile.EnabledFilterIsEdited;
             IsEnabledFilterCompareModeIsInspected = projectFile.EnabledFilterCompareModeIsInspected;
-            IsEnabledIgnoreInspected = projectFile.EnabledIgnoreInspectedWhileTransfer;
+            IsEnabledIgnoreInspectedWhileTransfer = projectFile.EnabledIgnoreInspectedWhileTransfer;
             IsMuted = projectFile.AudioPlayerMuted;
         }
         catch (Exception e)
@@ -718,7 +718,7 @@ public partial class MainWindowViewModel : ObservableObject
                     _conversationList.Add(SelectedConversationDiff.Diff.Compared);
                 break;
             case ComparisonResultType.Changed:
-                if (IsEnabledIgnoreInspected && SelectedConversationDiff.Diff.Variances.ContainsKey("IsInspected"))
+                if (IsEnabledIgnoreInspectedWhileTransfer && SelectedConversationDiff.Diff.Variances.ContainsKey("IsInspected"))
                     SelectedConversationDiff.Diff.Variances.Remove("IsInspected");
 
                 SelectedConversationDiff.Diff.Compared.TransferTo(SelectedConversationDiff.Diff.Original, SelectedConversationDiff.Diff.Variances);
