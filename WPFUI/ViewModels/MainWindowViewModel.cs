@@ -129,6 +129,9 @@ public partial class MainWindowViewModel : ObservableObject
     private string _title = TITLE;
 
     [ObservableProperty]
+    private string _titleCompareMode = TITLE;
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveProjectCommand))]
     [NotifyCanExecuteChangedFor(nameof(SaveProjectAsCommand))]
     [NotifyCanExecuteChangedFor(nameof(SetPathToAudioFilesCommand))]
@@ -466,9 +469,10 @@ public partial class MainWindowViewModel : ObservableObject
         }
 
         var loadedConversations = new HashSet<Conversation>();
+        var filePath = odf.FileName;
         try
         {
-            loadedConversations = OpenFileToCompare(odf.FileName);
+            loadedConversations = OpenFileToCompare(filePath);
         }
         catch (Exception e)
         {
@@ -494,6 +498,7 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedConversation = new();
         SelectedGridRow = null;
 
+        TitleCompareMode = TITLE + " - " + filePath;
         var compareWindow = new CompareWindow(this);
         compareWindow.ShowDialog();
         compareWindow = null;

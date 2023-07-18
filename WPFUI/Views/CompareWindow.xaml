@@ -14,7 +14,7 @@
         xmlns:components="clr-namespace:WPFUI.Components"
         mc:Ignorable="d"
         FontSize="16"
-        Title="{Binding Title}" Width="1280" Height="720" 
+        Title="{Binding TitleCompareMode}" Width="1280" Height="720" 
         ui:WindowHelper.UseModernWindowStyle="True">
 
 
