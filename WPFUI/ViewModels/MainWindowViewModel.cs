@@ -373,8 +373,11 @@ public partial class MainWindowViewModel : ObservableObject
             EnabledFilterOriginalText = IsEnabledFilterOriginalText,
             EnabledFilterEditedText = IsEnabledFilterEditedText,
             FilterType = SelectedFilterType,
+            FilterTypeCompareMode = SelectedFilterTypeCompareMode,
             EnabledFilterIsEdited = IsEnabledFilterIsEdited,
             EnabledFilterIsInspected = IsEnabledFilterIsInspected,
+            EnabledFilterCompareModeIsInspected = IsEnabledFilterCompareModeIsInspected,
+            EnabledIgnoreInspectedWhileTransfer = IsEnabledIgnoreInspected,
             AudioPlayerVolume = CurrentVolume,
             AudioPlayerPreviousVolume = _previousVolume,
             AudioPlayerMuted = IsMuted,
@@ -628,6 +631,9 @@ public partial class MainWindowViewModel : ObservableObject
             if (Enum.IsDefined(typeof(FilterType), projectFile.FilterType))
                 SelectedFilterType = projectFile.FilterType;
 
+            if (Enum.IsDefined(typeof(FilterType), projectFile.FilterType))
+                SelectedFilterTypeCompareMode = projectFile.FilterTypeCompareMode;
+
             if (Enum.IsDefined(typeof(StringComparison), projectFile.ComparisonMethod))
                 SelectedComparisonMethod = projectFile.ComparisonMethod;
 
@@ -642,6 +648,8 @@ public partial class MainWindowViewModel : ObservableObject
             IsEnabledFilterEditedText = projectFile.EnabledFilterEditedText;
             IsEnabledFilterIsInspected = projectFile.EnabledFilterIsInspected;
             IsEnabledFilterIsEdited = projectFile.EnabledFilterIsEdited;
+            IsEnabledFilterCompareModeIsInspected = projectFile.EnabledFilterCompareModeIsInspected;
+            IsEnabledIgnoreInspected = projectFile.EnabledIgnoreInspectedWhileTransfer;
             IsMuted = projectFile.AudioPlayerMuted;
         }
         catch (Exception e)

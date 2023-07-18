@@ -26,9 +26,15 @@ public sealed class SaveFile
 
     public FilterType FilterType { get; set; } = FilterType.HideAll;
 
+    public FilterType FilterTypeCompareMode { get; set; } = FilterType.HideAll;
+
     public bool EnabledFilterIsInspected { get; set; } = true;
 
     public bool EnabledFilterIsEdited { get; set; } = true;
+
+    public bool EnabledFilterCompareModeIsInspected { get; set; } = true;
+
+    public bool EnabledIgnoreInspectedWhileTransfer { get; set; } = true;
 
     public float AudioPlayerVolume { get; set; } = 1.0f;
 
