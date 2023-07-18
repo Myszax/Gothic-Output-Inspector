@@ -723,6 +723,21 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void DiscardComparedChanges()
+    {
+        if (SelectedConversationDiff.Diff is null)
+            return;
+
+        SelectNextConversationDiffGridItem();
+        ConversationDiffCollection.Refresh();
+        OnPropertyChanged(nameof(LoadedConversationsDiffCount));
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
+        OnPropertyChanged(nameof(AddedConversationsDiffCount));
+        OnPropertyChanged(nameof(ChangedConversationsDiffCount));
+        OnPropertyChanged(nameof(RemovedConversationsDiffCount));
+    }
+
+    [RelayCommand]
     private void StartPlayback()
     {
         if (string.IsNullOrEmpty(CurrentlySelectedAudioName))
