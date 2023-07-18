@@ -1,8 +1,8 @@
-﻿using Parser;
-using System.Text;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Parser;
 using System;
-using WPFUI.Components;
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.Text;
+using WPFUI.Enums;
 
 namespace WPFUI.Models;
 

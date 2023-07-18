@@ -1,4 +1,4 @@
-﻿namespace WPFUI.Components;
+﻿namespace WPFUI.Enums;
 
 public enum ConversationType
 {
