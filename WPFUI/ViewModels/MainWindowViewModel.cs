@@ -191,6 +191,19 @@ public partial class MainWindowViewModel : ObservableObject
             e.Cancel = true;
     }
 
+    public void OnCompareWindowClosing(object? sender, CancelEventArgs e)
+    {
+        if (!_conversationDiffList.Any())
+            return; // don't have to do anything else, program will close itself because CancelEventArgs.Cancel is false
+
+        var result = ConversationDiffListNonEmpty();
+
+        if (result == System.Windows.MessageBoxResult.Yes)
+            e.Cancel = false;
+        else
+            e.Cancel = true;
+    }
+
     partial void OnFilterValueChanged(string value)
     {
         ConversationCollection.Refresh();

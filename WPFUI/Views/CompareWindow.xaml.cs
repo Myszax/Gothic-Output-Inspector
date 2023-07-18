@@ -9,6 +9,8 @@ public partial class CompareWindow : Window
     {
         InitializeComponent();
         DataContext = mainWindowVM;
+
+        Closing += mainWindowVM.OnCompareWindowClosing;
     }
 
     private void TextBox_CopyToClipboard(object sender, System.Windows.Input.MouseButtonEventArgs e)
