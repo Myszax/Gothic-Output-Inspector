@@ -4,7 +4,7 @@ using WPFUI.Comparer;
 
 namespace WPFUI.Components;
 
-public partial class ColoredText
+public sealed class ColoredText
 {
     public bool Name { get; set; } = false;
     public bool OriginalText { get; set; } = false;
