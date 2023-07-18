@@ -2,24 +2,23 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace WPFUI.Converters
+namespace WPFUI.Converters;
+
+public sealed class MuteButtonConverter : IValueConverter
 {
-    public sealed class MuteButtonConverter : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is not Boolean muted)
-                return value;
+        if (value is not Boolean muted)
+            return value;
 
-            if (muted)
-                return "Solid_VolumeXmark";
+        if (muted)
+            return "Solid_VolumeXmark";
 
-            return "Solid_VolumeHigh";
-        }
+        return "Solid_VolumeHigh";
+    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
     }
 }
