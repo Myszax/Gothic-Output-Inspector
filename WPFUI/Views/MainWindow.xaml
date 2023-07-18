@@ -23,6 +23,7 @@
         <KeyBinding Key="A" Modifiers="Control" Command="{Binding SaveProjectAsCommand}" />
         <KeyBinding Key="I" Modifiers="Control" Command="{Binding ImportFileCommand}" />
         <KeyBinding Key="P" Modifiers="Control" Command="{Binding SetPathToAudioFilesCommand}" />
+        <KeyBinding Key="M" Modifiers="Control" Command="{Binding CompareOtherFileCommand}" />
     </Window.InputBindings>
 
 
@@ -89,6 +90,7 @@
                         <MenuItem Header="S_ave As..." Command="{Binding SaveProjectAsCommand}" InputGestureText="Ctrl + A" />
                         <Separator />
                         <MenuItem Header="_Import OU File" Command="{Binding ImportFileCommand}" InputGestureText="Ctrl + I" />
+                        <MenuItem Header="Co_mpare OU" Command="{Binding CompareOtherFileCommand}" InputGestureText="Ctrl + M" />
                         <Separator />
                         <MenuItem Header="_Exit" Command="{Binding ExitApplicationCommand}" InputGestureText="Alt + F4" />
                     </MenuItem>

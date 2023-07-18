@@ -35,6 +35,9 @@
             <converters:MuteButtonConverter x:Key="MuteButtonConverter" />
             <converters:VolumeConverter x:Key="VolumeConverter" />
             <converters:PercentageCoverageConverter x:Key="PercentageCoverageConverter" />
+            <converters:ComparisonResultTypeConverter x:Key="ComparisonResultTypeConverter" />
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter" NormalColor="White" MarkedColor="RoyalBlue" />
+            <converters:ComparisonResultTypeToVisibilityConverter x:Key="ComparisonResultTypeToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

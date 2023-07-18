@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Forms;
 using WPFUI.Components;
+using WPFUI.Enums;
+using WPFUI.Extensions;
 using WPFUI.Models;
 using WPFUI.NAudioWrapper;
 using WPFUI.NAudioWrapper.Enums;
@@ -27,15 +29,27 @@ public partial class MainWindowViewModel : ObservableObject
 {
     public RangeObservableCollection<Conversation> SelectedConversations { get; } = new();
     public ICollectionView ConversationCollection { get; set; }
+    public ICollectionView ConversationDiffCollection { get; set; }
     public List<EncodingMenuItem> Encodings { get; }
     public int LoadedConversationsCount => _conversationList.Count;
+    public int LoadedConversationsDiffCount => _conversationDiffList.Count;
     public int LoadedNPCsCount => ConversationCollection.Groups.Count;
     public int EditedConversationsCount => _conversationList.Where(x => x.IsEdited).Count();
     public int InspectedConversationsCount => _conversationList.Where(x => x.IsInspected).Count();
     public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
+    public int FilteredConversationsDiffCount => ConversationDiffCollection.Cast<object>().Count();
+    public int AddedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Added).Count();
+    public int ChangedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Changed).Count();
+    public int RemovedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Removed).Count();
+
+    [ObservableProperty]
+    private ColoredText _propertyColor = new();
 
     [ObservableProperty]
     private string _filterValue = string.Empty;
+
+    [ObservableProperty]
+    private string _filterValueCompareMode = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EditedConversationsCount))]
@@ -43,7 +57,13 @@ public partial class MainWindowViewModel : ObservableObject
     private Conversation _selectedConversation = new();
 
     [ObservableProperty]
+    private ConversationDiff _selectedConversationDiff = new();
+
+    [ObservableProperty]
     private Conversation? _selectedGridRow = new();
+
+    [ObservableProperty]
+    private ConversationDiff? _selectedGridRowCompareMode = new();
 
     [ObservableProperty]
     private double _currentAudioLength;
@@ -67,6 +87,9 @@ public partial class MainWindowViewModel : ObservableObject
     private bool _isMuted = false;
 
     [ObservableProperty]
+    private bool _isEnabledIgnoreInspected = true;
+
+    [ObservableProperty]
     private Encoding _selectedEncoding;
 
     [ObservableProperty]
@@ -77,6 +100,9 @@ public partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     private FilterType _selectedFilterType = FilterType.HideAll;
+
+    [ObservableProperty]
+    private FilterType _selectedFilterTypeCompareMode = FilterType.HideAll;
 
     [ObservableProperty]
     private bool _isEnabledFilterName = true;
@@ -94,15 +120,22 @@ public partial class MainWindowViewModel : ObservableObject
     private bool _isEnabledFilterIsInspected = true;
 
     [ObservableProperty]
+    private bool _isEnabledFilterCompareModeIsInspected = true;
+
+    [ObservableProperty]
     private string _pathToSaveFile = string.Empty;
 
     [ObservableProperty]
     private string _title = TITLE;
 
     [ObservableProperty]
+    private string _titleCompareMode = TITLE;
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveProjectCommand))]
     [NotifyCanExecuteChangedFor(nameof(SaveProjectAsCommand))]
     [NotifyCanExecuteChangedFor(nameof(SetPathToAudioFilesCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CompareOtherFileCommand))]
     private bool _isOuFileImported = false;
 
     [ObservableProperty]
@@ -112,6 +145,8 @@ public partial class MainWindowViewModel : ObservableObject
     private AudioPlayer? _audioPlayer;
 
     private readonly List<Conversation> _conversationList = new();
+
+    private List<ConversationDiff> _conversationDiffList = new();
 
     private List<Dialogue> _parsedDialogues = new();
 
@@ -159,10 +194,29 @@ public partial class MainWindowViewModel : ObservableObject
             e.Cancel = true;
     }
 
+    public void OnCompareWindowClosing(object? sender, CancelEventArgs e)
+    {
+        if (!_conversationDiffList.Any())
+            return; // don't have to do anything else, program will close itself because CancelEventArgs.Cancel is false
+
+        var result = ConversationDiffListNonEmpty();
+
+        if (result == System.Windows.MessageBoxResult.Yes)
+            e.Cancel = false;
+        else
+            e.Cancel = true;
+    }
+
     partial void OnFilterValueChanged(string value)
     {
         ConversationCollection.Refresh();
         OnPropertyChanged(nameof(FilteredConversationsCount));
+    }
+
+    partial void OnFilterValueCompareModeChanged(string value)
+    {
+        ConversationDiffCollection.Refresh();
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
     }
 
     partial void OnSelectedGridRowChanged(Conversation? value)
@@ -171,6 +225,29 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         SelectedConversation = value;
+    }
+
+    partial void OnSelectedGridRowCompareModeChanged(ConversationDiff? value)
+    {
+        if (value is null)
+            return;
+
+        SelectedConversationDiff = value;
+    }
+
+    partial void OnSelectedConversationDiffChanged(ConversationDiff value)
+    {
+        if (value.Diff is null)
+            return;
+
+        string? soundFileName;
+        if (value.Diff.Type == ComparisonResultType.Removed)
+            soundFileName = value.Diff.Original?.Sound;
+        else
+            soundFileName = value.Diff.Compared?.Sound;
+
+        CurrentlySelectedAudioName = PathToAudioFiles + (soundFileName ?? string.Empty);
+        PropertyColor = ColoredText.Create(value.Diff.Variances);
     }
 
     partial void OnSelectedConversationChanging(Conversation value) => _previousNpcName = SelectedConversation.NpcName;
@@ -223,6 +300,31 @@ public partial class MainWindowViewModel : ObservableObject
 
         // this check prevents returning false if every search checkbox is unchecked
         return !IsEnabledFilterName && !IsEnabledFilterOriginalText && !IsEnabledFilterEditedText;
+    }
+
+    private bool FilterCollectionCompareMode(object obj)
+    {
+        if (obj is null || obj is not ConversationDiff conversationDiff)
+            return false;
+
+        if (conversationDiff.Diff.Compared is not null)
+        {
+            if (SelectedFilterTypeCompareMode == FilterType.HideAll)
+            {
+                if (IsEnabledFilterCompareModeIsInspected && conversationDiff.Diff.Variances.Count == 1 && conversationDiff.Diff.Variances.ContainsKey("IsInspected"))
+                    return false;
+            }
+            else
+            {
+                if (IsEnabledFilterCompareModeIsInspected && conversationDiff.Diff.Variances.ContainsKey("IsInspected"))
+                    return false;
+            }
+        }
+
+        if (FilterValueCompareMode.Length > 0 && !conversationDiff.Name.Contains(FilterValueCompareMode, SelectedComparisonMethod))
+            return false;
+
+        return true;
     }
 
     private void SetGroupingAndSortingOnConversationCollection()
@@ -305,6 +407,16 @@ public partial class MainWindowViewModel : ObservableObject
         OnPropertyChanged(nameof(FilteredConversationsCount));
     }
 
+    [RelayCommand]
+    private void RefreshConversationDiffCollection(bool checkForEmptyFilterValue = true)
+    {
+        if (checkForEmptyFilterValue && string.IsNullOrEmpty(FilterValueCompareMode))
+            return;
+
+        ConversationDiffCollection.Refresh();
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
+    }
+
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
     private void SetPathToAudioFiles()
     {
@@ -339,6 +451,59 @@ public partial class MainWindowViewModel : ObservableObject
 
         value.IsChecked = true;
         SelectedEncoding = value.Encoding;
+    }
+
+    [RelayCommand(CanExecute = nameof(IsOuFileImported))]
+    private void CompareOtherFile()
+    {
+        var odf = new OpenFileDialog()
+        {
+            Filter = "Supported files|*.bin;*.goi",
+            Title = "Open file to compare"
+        };
+
+        if (odf.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(odf.FileName))
+        {
+            odf.Dispose();
+            return;
+        }
+
+        var loadedConversations = new HashSet<Conversation>();
+        var filePath = odf.FileName;
+        try
+        {
+            loadedConversations = OpenFileToCompare(filePath);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.Message, "Open Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
+        finally
+        {
+            odf.Dispose();
+        }
+
+        _conversationDiffList = _conversationList.CompareTo(loadedConversations, x => x.Name)
+            .Select(x => new ConversationDiff() { Diff = x, Name = x.Original?.Name ?? x.Compared.Name }).ToList();
+
+        FilterValueCompareMode = string.Empty;
+        ConversationDiffCollection = CollectionViewSource.GetDefaultView(_conversationDiffList);
+        ConversationDiffCollection.Filter = FilterCollectionCompareMode;
+        OnPropertyChanged(nameof(LoadedConversationsDiffCount));
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
+
+        // those properties should be reset before `compareWindow.ShowDialog()`
+        // to avoid strange bugs when SelectedConversation is selected on Grid and then edited via Compare Mode
+        SelectedConversation = new();
+        SelectedGridRow = null;
+
+        TitleCompareMode = TITLE + " - " + filePath;
+        var compareWindow = new CompareWindow(this);
+        compareWindow.ShowDialog();
+        compareWindow = null;
+
+        CleanUpOnCompareWindowClose();
     }
 
     [RelayCommand]
@@ -529,6 +694,55 @@ public partial class MainWindowViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void AcceptComparedChanges()
+    {
+        if (SelectedConversationDiff.Diff is null)
+            return;
+
+        switch (SelectedConversationDiff.Diff.Type)
+        {
+            case ComparisonResultType.Removed:
+                if (SelectedConversationDiff.Diff.Original is not null)
+                    _conversationList.Remove(SelectedConversationDiff.Diff.Original);
+                break;
+            case ComparisonResultType.Added:
+                if (SelectedConversationDiff.Diff.Compared is not null)
+                    _conversationList.Add(SelectedConversationDiff.Diff.Compared);
+                break;
+            case ComparisonResultType.Changed:
+                if (IsEnabledIgnoreInspected && SelectedConversationDiff.Diff.Variances.ContainsKey("IsInspected"))
+                    SelectedConversationDiff.Diff.Variances.Remove("IsInspected");
+
+                SelectedConversationDiff.Diff.Compared.TransferTo(SelectedConversationDiff.Diff.Original, SelectedConversationDiff.Diff.Variances);
+                break;
+        }
+
+        SelectNextConversationDiffGridItem();
+        ConversationDiffCollection.Refresh();
+        ProjectFileChanged();
+        OnPropertyChanged(nameof(LoadedConversationsDiffCount));
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
+        OnPropertyChanged(nameof(AddedConversationsDiffCount));
+        OnPropertyChanged(nameof(ChangedConversationsDiffCount));
+        OnPropertyChanged(nameof(RemovedConversationsDiffCount));
+    }
+
+    [RelayCommand]
+    private void DiscardComparedChanges()
+    {
+        if (SelectedConversationDiff.Diff is null)
+            return;
+
+        SelectNextConversationDiffGridItem();
+        ConversationDiffCollection.Refresh();
+        OnPropertyChanged(nameof(LoadedConversationsDiffCount));
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
+        OnPropertyChanged(nameof(AddedConversationsDiffCount));
+        OnPropertyChanged(nameof(ChangedConversationsDiffCount));
+        OnPropertyChanged(nameof(RemovedConversationsDiffCount));
+    }
+
+    [RelayCommand]
     private void StartPlayback()
     {
         if (string.IsNullOrEmpty(CurrentlySelectedAudioName))
@@ -670,6 +884,66 @@ public partial class MainWindowViewModel : ObservableObject
         PathToSaveFile = path;
         Title = TITLE + " - " + path;
         return true;
+    }
+
+    private void SelectNextConversationDiffGridItem()
+    {
+        var index = _conversationDiffList.IndexOf(SelectedConversationDiff);
+        _conversationDiffList.Remove(SelectedConversationDiff);
+
+        var count = _conversationDiffList.Count;
+
+        if (count == 0)
+        {
+            SelectedGridRowCompareMode = null;
+            SelectedConversationDiff = new();
+        }
+        else if (index < _conversationDiffList.Count)
+            SelectedGridRowCompareMode = _conversationDiffList[index];
+        else
+            SelectedGridRowCompareMode = _conversationDiffList.Last();
+    }
+
+    private HashSet<Conversation> OpenFileToCompare(string fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+            throw new Exception("File name is NULL or WhiteSpace");
+
+        var loadedList = Enumerable.Empty<Conversation>();
+
+        if (fileName.EndsWith(".goi", StringComparison.OrdinalIgnoreCase))
+        {
+            var saveFile = File.ReadAllText(fileName);
+            var projectFile = JsonSerializer.Deserialize<SaveFile>(saveFile)
+                ?? throw new Exception("Error while reading save file. NULL");
+
+            loadedList = projectFile.Conversations;
+        }
+        else if (fileName.EndsWith(".bin", StringComparison.OrdinalIgnoreCase))
+        {
+            var parser = new Reader(fileName, SelectedEncoding);
+            var parsedDialogues = parser.Parse(false);
+
+            loadedList = parsedDialogues.Select(Conversation.CreateConversationFromDialogue);
+        }
+        else
+            throw new Exception($"File '{fileName}' cannot be opened.");
+
+        return loadedList.ToHashSet();
+    }
+
+    private void CleanUpOnCompareWindowClose()
+    {
+        SelectedConversationDiff = new();
+        SelectedGridRowCompareMode = null;
+        FillLowerDataGrid();
+        ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
+        OnPropertyChanged(nameof(LoadedConversationsCount));
+        ConversationCollection.Refresh();
+        OnPropertyChanged(nameof(LoadedNPCsCount));
+        OnPropertyChanged(nameof(FilteredConversationsCount));
+        OnPropertyChanged(nameof(InspectedConversationsCount));
+        OnPropertyChanged(nameof(EditedConversationsCount));
     }
 
     private void MuteSound()

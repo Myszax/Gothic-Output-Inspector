@@ -1,0 +1,406 @@
+﻿<Window x:Class="WPFUI.CompareWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:WPFUI.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
+        xmlns:cc = "clr-namespace:WPFUI.Controls"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:WPFUI" xmlns:fa="http://schemas.fontawesome.com/icons/svg"
+        xmlns:components="clr-namespace:WPFUI.Components"
+        mc:Ignorable="d"
+        FontSize="16"
+        Title="{Binding TitleCompareMode}" Width="1280" Height="720" 
+        ui:WindowHelper.UseModernWindowStyle="True">
+
+
+    <Window.Resources>
+        <CollectionViewSource Source="{Binding SelectedConversations}" x:Key="LowerDataGridCVS">
+            <CollectionViewSource.GroupDescriptions>
+                <dat:PropertyGroupDescription PropertyName="Context" />
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Number" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+        <!-- Label that enable using `_` at the beginning -->
+        <Style x:Key="LabelDisabledAccessKey" TargetType="{x:Type Label}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Label}">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                RecognizesAccessKey="False"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Background="#FF27282C">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="6*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="4*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+
+        <Grid Grid.Row="0" Grid.ColumnSpan="10" Background="#AF000000">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                FontSize="21"  Foreground="DarkCyan"
+                Padding="0 0 0 5" FontWeight="Heavy">Compare Mode</TextBlock>
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.ColumnSpan="10" Background="#FF18191B">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="4*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+
+                <ui:AutoSuggestBox Grid.Column="0" x:Name="ConversationDiffCollectionFilter"
+                    Text="{Binding FilterValueCompareMode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, Delay=250}"
+                    PlaceholderText="Search..." QueryIcon="Find" />
+                <DockPanel Grid.Column="1" Grid.ColumnSpan="2" LastChildFill="False">
+                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2 0 2 0">
+
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="3 0 3 0">
+                            <TextBlock VerticalAlignment="Center" Text="Search Mode:" />
+                            <!--TODO: Set width by longest item length. Here is workaround for this with Grid & ItemsControl-->
+                            <Grid HorizontalAlignment="Left">
+                                <ItemsControl ItemsSource="{components:BindingEnums sys:StringComparison}" Height="0" Margin="15 0" Width="190" />
+                                <ComboBox ItemsSource="{components:BindingEnums sys:StringComparison}" SelectedItem="{Binding SelectedComparisonMethod}" VerticalAlignment="Bottom">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="SelectionChanged">
+                                            <i:InvokeCommandAction Command="{Binding RefreshConversationDiffCollectionCommand}" CommandParameter="{components:True}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </ComboBox>
+                            </Grid>
+                        </StackPanel>
+
+                    </StackPanel>
+
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 2 0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="3 0 3 0">
+                            <TextBlock VerticalAlignment="Center" Text="Filter Mode:" />
+                            <!--TODO: Set width by longest item length-->
+                            <ComboBox ItemsSource="{components:BindingEnums components:FilterType}" SelectedItem="{Binding SelectedFilterTypeCompareMode}" Width="110">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="SelectionChanged">
+                                        <i:InvokeCommandAction Command="{Binding RefreshConversationDiffCollectionCommand}" CommandParameter="{components:False}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </ComboBox>
+                        </StackPanel>
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsEnabledFilterCompareModeIsInspected}"
+                            Command="{Binding RefreshConversationDiffCollectionCommand}" CommandParameter="{components:False}"
+                            VerticalContentAlignment="Center" Content="Inspected" />
+                    </StackPanel>
+
+                </DockPanel>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="0" Grid.RowSpan="2">
+            <cc:DataGrid x:Name="DataGrid_Upper" Grid.Row="2"
+                ItemsSource="{Binding ConversationDiffCollection}"
+                SelectionMode="Single" IsReadOnly="True"
+                HeadersVisibility="Column" AutoGenerateColumns="False"                         
+                CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
+                CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
+                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                SelectedItem="{Binding SelectedGridRowCompareMode}"
+                VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Type" Binding="{Binding Diff.Type}" />
+                </DataGrid.Columns>
+
+                <DataGrid.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <Label Style="{StaticResource LabelDisabledAccessKey}"
+                                    Content="{Binding Name}"
+                                    Foreground="DarkOrange"
+                                    FontWeight="Bold" />
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+
+            </cc:DataGrid>
+        </Grid>
+
+
+        <Grid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0 6"
+                    FontWeight="Bold" Foreground="DarkOrange">Original</TextBlock>
+                <ScrollViewer BorderThickness="1 0 1 0" BorderBrush="Black">
+                    <StackPanel Margin="5 5 5 5">
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Type, Converter={StaticResource BoolToColorConverter}}">Type</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Type}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Name, Converter={StaticResource BoolToColorConverter}}">Name</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Name}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Sound, Converter={StaticResource BoolToColorConverter}}">Sound</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Sound}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.NpcName, Converter={StaticResource BoolToColorConverter}}">NPC Name</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.NpcName}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Context, Converter={StaticResource BoolToColorConverter}}">Context</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Context}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Voice, Converter={StaticResource BoolToColorConverter}}">Voice</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Voice}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Number, Converter={StaticResource BoolToColorConverter}}">Number</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Number}" />
+                        </WrapPanel>
+                        <DockPanel LastChildFill="False">
+                            <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
+                                <TextBlock VerticalAlignment="Center" Text="Inspected" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}" />
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsInspected}" />
+                            </WrapPanel>
+                            <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
+                                <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Edited, Converter={StaticResource BoolToColorConverter}}">Edited</TextBlock>
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsEdited}" />
+                            </WrapPanel>
+                        </DockPanel>
+                        <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.OriginalText, Converter={StaticResource BoolToColorConverter}}">Original Text</TextBlock>
+                            <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
+                             IsReadOnly="True"
+                             Text="{Binding SelectedConversationDiff.Diff.Original.OriginalText}" />
+                        </StackPanel>
+                        <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.EditedText, Converter={StaticResource BoolToColorConverter}}">Edited Text</TextBlock>
+                            <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
+                             IsReadOnly="True"
+                             SpellCheck.IsEnabled="True" Language="pl-PL"
+                             Text="{Binding SelectedConversationDiff.Diff.Original.EditedText, UpdateSourceTrigger=PropertyChanged}">
+                            </TextBox>
+                        </StackPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="2" Grid.RowSpan="2">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Button HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Command="{Binding DiscardComparedChangesCommand}">
+                    <fa:ImageAwesome Icon="Solid_Xmark" Height="20" PrimaryColor="DarkCyan" />
+                </Button>
+                <TextBlock Margin="0 0 0 10" Text="Discard" HorizontalAlignment="Center" />
+                
+                <Button HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Command="{Binding AcceptComparedChangesCommand}">
+                    <fa:ImageAwesome Icon="Solid_ArrowLeft" Height="20" PrimaryColor="DarkCyan" />
+                </Button>
+                <TextBlock Text="{Binding SelectedConversationDiff.Diff.Type, Converter={StaticResource ComparisonResultTypeConverter}, FallbackValue=-}"
+                    HorizontalAlignment="Center" />
+                
+                <CheckBox Visibility="{Binding SelectedConversationDiff.Diff.Type, Converter={StaticResource ComparisonResultTypeToVisibilityConverter}, FallbackValue=Hidden}"
+                    Margin="0 15 0 0" FontSize="10" Content="Ignore Inspected" IsChecked="{Binding IsEnabledIgnoreInspected}" />
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="3" x:Name="DetailedPanel" Grid.RowSpan="2">
+
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0 6"
+                    FontWeight="Bold" Foreground="DarkOrange">Imported</TextBlock>
+                <ScrollViewer BorderThickness="1 0 0 0" BorderBrush="Black">
+                    <StackPanel Margin="5 5 5 5">
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Type, Converter={StaticResource BoolToColorConverter}}">Type</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Type}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Name, Converter={StaticResource BoolToColorConverter}}">Name</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Name}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Sound, Converter={StaticResource BoolToColorConverter}}">Sound</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Sound}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.NpcName, Converter={StaticResource BoolToColorConverter}}">NPC Name</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.NpcName}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Context, Converter={StaticResource BoolToColorConverter}}">Context</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Context}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Voice, Converter={StaticResource BoolToColorConverter}}">Voice</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Voice}" />
+                        </WrapPanel>
+                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
+                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Number, Converter={StaticResource BoolToColorConverter}}">Number</TextBlock>
+                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Number}" />
+                        </WrapPanel>
+                        <DockPanel LastChildFill="False">
+                            <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
+                                <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}">Inspected</TextBlock>
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsInspected}" />
+                            </WrapPanel>
+                            <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
+                                <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Edited, Converter={StaticResource BoolToColorConverter}}">Edited</TextBlock>
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsEdited}" />
+                            </WrapPanel>
+                        </DockPanel>
+                        <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.OriginalText, Converter={StaticResource BoolToColorConverter}}">Original Text</TextBlock>
+                            <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
+                             IsReadOnly="True"
+                             Text="{Binding SelectedConversationDiff.Diff.Compared.OriginalText}" />
+                        </StackPanel>
+                        <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.EditedText, Converter={StaticResource BoolToColorConverter}}">Edited Text</TextBlock>
+                            <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
+                             SpellCheck.IsEnabled="True" Language="pl-PL"
+                             IsReadOnly="True"
+                             Text="{Binding SelectedConversationDiff.Diff.Compared.EditedText, UpdateSourceTrigger=PropertyChanged}">
+                            </TextBox>
+                        </StackPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Grid>
+
+        <Grid Grid.Row="4" Grid.ColumnSpan="10" Background="#FF18191B">
+            <StackPanel Margin="5">
+                <DockPanel LastChildFill="False">
+                    <TextBlock DockPanel.Dock="Left" Text="Audio Path:" />
+                    <TextBlock DockPanel.Dock="Left" Margin="3 0 0 0" Text="{Binding CurrentlyPlayingAudioName}" />
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding CurrentAudioLength, StringFormat=N3}" />
+                    <TextBlock DockPanel.Dock="Right" Margin="3 0 3 0" Text=":" />
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding CurrentAudioPosition, StringFormat=N3}" />
+                </DockPanel>
+
+                <DockPanel LastChildFill="True" Margin="0 3 0 0">
+                    <Slider x:Name="SeekbarControl" Minimum="0" Maximum="{Binding CurrentAudioLength, Mode=TwoWay}" Value="{Binding CurrentAudioPosition, Mode=TwoWay}"
+                            IsMoveToPointEnabled="True" SmallChange="0.01" />
+                </DockPanel>
+
+                <DockPanel LastChildFill="True" Margin="0 3 0 0">
+                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Text="Volume:" />
+                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5 0 0 0" Width="53" Text="{Binding CurrentVolume, Converter={StaticResource VolumeConverter}}" />
+                    <Button DockPanel.Dock="Left" Margin="5 0 0 0" Command="{Binding ToggleMuteCommand}">
+                        <fa:ImageAwesome Icon="{Binding IsMuted, Converter={StaticResource MuteButtonConverter}}" Height="20" Width="20" PrimaryColor="DarkCyan" />
+                    </Button>
+                    <Slider x:Name="VolumeControl" DockPanel.Dock="Right" Margin="5 0 0 0" Minimum="0" Maximum="1" Value="{Binding CurrentVolume, Mode=TwoWay}"
+                        VerticalAlignment="Center" IsMoveToPointEnabled="True">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="ValueChanged">
+                                <i:InvokeCommandAction Command="{Binding VolumeControlValueChangedCommand}"></i:InvokeCommandAction>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Slider>
+                </DockPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Command="{Binding StartPlaybackCommand}">
+                        <fa:ImageAwesome Icon="{Binding StateOfPlayback, Converter={StaticResource PlaybackStateConverter}}" Height="20" PrimaryColor="DarkCyan" />
+                    </Button>
+                    <Separator Margin="3 0 3 0"/>
+                    <Button Command="{Binding StopPlaybackCommand}">
+                        <fa:ImageAwesome Icon="Solid_Stop" Height="20" PrimaryColor="DarkCyan" />
+                    </Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="5" Grid.ColumnSpan="10" Background="#AF000000">
+            <Grid Margin="1 0 1 2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Margin="3 0 0 0" Text="{Binding FilteredConversationsDiffCount, StringFormat=Filtered: {0:N0}/}" />
+                    <TextBlock Text="{Binding LoadedConversationsDiffCount, StringFormat={}{0:N0}}" />
+                </StackPanel>
+                <TextBlock Grid.Column="1" HorizontalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource PercentageCoverageConverter}" StringFormat="Changed: {0}">
+                            <Binding Path="ChangedConversationsDiffCount" />
+                            <Binding Path="LoadedConversationsDiffCount" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Grid.Column="2" HorizontalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource PercentageCoverageConverter}" StringFormat="Added: {0}">
+                            <Binding Path="AddedConversationsDiffCount" />
+                            <Binding Path="LoadedConversationsDiffCount" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <TextBlock Margin="0 0 3 0" Grid.Column="3" HorizontalAlignment="Right">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource PercentageCoverageConverter}" StringFormat="Removed: {0}">
+                            <Binding Path="RemovedConversationsDiffCount" />
+                            <Binding Path="LoadedConversationsDiffCount" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </Grid>
+        </Grid>
+
+    </Grid>
+</Window>
