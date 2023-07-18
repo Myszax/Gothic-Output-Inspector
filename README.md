@@ -12,7 +12,11 @@ Now you will be able to save project.
 ## Work in progress
 There is still much to do :)
 - Add dictionaries (currently only Polish works)
-- Compare different **OU** files / **.goi** projects
+- ~~Compare different **OU** files / **.goi** projects~~ https://github.com/Myszax/Gothic-Output-Inspector/pull/2
 - More export options
 ## Preview
+Main View
 ![screenshot](https://github.com/Myszax/Gothic-Output-Inspector/raw/master/preview.png)
+
+Compare Mode
+![screenshot](https://user-images.githubusercontent.com/6831024/254318912-3c7b6a1e-5860-46da-b07e-3a98f02bd028.png)
