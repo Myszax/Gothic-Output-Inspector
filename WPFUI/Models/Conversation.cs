@@ -43,8 +43,7 @@ public partial class Conversation : ObservableObject, IEquatable<Conversation>
 
     public override bool Equals(object? obj) => obj is not null && Equals(obj as Conversation);
 
-    public override int GetHashCode() =>
-        (Name, OriginalText, EditedText, Sound, Context, NpcName, Type, Voice, Number, IsEdited, IsInspected).GetHashCode();
+    public override int GetHashCode() => Name.GetHashCode();
 
     public bool Equals(Conversation? other)
     {
