@@ -9,7 +9,7 @@
 		<PublishSingleFile>true</PublishSingleFile>
 		<AssemblyName>Gothic Output Inspector</AssemblyName>
 		<ApplicationIcon>Resources\goi.ico</ApplicationIcon>
-		<FileVersion>1.1.0.0</FileVersion>
+		<FileVersion>1.1.1.0</FileVersion>
 		<VersionPrefix>$(FileVersion)</VersionPrefix>
 	</PropertyGroup>
 
