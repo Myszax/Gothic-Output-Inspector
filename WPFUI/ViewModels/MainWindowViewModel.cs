@@ -357,6 +357,8 @@ public partial class MainWindowViewModel : ObservableObject
         ConversationCollection.Refresh();
         OnPropertyChanged(nameof(LoadedNPCsCount));
         OnPropertyChanged(nameof(FilteredConversationsCount));
+        OnPropertyChanged(nameof(EditedConversationsCount));
+        OnPropertyChanged(nameof(InspectedConversationsCount));
         _projectWasEdited = false;
     }
 
