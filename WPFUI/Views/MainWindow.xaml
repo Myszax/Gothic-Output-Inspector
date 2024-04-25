@@ -200,9 +200,8 @@
                     <DataGridTemplateColumn Header="Audio">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
-                                    AncestorType={x:Type Window}},
-                                    Path=DataContext.StartPlaybackCommand}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Button Command="{Binding Path=DataContext.StartPlaybackCommand, Source={x:Reference DataGrid_Upper}}"
+                                    VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <fa:ImageAwesome Icon="Solid_Play" Height="12" Width="12" PrimaryColor="White" />
                                 </Button>
                             </DataTemplate>
@@ -214,7 +213,7 @@
                             <DataTemplate>
                                 <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                                     IsChecked="{Binding IsInspected, UpdateSourceTrigger=PropertyChanged}"
-                                    Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ProjectFileChangedCommand}" />
+                                    Command="{Binding Path=DataContext.ProjectFileChangedCommand, Source={x:Reference DataGrid_Upper}}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -297,9 +296,8 @@
                     <DataGridTemplateColumn Header="Audio">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
-                                    AncestorType={x:Type Window}},
-                                    Path=DataContext.StartPlaybackCommand}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Button Command="{Binding Path=DataContext.StartPlaybackCommand, Source={x:Reference DataGrid_Lower}}"
+                                    VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <fa:ImageAwesome Icon="Solid_Play" Height="12" Width="12" PrimaryColor="White" />
                                 </Button>
                             </DataTemplate>
@@ -311,7 +309,7 @@
                             <DataTemplate>
                                 <CheckBox VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                                     IsChecked="{Binding IsInspected, UpdateSourceTrigger=PropertyChanged}"
-                                    Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ProjectFileChangedCommand}" />
+                                    Command="{Binding Path=DataContext.ProjectFileChangedCommand, Source={x:Reference DataGrid_Lower}}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
