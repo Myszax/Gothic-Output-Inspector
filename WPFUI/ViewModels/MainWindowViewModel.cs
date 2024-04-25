@@ -443,6 +443,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var edited = !SelectedConversation.EditedText.Equals(SelectedConversation.OriginalText);
         SelectedConversation.IsEdited = edited;
+        OnPropertyChanged(nameof(EditedConversationsCount));
 
         if (edited)
             ProjectFileChanged();
@@ -675,6 +676,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void ProjectFileChanged()
     {
+        OnPropertyChanged(nameof(InspectedConversationsCount));        
         if (_projectWasEdited)
             return;
 
