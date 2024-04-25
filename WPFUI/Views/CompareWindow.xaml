@@ -239,16 +239,16 @@
                     <fa:ImageAwesome Icon="Solid_Xmark" Height="20" PrimaryColor="DarkCyan" />
                 </Button>
                 <TextBlock Margin="0 0 0 10" Text="Discard" HorizontalAlignment="Center" />
-                
+
                 <Button HorizontalAlignment="Center" VerticalAlignment="Center"
                     Command="{Binding AcceptComparedChangesCommand}">
                     <fa:ImageAwesome Icon="Solid_ArrowLeft" Height="20" PrimaryColor="DarkCyan" />
                 </Button>
                 <TextBlock Text="{Binding SelectedConversationDiff.Diff.Type, Converter={StaticResource ComparisonResultTypeConverter}, FallbackValue=-}"
                     HorizontalAlignment="Center" />
-                
+
                 <CheckBox Visibility="{Binding SelectedConversationDiff.Diff.Type, Converter={StaticResource ComparisonResultTypeToVisibilityConverter}, FallbackValue=Hidden}"
-                    Margin="0 15 0 0" FontSize="10" Content="Ignore Inspected" IsChecked="{Binding IsEnabledIgnoreInspectedWhileTransfer}" />
+                    Margin="0 15 0 0" FontSize="10" Content="Force Check Inspected" IsChecked="{Binding IsEnabledIgnoreInspectedWhileTransfer}" />
             </StackPanel>
         </Grid>
 

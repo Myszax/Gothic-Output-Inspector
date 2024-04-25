@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Forms;
+using WPFUI.Comparer;
 using WPFUI.Components;
 using WPFUI.Enums;
 using WPFUI.Extensions;
@@ -722,8 +723,19 @@ public partial class MainWindowViewModel : ObservableObject
                     _conversationList.Add(SelectedConversationDiff.Diff.Compared);
                 break;
             case ComparisonResultType.Changed:
-                if (IsEnabledIgnoreInspectedWhileTransfer && SelectedConversationDiff.Diff.Variances.ContainsKey("IsInspected"))
-                    SelectedConversationDiff.Diff.Variances.Remove("IsInspected");
+                if (IsEnabledIgnoreInspectedWhileTransfer)
+                {
+                    if (!SelectedConversationDiff.Diff.Variances.TryGetValue(nameof(Conversation.IsInspected), out ComparisonVariance? value))
+                    {
+                        SelectedConversationDiff.Diff.Variances
+                            .Add(nameof(Conversation.IsInspected), new ComparisonVariance { PropertyName = nameof(Conversation.IsInspected), ValA = true, ValB = true });
+                    }
+                    else
+                    {
+                        value.ValB = true;
+                    }
+                    SelectedConversationDiff.Diff.Compared!.IsInspected = true;
+                }
 
                 SelectedConversationDiff.Diff.Compared.TransferTo(SelectedConversationDiff.Diff.Original, SelectedConversationDiff.Diff.Variances);
                 break;
