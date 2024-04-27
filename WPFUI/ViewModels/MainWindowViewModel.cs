@@ -215,6 +215,13 @@ public partial class MainWindowViewModel : ObservableObject
     {
         ConversationCollection.Refresh();
         OnPropertyChanged(nameof(FilteredConversationsCount));
+
+        if (FilteredConversationsCount > 0)
+        {
+            var enumerator = ConversationCollection.GetEnumerator();
+            if (enumerator.MoveNext())
+                SelectedGridRow = (Conversation)enumerator.Current;
+        }
     }
 
     partial void OnFilterValueCompareModeChanged(string value)
