@@ -275,7 +275,7 @@
                 CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True"
                 CanUserResizeColumns="True" CanUserResizeRows="True" CanUserSortColumns="True"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
-                SelectedItem="{Binding SelectedGridRow}"
+                SelectedItem="{Binding SelectedLowerGridRow}"
                 VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling">
 

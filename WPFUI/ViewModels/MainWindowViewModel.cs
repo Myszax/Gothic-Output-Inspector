@@ -64,6 +64,9 @@ public partial class MainWindowViewModel : ObservableObject
     private Conversation? _selectedGridRow = new();
 
     [ObservableProperty]
+    private Conversation? _selectedLowerGridRow = new();
+
+    [ObservableProperty]
     private ConversationDiff? _selectedGridRowCompareMode = new();
 
     [ObservableProperty]
@@ -228,6 +231,14 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedConversation = value;
     }
 
+    partial void OnSelectedLowerGridRowChanged(Conversation? value)
+    {
+        if (value is null)
+            return;
+
+        SelectedGridRow = value;
+    }
+
     partial void OnSelectedGridRowCompareModeChanged(ConversationDiff? value)
     {
         if (value is null)
@@ -257,6 +268,11 @@ public partial class MainWindowViewModel : ObservableObject
     {
         CurrentlySelectedAudioName = PathToAudioFiles + SelectedConversation.Sound;
         FillLowerDataGrid();
+
+        if (!ConversationCollection.Cast<Conversation>().Contains(value))
+            SelectedGridRow = null;
+
+        SelectedLowerGridRow = value;
     }
 
     partial void OnPathToAudioFilesChanged(string value) => CurrentlySelectedAudioName = value + SelectedConversation.Sound;
