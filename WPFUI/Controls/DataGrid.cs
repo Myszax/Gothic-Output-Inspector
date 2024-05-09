@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Automation.Peers;
+using System.Windows.Controls;
 
 namespace WPFUI.Controls;
 
@@ -17,6 +18,19 @@ public sealed class DataGrid : System.Windows.Controls.DataGrid
     /// Turn off UI Automation
     /// </summary>
     protected override AutomationPeer OnCreateAutomationPeer() => new CustomDataGridExAutomationPeer(this);
+
+    protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+    {
+        var dataGrid = e.Source as DataGrid;
+
+        if (dataGrid is not null && dataGrid.SelectedItem is not null)
+        {
+            dataGrid.ScrollIntoView(dataGrid.SelectedItem);
+            dataGrid.UpdateLayout();
+        }
+
+        base.OnSelectionChanged(e);
+    }
 }
 
 public sealed class CustomDataGridExAutomationPeer : FrameworkElementAutomationPeer
