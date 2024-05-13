@@ -20,7 +20,7 @@ public sealed class PercentageCoverageConverter : IMultiValueConverter
         var currentAmount = (int)values[0];
         var percentageValue = decimal.Divide(currentAmount, totalAmount) * 100;
 
-        return $"{currentAmount}({percentageValue:N2}%)";
+        return string.Create(CultureInfo.InvariantCulture, $"{currentAmount:N0} ({percentageValue:N2}%)");
     }
 
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
