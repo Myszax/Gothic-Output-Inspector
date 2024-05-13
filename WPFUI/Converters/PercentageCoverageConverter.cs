@@ -8,7 +8,7 @@ public sealed class PercentageCoverageConverter : IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        string zero = $"0({0:N2})%";
+        var zero = $"0 ({0:N2})%";
 
         if (values.Length != 2 || values[0] is not int || values[1] is not int)
             return zero;
