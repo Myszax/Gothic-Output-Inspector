@@ -700,7 +700,7 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand]
     private void ProjectFileChanged()
     {
-        OnPropertyChanged(nameof(InspectedConversationsCount));        
+        OnPropertyChanged(nameof(InspectedConversationsCount));
         if (_projectWasEdited)
             return;
 
@@ -935,20 +935,17 @@ public partial class MainWindowViewModel : ObservableObject
 
     private void SelectNextConversationDiffGridItem()
     {
-        var index = _conversationDiffList.IndexOf(SelectedConversationDiff);
         _conversationDiffList.Remove(SelectedConversationDiff);
 
-        var count = _conversationDiffList.Count;
-
-        if (count == 0)
+        if (FilteredConversationsDiffCount > 0)
         {
-            SelectedGridRowCompareMode = null;
-            SelectedConversationDiff = new();
+            if (FilteredConversationsDiffCount == ConversationDiffCollection.CurrentPosition + 1)
+                ConversationDiffCollection.MoveCurrentToPrevious();
+            else
+                ConversationDiffCollection.MoveCurrentToNext();
         }
-        else if (index < _conversationDiffList.Count)
-            SelectedGridRowCompareMode = _conversationDiffList[index];
         else
-            SelectedGridRowCompareMode = _conversationDiffList.Last();
+            SelectedConversationDiff = new();
     }
 
     private HashSet<Conversation> OpenFileToCompare(string fileName)

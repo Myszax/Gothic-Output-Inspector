@@ -142,7 +142,8 @@
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
                 SelectedItem="{Binding SelectedGridRowCompareMode}"
                 VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
-                VirtualizingStackPanel.VirtualizationMode="Recycling">
+                VirtualizingStackPanel.VirtualizationMode="Recycling"
+                IsSynchronizedWithCurrentItem="True">
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
