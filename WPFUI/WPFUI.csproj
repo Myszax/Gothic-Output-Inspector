@@ -1,38 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net7.0-windows</TargetFramework>
-		<Nullable>enable</Nullable>
-		<UseWPF>true</UseWPF>
-		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-		<PublishSingleFile>true</PublishSingleFile>
-		<AssemblyName>Gothic Output Inspector</AssemblyName>
-		<ApplicationIcon>Resources\goi.ico</ApplicationIcon>
-		<FileVersion>1.1.1.0</FileVersion>
-		<VersionPrefix>$(FileVersion)</VersionPrefix>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <Content Include="Resources\goi.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-		<PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-		<PackageReference Include="ModernWpfUI" Version="0.9.6" />
-		<PackageReference Include="NAudio" Version="2.1.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Parser\Parser.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Update="Views\CompareWindow.xaml">
-	    <SubType>Designer</SubType>
-	  </Page>
-	</ItemGroup>
-
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <PublishSingleFile>true</PublishSingleFile>
+    <AssemblyName>Gothic Output Inspector</AssemblyName>
+    <ApplicationIcon>Resources\goi.ico</ApplicationIcon>
+    <FileVersion>1.1.2.0</FileVersion>
+    <VersionPrefix>$(FileVersion)</VersionPrefix>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Resources\goi.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="FontAwesome6.Svg" Version="2.5.1" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.77" />
+    <PackageReference Include="ModernWpfUI" Version="0.9.6" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Parser\Parser.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Views\CompareWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
 </Project>
