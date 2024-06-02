@@ -4,7 +4,6 @@
              xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:local="clr-namespace:WPFUI"
              xmlns:cc = "clr-namespace:WPFUI.Controls"
-             StartupUri="Views\MainWindow.xaml"
              xmlns:converters="clr-namespace:WPFUI.Converters">
     <Application.Resources>
         <ResourceDictionary>

@@ -185,17 +185,19 @@ public partial class MainWindowViewModel : ObservableObject
         refreshAudioPosition.Start();
     }
 
-    public void OnWindowClosing(object? sender, CancelEventArgs e)
+    public bool CanCloseWindow()
     {
         if (!_projectWasEdited)
-            return; // don't have to do anything else, program will close itself because CancelEventArgs.Cancel is false
+            return true;
 
         var result = SaveProjectPrompt();
 
         if (result == System.Windows.MessageBoxResult.Yes)
-            e.Cancel = !TryToSaveProject();
+            return TryToSaveProject();
         else if (result == System.Windows.MessageBoxResult.Cancel)
-            e.Cancel = true;
+            return false;
+
+        return true;
     }
 
     public void OnCompareWindowClosing(object? sender, CancelEventArgs e)
