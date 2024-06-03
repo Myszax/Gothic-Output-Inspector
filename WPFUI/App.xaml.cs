@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
-using WPFUI.Models;
 using WPFUI.Services;
 using WPFUI.ViewModels;
 
@@ -17,6 +16,7 @@ public partial class App : Application
         _services.AddSingleton<WindowMapper>();
         _services.AddSingleton<IDataService, DataService>();
         _services.AddSingleton<IWindowManager, WindowManager>();
+        _services.AddSingleton<IDialogService, DialogService>();
         _serviceProvider = _services.BuildServiceProvider();
     }
 

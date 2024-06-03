@@ -160,10 +160,12 @@ public partial class MainWindowViewModel : ObservableObject
     private float _previousVolume = 0f;
 
     private readonly IDataService _dataService;
+    private readonly IDialogService _dialogService;
 
-    public MainWindowViewModel(IDataService dataService)
+    public MainWindowViewModel(IDataService dataService, IDialogService dialogService)
     {
         _dataService = dataService;
+        _dialogService = dialogService;
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // need to register to be able to use Encoding.GetEncoding()
 
         Encodings = Encoding.GetEncodings()
@@ -192,11 +194,11 @@ public partial class MainWindowViewModel : ObservableObject
         if (!_projectWasEdited)
             return true;
 
-        var result = SaveProjectPrompt();
+        var result = _dialogService.ShowMessageBox(SAVE_PROMPT, CAPTION_SAVING, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 
-        if (result == System.Windows.MessageBoxResult.Yes)
+        if (result == DialogResult.Yes)
             return TryToSaveProject();
-        else if (result == System.Windows.MessageBoxResult.Cancel)
+        else if (result == DialogResult.Cancel)
             return false;
 
         return true;
@@ -207,9 +209,9 @@ public partial class MainWindowViewModel : ObservableObject
         if (!_conversationDiffList.Any())
             return; // don't have to do anything else, program will close itself because CancelEventArgs.Cancel is false
 
-        var result = ConversationDiffListNonEmpty();
+        var result = _dialogService.ShowMessageBox(COMPARE_MODE_EXIT_PROMPT, CAPTION_EXITING_COMPARE_MODE, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-        if (result == System.Windows.MessageBoxResult.Yes)
+        if (result == DialogResult.Yes)
             e.Cancel = false;
         else
             e.Cancel = true;
@@ -461,7 +463,7 @@ public partial class MainWindowViewModel : ObservableObject
             ProjectFileChanged();
         }
         else
-            AudioPathNotSpecified();
+            _dialogService.ShowMessageBox(AUDIO_PATH_NOT_SPECIFIED, CAPTION_AUDIO, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         fbd.Dispose();
     }
@@ -510,7 +512,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
         catch (Exception e)
         {
-            MessageBox.Show(e.Message, "Open Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            _dialogService.ShowMessageBox(e.Message, "Open Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
         finally
@@ -545,10 +547,10 @@ public partial class MainWindowViewModel : ObservableObject
     {
         if (_projectWasEdited)
         {
-            var result = SaveProjectPrompt();
-            if (result == System.Windows.MessageBoxResult.Yes)
+            var result = _dialogService.ShowMessageBox(SAVE_PROMPT, CAPTION_SAVING, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
                 SaveProject();
-            else if (result == System.Windows.MessageBoxResult.Cancel)
+            else if (result == DialogResult.Cancel)
                 return;
         }
 
@@ -571,7 +573,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
         catch (Exception e)
         {
-            MessageBox.Show(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            _dialogService.ShowMessageBox(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
         finally
@@ -608,10 +610,10 @@ public partial class MainWindowViewModel : ObservableObject
     {
         if (_projectWasEdited)
         {
-            var result = SaveProjectPrompt();
-            if (result == System.Windows.MessageBoxResult.Yes)
+            var result = _dialogService.ShowMessageBox(SAVE_PROMPT, CAPTION_SAVING, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
                 SaveProject();
-            else if (result == System.Windows.MessageBoxResult.Cancel)
+            else if (result == DialogResult.Cancel)
                 return;
         }
 
@@ -637,7 +639,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
         catch (Exception e)
         {
-            MessageBox.Show(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            _dialogService.ShowMessageBox(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
         finally
@@ -687,7 +689,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
         catch (Exception e)
         {
-            MessageBox.Show(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            _dialogService.ShowMessageBox(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
         }
 
@@ -720,12 +722,12 @@ public partial class MainWindowViewModel : ObservableObject
         if (!_projectWasEdited)
             System.Windows.Application.Current.Shutdown();
 
-        var result = SaveProjectPrompt();
+        var result = _dialogService.ShowMessageBox(SAVE_PROMPT, CAPTION_SAVING, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
         bool shouldExit = false;
 
-        if (result == System.Windows.MessageBoxResult.No)
+        if (result == DialogResult.No)
             shouldExit = true;
-        else if (result == System.Windows.MessageBoxResult.Yes)
+        else if (result == DialogResult.Yes)
             shouldExit = TryToSaveProject();
 
         if (shouldExit)
@@ -803,13 +805,13 @@ public partial class MainWindowViewModel : ObservableObject
 
         if (string.IsNullOrEmpty(PathToAudioFiles))
         {
-            AudioPathNotSpecified();
+            _dialogService.ShowMessageBox(AUDIO_PATH_NOT_SPECIFIED, CAPTION_AUDIO, MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
         }
 
         if (!File.Exists(CurrentlySelectedAudioName))
         {
-            FileNotFound();
+            _dialogService.ShowMessageBox(FILE_NOT_FOUND, CAPTION_AUDIO, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -901,7 +903,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
         catch (Exception e)
         {
-            MessageBox.Show(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            _dialogService.ShowMessageBox(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
         }
 
@@ -930,7 +932,7 @@ public partial class MainWindowViewModel : ObservableObject
         }
         catch (Exception e)
         {
-            MessageBox.Show(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            _dialogService.ShowMessageBox(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
         }
 
