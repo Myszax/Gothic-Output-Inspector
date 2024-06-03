@@ -8,7 +8,7 @@ public sealed class SaveFile
 {
     public int Version { get; set; } = 1;
 
-    public List<Conversation> Conversations { get; set; } = new();
+    public IEnumerable<Conversation> Conversations { get; set; } = [];
 
     public string OriginalEncoding { get; set; } = string.Empty;
 
