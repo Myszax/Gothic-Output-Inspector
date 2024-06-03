@@ -22,6 +22,7 @@ using WPFUI.Extensions;
 using WPFUI.Models;
 using WPFUI.NAudioWrapper;
 using WPFUI.NAudioWrapper.Enums;
+using WPFUI.Services;
 using static WPFUI.Components.Messages;
 
 namespace WPFUI.ViewModels;
@@ -32,11 +33,11 @@ public partial class MainWindowViewModel : ObservableObject
     public ICollectionView ConversationCollection { get; set; }
     public ICollectionView ConversationDiffCollection { get; set; }
     public List<EncodingMenuItem> Encodings { get; }
-    public int LoadedConversationsCount => _conversationList.Count;
+    public int LoadedConversationsCount => _dataService.Data.Count;
     public int LoadedConversationsDiffCount => _conversationDiffList.Count;
     public int LoadedNPCsCount => ConversationCollection.Groups.Count;
-    public int EditedConversationsCount => _conversationList.Where(x => x.IsEdited).Count();
-    public int InspectedConversationsCount => _conversationList.Where(x => x.IsInspected).Count();
+    public int EditedConversationsCount => _dataService.Data.Where(x => x.IsEdited).Count();
+    public int InspectedConversationsCount => _dataService.Data.Where(x => x.IsInspected).Count();
     public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
     public int FilteredConversationsDiffCount => ConversationDiffCollection.Cast<object>().Count();
     public int AddedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Added).Count();
@@ -148,8 +149,6 @@ public partial class MainWindowViewModel : ObservableObject
 
     private AudioPlayer? _audioPlayer;
 
-    private readonly List<Conversation> _conversationList = new();
-
     private List<ConversationDiff> _conversationDiffList = new();
 
     private List<Dialogue> _parsedDialogues = new();
@@ -160,8 +159,11 @@ public partial class MainWindowViewModel : ObservableObject
 
     private float _previousVolume = 0f;
 
-    public MainWindowViewModel()
+    private readonly IDataService _dataService;
+
+    public MainWindowViewModel(IDataService dataService)
     {
+        _dataService = dataService;
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // need to register to be able to use Encoding.GetEncoding()
 
         Encodings = Encoding.GetEncodings()
@@ -175,7 +177,7 @@ public partial class MainWindowViewModel : ObservableObject
         Encodings[1].IsChecked = true;
         SelectedEncoding = Encodings[1].Encoding;
 
-        ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
+        ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
         SetGroupingAndSortingOnConversationCollection();
         ConversationCollection.Filter = FilterCollection;
         OnPropertyChanged(nameof(LoadedConversationsCount));
@@ -292,7 +294,7 @@ public partial class MainWindowViewModel : ObservableObject
             return;
 
         SelectedConversations.Clear();
-        SelectedConversations.AddRange(_conversationList.Where(x => x.NpcName.Equals(SelectedConversation.NpcName)));
+        SelectedConversations.AddRange(_dataService.Data.Where(x => x.NpcName.Equals(SelectedConversation.NpcName)));
     }
 
     private bool FilterCollection(object obj)
@@ -378,7 +380,7 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedGridRow = null;
         SelectedConversation = new();
         FillLowerDataGrid();
-        ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
+        ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
         OnPropertyChanged(nameof(LoadedConversationsCount));
         ConversationCollection.Refresh();
         OnPropertyChanged(nameof(LoadedNPCsCount));
@@ -392,7 +394,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var save = new SaveFile()
         {
-            Conversations = _conversationList,
+            Conversations = _dataService.Data,
             OriginalEncoding = UsedEncoding.HeaderName,
             ChosenEncoding = SelectedEncoding.HeaderName,
             AudioPath = PathToAudioFiles,
@@ -516,7 +518,7 @@ public partial class MainWindowViewModel : ObservableObject
             odf.Dispose();
         }
 
-        _conversationDiffList = _conversationList.CompareTo(loadedConversations, x => x.Name)
+        _conversationDiffList = _dataService.Data.CompareTo(loadedConversations, x => x.Name)
             .Select(x => new ConversationDiff() { Diff = x, Name = x.Original?.Name ?? x.Compared.Name }).ToList();
 
         FilterValueCompareMode = string.Empty;
@@ -579,13 +581,15 @@ public partial class MainWindowViewModel : ObservableObject
 
         UsedEncoding = SelectedEncoding;
 
-        if (_conversationList.Any())
-            _conversationList.Clear();
+        if (_dataService.Data.Count > 0)
+            _dataService.Data.Clear();
+
+        var conversationList = new List<Conversation>();
 
         foreach (var dialogue in _parsedDialogues)
-        {
-            _conversationList.Add(Conversation.CreateConversationFromDialogue(dialogue));
-        }
+            conversationList.Add(Conversation.CreateConversationFromDialogue(dialogue));
+
+        _dataService.Data.AddRange(conversationList);
 
         CleanReloadRefreshConversationCollection();
         IsOuFileImported = true;
@@ -687,11 +691,11 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        if (_conversationList.Any())
-            _conversationList.Clear();
+        if (_dataService.Data.Count > 0)
+            _dataService.Data.Clear();
 
         if (projectFile.Conversations is not null)
-            _conversationList.AddRange(projectFile.Conversations);
+            _dataService.Data.AddRange(projectFile.Conversations);
 
         CleanReloadRefreshConversationCollection();
         IsOuFileImported = true;
@@ -741,11 +745,11 @@ public partial class MainWindowViewModel : ObservableObject
         {
             case ComparisonResultType.Removed:
                 if (SelectedConversationDiff.Diff.Original is not null)
-                    _conversationList.Remove(SelectedConversationDiff.Diff.Original);
+                    _dataService.Data.Remove(SelectedConversationDiff.Diff.Original);
                 break;
             case ComparisonResultType.Added:
                 if (SelectedConversationDiff.Diff.Compared is not null)
-                    _conversationList.Add(SelectedConversationDiff.Diff.Compared);
+                    _dataService.Data.Add(SelectedConversationDiff.Diff.Compared);
                 break;
             case ComparisonResultType.Changed:
                 if (IsEnabledIgnoreInspectedWhileTransfer)
@@ -983,7 +987,7 @@ public partial class MainWindowViewModel : ObservableObject
         SelectedConversationDiff = new();
         SelectedGridRowCompareMode = null;
         FillLowerDataGrid();
-        ConversationCollection = CollectionViewSource.GetDefaultView(_conversationList);
+        ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
         OnPropertyChanged(nameof(LoadedConversationsCount));
         ConversationCollection.Refresh();
         OnPropertyChanged(nameof(LoadedNPCsCount));
