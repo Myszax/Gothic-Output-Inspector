@@ -492,20 +492,18 @@ public partial class MainWindowViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
     private void CompareOtherFile()
     {
-        var odf = new OpenFileDialog()
+        var fileDialogSettings = new FileDialogSettings()
         {
             Filter = "Supported files|*.bin;*.goi",
             Title = "Open file to compare"
         };
 
-        if (odf.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(odf.FileName))
-        {
-            odf.Dispose();
+        var fileDialogResult = _dialogService.ShowFileDialog(fileDialogSettings, out string filePath, false);
+
+        if (fileDialogResult != DialogResult.OK || string.IsNullOrEmpty(filePath))
             return;
-        }
 
         var loadedConversations = new HashSet<Conversation>();
-        var filePath = odf.FileName;
         try
         {
             loadedConversations = OpenFileToCompare(filePath);
@@ -514,10 +512,6 @@ public partial class MainWindowViewModel : ObservableObject
         {
             _dialogService.ShowMessageBox(e.Message, "Open Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
-        }
-        finally
-        {
-            odf.Dispose();
         }
 
         _conversationDiffList = _dataService.Data.CompareTo(loadedConversations, x => x.Name)
@@ -554,18 +548,17 @@ public partial class MainWindowViewModel : ObservableObject
                 return;
         }
 
-        var odf = new OpenFileDialog()
+        var fileDialogSettings = new FileDialogSettings()
         {
             Filter = "Binary files (*.bin)|*.bin|All files (*.*)|*.*",
         };
 
-        if (odf.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(odf.FileName))
-        {
-            odf.Dispose();
-            return;
-        }
+        var fileDialogResult = _dialogService.ShowFileDialog(fileDialogSettings, out string filePath, false);
 
-        var parser = new Reader(odf.FileName, SelectedEncoding);
+        if (fileDialogResult != DialogResult.OK || string.IsNullOrWhiteSpace(filePath))
+            return;
+
+        var parser = new Reader(filePath, SelectedEncoding);
 
         try
         {
@@ -575,10 +568,6 @@ public partial class MainWindowViewModel : ObservableObject
         {
             _dialogService.ShowMessageBox(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
-        }
-        finally
-        {
-            odf.Dispose();
         }
 
         UsedEncoding = SelectedEncoding;
@@ -617,34 +606,29 @@ public partial class MainWindowViewModel : ObservableObject
                 return;
         }
 
-        var odf = new OpenFileDialog()
+        var fileDialogSettings = new FileDialogSettings()
         {
-            Filter = "Gothic Output Inspector (*.goi)|*.goi",
+            Filter = "Gothic Output Inspector (*.goi)|*.goi"
         };
 
-        if (odf.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(odf.FileName))
-        {
-            odf.Dispose();
+        var fileDialogResult = _dialogService.ShowFileDialog(fileDialogSettings, out string filePath, false);
+
+        if (fileDialogResult != DialogResult.OK || string.IsNullOrWhiteSpace(filePath))
             return;
-        }
 
         SaveFile? projectFile;
         string pathToSaveFile;
 
         try
         {
-            var saveFile = File.ReadAllText(odf.FileName);
+            var saveFile = File.ReadAllText(filePath);
             projectFile = JsonSerializer.Deserialize<SaveFile>(saveFile);
-            pathToSaveFile = odf.FileName;
+            pathToSaveFile = filePath;
         }
         catch (Exception e)
         {
             _dialogService.ShowMessageBox(e.Message, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
-        }
-        finally
-        {
-            odf.Dispose();
         }
 
         if (projectFile is null)
