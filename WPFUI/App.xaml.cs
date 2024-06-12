@@ -10,6 +10,7 @@ public partial class App : Application
 {
     private readonly IServiceCollection _services = new ServiceCollection();
     private readonly IServiceProvider _serviceProvider;
+
     public App()
     {
         _services.AddSingleton<MainWindowViewModel>();
@@ -23,9 +24,7 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         var windowManager = _serviceProvider.GetRequiredService<IWindowManager>();
-        var mainVM = _serviceProvider.GetRequiredService<MainWindowViewModel>();
-
-        windowManager.ShowWindow(mainVM, mainVM.CanCloseWindow);
+        windowManager.ShowWindow<MainWindowViewModel>();
 
         base.OnStartup(e);
     }
