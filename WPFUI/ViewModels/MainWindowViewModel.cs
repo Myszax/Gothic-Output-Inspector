@@ -19,6 +19,7 @@ using WPFUI.Comparer;
 using WPFUI.Components;
 using WPFUI.Enums;
 using WPFUI.Extensions;
+using WPFUI.Interfaces;
 using WPFUI.Models;
 using WPFUI.NAudioWrapper;
 using WPFUI.NAudioWrapper.Enums;
@@ -29,6 +30,7 @@ namespace WPFUI.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject
 {
+public partial class MainWindowViewModel : ObservableObject, ICloseable
     public RangeObservableCollection<Conversation> SelectedConversations { get; } = new();
     public ICollectionView ConversationCollection { get; set; }
     public ICollectionView ConversationDiffCollection { get; set; }
@@ -189,7 +191,7 @@ public partial class MainWindowViewModel : ObservableObject
         refreshAudioPosition.Start();
     }
 
-    public bool CanCloseWindow()
+    public bool CanClose()
     {
         if (!_projectWasEdited)
             return true;
