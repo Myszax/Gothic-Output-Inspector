@@ -20,6 +20,12 @@ public sealed class WindowMapper
         _mappings.Add(typeof(TViewModel), typeof(TWindow));
     }
 
+    public Type? GetWindowTypeForViewModel<TViewModel>()
+    {
+        _mappings.TryGetValue(typeof(TViewModel), out var windowType);
+        return windowType;
+    }
+
     public Type? GetWindowTypeForViewModel(Type viewModelType)
     {
         _mappings.TryGetValue(viewModelType, out var type);

@@ -1,44 +1,65 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.ComponentModel;
 using System.Windows;
+using WPFUI.Interfaces;
 
 namespace WPFUI.Services;
 
 public interface IWindowManager
 {
-    void ShowWindow(ObservableObject viewModel, Func<bool> canCloseWindow);
+    public void ShowWindow<TViewModel>();
+    public bool? ShowDialogWindow<TViewModel>();
 }
 
 public sealed class WindowManager : IWindowManager
 {
     private readonly WindowMapper _windowMapper;
+    private readonly IServiceProvider _serviceProvider;
 
-    public WindowManager(WindowMapper windowMapper)
+    public WindowManager(WindowMapper windowMapper, IServiceProvider serviceProvider)
     {
+        _serviceProvider = serviceProvider;
         _windowMapper = windowMapper;
     }
 
-    public void ShowWindow(ObservableObject viewModel, Func<bool> canCloseWindow)
+    public bool? ShowDialogWindow<TViewModel>()
     {
-        var windowType = _windowMapper.GetWindowTypeForViewModel(viewModel.GetType());
-        if (windowType is null)
-            return;
+        var window = CreateWindow<TViewModel>();
+        return window.ShowDialog();
+    }
+
+    public void ShowWindow<TViewModel>()
+    {
+        var window = CreateWindow<TViewModel>();
+        window.Show();
+    }
+
+    private Window CreateWindow<TViewModel>()
+    {
+        var windowType = _windowMapper.GetWindowTypeForViewModel<TViewModel>()
+            ?? throw new ArgumentNullException();
+
+        var viewModel = (TViewModel)_serviceProvider.GetRequiredService(typeof(TViewModel));
 
         if (Activator.CreateInstance(windowType) is not Window window)
-            return;
+            throw new Exception("Created window isn't type of `Window`");
 
         window.DataContext = viewModel;
 
-        void closeEventHandler(object? s, CancelEventArgs e)
+        if (viewModel is ICloseable closeable)
         {
-            if (canCloseWindow())
-                window.Closing -= closeEventHandler;
-            else
-                e.Cancel = true;
+            void closeEventHandler(object? s, CancelEventArgs e)
+            {
+                if (closeable.CanClose())
+                    window.Closing -= closeEventHandler;
+                else
+                    e.Cancel = true;
+            }
+
+            window.Closing += closeEventHandler;
         }
 
-        window.Closing += closeEventHandler;
-        window.Show();
+        return window;
     }
 }
