@@ -12,10 +12,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using System.Windows.Data;
 using System.Windows.Forms;
-using WPFUI.Comparer;
 using WPFUI.Components;
-using WPFUI.Enums;
-using WPFUI.Extensions;
 using WPFUI.Interfaces;
 using WPFUI.Models;
 using WPFUI.Services;
@@ -23,23 +20,16 @@ using static WPFUI.Components.Messages;
 
 namespace WPFUI.ViewModels;
 
-public partial class MainWindowViewModel : ObservableObject
-{
 public partial class MainWindowViewModel : ObservableObject, ICloseable
+{
     public RangeObservableCollection<Conversation> SelectedConversations { get; } = new();
     public ICollectionView ConversationCollection { get; set; }
-    public ICollectionView ConversationDiffCollection { get; set; }
     public List<EncodingMenuItem> Encodings { get; }
     public int LoadedConversationsCount => _dataService.Data.Count;
-    public int LoadedConversationsDiffCount => _conversationDiffList.Count;
     public int LoadedNPCsCount => ConversationCollection.Groups.Count;
     public int EditedConversationsCount => _dataService.Data.Where(x => x.IsEdited).Count();
     public int InspectedConversationsCount => _dataService.Data.Where(x => x.IsInspected).Count();
     public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
-    public int FilteredConversationsDiffCount => ConversationDiffCollection.Cast<object>().Count();
-    public int AddedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Added).Count();
-    public int ChangedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Changed).Count();
-    public int RemovedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Removed).Count();
 
     [ObservableProperty]
     private ColoredText _propertyColor = new();
@@ -56,22 +46,13 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     private Conversation _selectedConversation = new();
 
     [ObservableProperty]
-    private ConversationDiff _selectedConversationDiff = new();
-
-    [ObservableProperty]
     private Conversation? _selectedGridRow = new();
 
     [ObservableProperty]
     private Conversation? _selectedLowerGridRow = new();
 
     [ObservableProperty]
-    private ConversationDiff? _selectedGridRowCompareMode = new();
-
-    [ObservableProperty]
     private string _pathToAudioFiles = string.Empty;
-
-    [ObservableProperty]
-    private bool _isEnabledIgnoreInspectedWhileTransfer = true;
 
     [ObservableProperty]
     private Encoding _selectedEncoding;
@@ -84,9 +65,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
     [ObservableProperty]
     private FilterType _selectedFilterType = FilterType.HideAll;
-
-    [ObservableProperty]
-    private FilterType _selectedFilterTypeCompareMode = FilterType.HideAll;
 
     [ObservableProperty]
     private bool _isEnabledFilterName = true;
@@ -104,16 +82,10 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     private bool _isEnabledFilterIsInspected = true;
 
     [ObservableProperty]
-    private bool _isEnabledFilterCompareModeIsInspected = true;
-
-    [ObservableProperty]
     private string _pathToSaveFile = string.Empty;
 
     [ObservableProperty]
     private string _title = TITLE;
-
-    [ObservableProperty]
-    private string _titleCompareMode = TITLE;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(SaveProjectCommand))]
@@ -121,8 +93,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     [NotifyCanExecuteChangedFor(nameof(SetPathToAudioFilesCommand))]
     [NotifyCanExecuteChangedFor(nameof(CompareOtherFileCommand))]
     private bool _isOuFileImported = false;
-
-    private List<ConversationDiff> _conversationDiffList = new();
 
     private List<Dialogue> _parsedDialogues = new();
 
@@ -132,14 +102,18 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
     private readonly IDataService _dataService;
     private readonly IDialogService _dialogService;
+    private readonly IWindowManager _windowManager;
 
-    public MainWindowViewModel(IDataService dataService, IDialogService dialogService)
-    public MainWindowViewModel(IDataService dataService, IDialogService dialogService, AudioPlayerViewModel audioPlayerViewModel)
+    public AudioPlayerViewModel AudioPlayerViewModel { get; private set; }
+
+    public MainWindowViewModel(IDataService dataService, IDialogService dialogService, IWindowManager windowManager, AudioPlayerViewModel audioPlayerViewModel)
     {
+        _windowManager = windowManager;
         _dataService = dataService;
         _dialogService = dialogService;
 
         AudioPlayerViewModel = audioPlayerViewModel;
+
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // need to register to be able to use Encoding.GetEncoding()
 
         Encodings = Encoding.GetEncodings()
@@ -175,19 +149,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         return true;
     }
 
-    public void OnCompareWindowClosing(object? sender, CancelEventArgs e)
-    {
-        if (!_conversationDiffList.Any())
-            return; // don't have to do anything else, program will close itself because CancelEventArgs.Cancel is false
-
-        var result = _dialogService.ShowMessageBox(COMPARE_MODE_EXIT_PROMPT, CAPTION_EXITING_COMPARE_MODE, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-        if (result == DialogResult.Yes)
-            e.Cancel = false;
-        else
-            e.Cancel = true;
-    }
-
     partial void OnFilterValueChanged(string value)
     {
         ConversationCollection.Refresh();
@@ -199,12 +160,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             if (enumerator.MoveNext())
                 SelectedGridRow = (Conversation)enumerator.Current;
         }
-    }
-
-    partial void OnFilterValueCompareModeChanged(string value)
-    {
-        ConversationDiffCollection.Refresh();
-        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
     }
 
     partial void OnSelectedGridRowChanged(Conversation? value)
@@ -221,28 +176,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             return;
 
         SelectedGridRow = value;
-    }
-
-    partial void OnSelectedGridRowCompareModeChanged(ConversationDiff? value)
-    {
-        if (value is null)
-            return;
-
-        SelectedConversationDiff = value;
-    }
-
-    partial void OnSelectedConversationDiffChanged(ConversationDiff value)
-    {
-        if (value.Diff is null)
-            return;
-
-        string? soundFileName;
-        if (value.Diff.Type == ComparisonResultType.Removed)
-            soundFileName = value.Diff.Original?.Sound;
-        else
-            soundFileName = value.Diff.Compared?.Sound;
-
-        PropertyColor = ColoredText.Create(value.Diff.Variances);
     }
 
     partial void OnSelectedConversationChanging(Conversation value) => _previousNpcName = SelectedConversation.NpcName;
@@ -300,31 +233,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
         // this check prevents returning false if every search checkbox is unchecked
         return !IsEnabledFilterName && !IsEnabledFilterOriginalText && !IsEnabledFilterEditedText;
-    }
-
-    private bool FilterCollectionCompareMode(object obj)
-    {
-        if (obj is null || obj is not ConversationDiff conversationDiff)
-            return false;
-
-        if (conversationDiff.Diff.Compared is not null)
-        {
-            if (SelectedFilterTypeCompareMode == FilterType.HideAll)
-            {
-                if (IsEnabledFilterCompareModeIsInspected && conversationDiff.Diff.Variances.Count == 1 && conversationDiff.Diff.Variances.ContainsKey("IsInspected"))
-                    return false;
-            }
-            else
-            {
-                if (IsEnabledFilterCompareModeIsInspected && conversationDiff.Diff.Variances.ContainsKey("IsInspected"))
-                    return false;
-            }
-        }
-
-        if (FilterValueCompareMode.Length > 0 && !conversationDiff.Name.Contains(FilterValueCompareMode, SelectedComparisonMethod))
-            return false;
-
-        return true;
     }
 
     private void SetGroupingAndSortingOnConversationCollection()
@@ -410,16 +318,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         OnPropertyChanged(nameof(FilteredConversationsCount));
     }
 
-    [RelayCommand]
-    private void RefreshConversationDiffCollection(bool checkForEmptyFilterValue = true)
-    {
-        if (checkForEmptyFilterValue && string.IsNullOrEmpty(FilterValueCompareMode))
-            return;
-
-        ConversationDiffCollection.Refresh();
-        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
-    }
-
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
     private void SetPathToAudioFiles()
     {
@@ -472,10 +370,10 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         if (fileDialogResult != DialogResult.OK || string.IsNullOrEmpty(filePath))
             return;
 
-        var loadedConversations = new HashSet<Conversation>();
+
         try
         {
-            loadedConversations = OpenFileToCompare(filePath);
+            _dataService.ConversationsToCompare = OpenFileToCompare(filePath);
         }
         catch (Exception e)
         {
@@ -483,26 +381,24 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             return;
         }
 
-        _conversationDiffList = _dataService.Data.CompareTo(loadedConversations, x => x.Name)
-            .Select(x => new ConversationDiff() { Diff = x, Name = x.Original?.Name ?? x.Compared.Name }).ToList();
 
-        FilterValueCompareMode = string.Empty;
-        ConversationDiffCollection = CollectionViewSource.GetDefaultView(_conversationDiffList);
-        ConversationDiffCollection.Filter = FilterCollectionCompareMode;
-        OnPropertyChanged(nameof(LoadedConversationsDiffCount));
-        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
-
-        // those properties should be reset before `compareWindow.ShowDialog()`
-        // to avoid strange bugs when SelectedConversation is selected on Grid and then edited via Compare Mode
-        SelectedConversation = new();
-        SelectedGridRow = null;
-
-        TitleCompareMode = TITLE + " - " + filePath;
-        var compareWindow = new CompareWindow(this);
-        compareWindow.ShowDialog();
-        compareWindow = null;
+        _dataService.CompareWindowTitle = TITLE + " - " + filePath;
+        var previousConversation = _dataService.CurrentConversation;
+        _dataService.CurrentConversation = new();
+        AudioPlayerViewModel.StopCommand.Execute(null);
+        _windowManager.ShowDialogWindow<CompareWindowViewModel>();
 
         CleanUpOnCompareWindowClose();
+        if (_dataService.Data.Contains(previousConversation))
+        {
+            SelectedGridRow = previousConversation;
+            _dataService.CurrentConversation = previousConversation;
+        }
+        else
+        {
+            SelectedGridRow = null;
+            SelectedConversation = _dataService.CurrentConversation = new();
+        }
     }
 
     [RelayCommand]
@@ -691,66 +587,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     }
 
     [RelayCommand]
-    private void AcceptComparedChanges()
-    {
-        if (SelectedConversationDiff.Diff is null)
-            return;
-
-        switch (SelectedConversationDiff.Diff.Type)
-        {
-            case ComparisonResultType.Removed:
-                if (SelectedConversationDiff.Diff.Original is not null)
-                    _dataService.Data.Remove(SelectedConversationDiff.Diff.Original);
-                break;
-            case ComparisonResultType.Added:
-                if (SelectedConversationDiff.Diff.Compared is not null)
-                    _dataService.Data.Add(SelectedConversationDiff.Diff.Compared);
-                break;
-            case ComparisonResultType.Changed:
-                if (IsEnabledIgnoreInspectedWhileTransfer)
-                {
-                    if (!SelectedConversationDiff.Diff.Variances.TryGetValue(nameof(Conversation.IsInspected), out ComparisonVariance? value))
-                    {
-                        SelectedConversationDiff.Diff.Variances
-                            .Add(nameof(Conversation.IsInspected), new ComparisonVariance { PropertyName = nameof(Conversation.IsInspected), ValA = true, ValB = true });
-                    }
-                    else
-                    {
-                        value.ValB = true;
-                    }
-                    SelectedConversationDiff.Diff.Compared!.IsInspected = true;
-                }
-
-                SelectedConversationDiff.Diff.Compared.TransferTo(SelectedConversationDiff.Diff.Original, SelectedConversationDiff.Diff.Variances);
-                break;
-        }
-
-        SelectNextConversationDiffGridItem();
-        ConversationDiffCollection.Refresh();
-        ProjectFileChanged();
-        OnPropertyChanged(nameof(LoadedConversationsDiffCount));
-        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
-        OnPropertyChanged(nameof(AddedConversationsDiffCount));
-        OnPropertyChanged(nameof(ChangedConversationsDiffCount));
-        OnPropertyChanged(nameof(RemovedConversationsDiffCount));
-    }
-
-    [RelayCommand]
-    private void DiscardComparedChanges()
-    {
-        if (SelectedConversationDiff.Diff is null)
-            return;
-
-        SelectNextConversationDiffGridItem();
-        ConversationDiffCollection.Refresh();
-        OnPropertyChanged(nameof(LoadedConversationsDiffCount));
-        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
-        OnPropertyChanged(nameof(AddedConversationsDiffCount));
-        OnPropertyChanged(nameof(ChangedConversationsDiffCount));
-        OnPropertyChanged(nameof(RemovedConversationsDiffCount));
-    }
-
-    [RelayCommand]
     private void StartPlayback() => AudioPlayerViewModel.PlayCommand.Execute(null);
 
     private bool TryToSaveProject()
@@ -802,21 +638,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         return true;
     }
 
-    private void SelectNextConversationDiffGridItem()
-    {
-        _conversationDiffList.Remove(SelectedConversationDiff);
-
-        if (FilteredConversationsDiffCount > 0)
-        {
-            if (FilteredConversationsDiffCount == ConversationDiffCollection.CurrentPosition + 1)
-                ConversationDiffCollection.MoveCurrentToPrevious();
-            else
-                ConversationDiffCollection.MoveCurrentToNext();
-        }
-        else
-            SelectedConversationDiff = new();
-    }
-
     private HashSet<Conversation> OpenFileToCompare(string fileName)
     {
         if (string.IsNullOrWhiteSpace(fileName))
@@ -847,9 +668,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
     private void CleanUpOnCompareWindowClose()
     {
-        SelectedConversationDiff = new();
-        SelectedGridRowCompareMode = null;
-        FillLowerDataGrid();
         ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
         OnPropertyChanged(nameof(LoadedConversationsCount));
         ConversationCollection.Refresh();
@@ -859,35 +677,12 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         OnPropertyChanged(nameof(EditedConversationsCount));
     }
 
-    private void MuteSound()
-    {
-        _previousVolume = CurrentVolume;
-        CurrentVolume = 0;
-        IsMuted = true;
-    }
+    [ObservableProperty]
+    private FilterType _selectedFilterTypeCompareMode = FilterType.HideAll;
 
-    private void UnMuteSound()
-    {
-        CurrentVolume = _previousVolume;
-        IsMuted = false;
-    }
+    [ObservableProperty]
+    private bool _isEnabledFilterCompareModeIsInspected = true;
 
-    private void AudioPlayer_PlaybackResumed() => StateOfPlayback = PlaybackState.Playing;
-
-    private void AudioPlayer_PlaybackPaused() => StateOfPlayback = PlaybackState.Paused;
-
-    private void RefreshAudioPosition()
-    {
-        // i know it drains unnecessary resources
-        // should be running only when `PlaybackState.Playing`
-        // eg. in play and resume method and stopped in stop method
-        // but for now i am leaving it like that: TODO
-        while (true)
-        {
-            if (_audioPlayer is not null && StateOfPlayback == PlaybackState.Playing)
-                CurrentAudioPosition = _audioPlayer.CurrentTime;
-
-            Thread.Sleep(20);
-        }
-    }
+    [ObservableProperty]
+    private bool _isEnabledIgnoreInspectedWhileTransfer = true;
 }

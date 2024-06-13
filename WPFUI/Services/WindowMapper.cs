@@ -13,6 +13,7 @@ public sealed class WindowMapper
     public WindowMapper()
     {
         RegisterMapping<MainWindowViewModel, MainWindow>();
+        RegisterMapping<CompareWindowViewModel, CompareWindow>();
     }
 
     public void RegisterMapping<TViewModel, TWindow>() where TViewModel : ObservableObject where TWindow : Window

@@ -1,16 +1,12 @@
 ﻿using System.Windows;
-using WPFUI.ViewModels;
 
 namespace WPFUI;
 
 public partial class CompareWindow : Window
 {
-    public CompareWindow(MainWindowViewModel mainWindowVM)
+    public CompareWindow()
     {
         InitializeComponent();
-        DataContext = mainWindowVM;
-
-        Closing += mainWindowVM.OnCompareWindowClosing;
     }
 
     private void TextBox_CopyToClipboard(object sender, System.Windows.Input.MouseButtonEventArgs e)
