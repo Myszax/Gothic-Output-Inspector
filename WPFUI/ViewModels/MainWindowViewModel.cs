@@ -428,6 +428,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         if (fbd.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
         {
             PathToAudioFiles = fbd.SelectedPath + '\\';
+            _dataService.AudioFilesPath = PathToAudioFiles;
             ProjectFileChanged();
         }
         else
