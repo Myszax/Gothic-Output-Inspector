@@ -281,11 +281,11 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             EnabledFilterOriginalText = IsEnabledFilterOriginalText,
             EnabledFilterEditedText = IsEnabledFilterEditedText,
             FilterType = SelectedFilterType,
-            FilterTypeCompareMode = SelectedFilterTypeCompareMode,
+            FilterTypeCompareMode = _dataService.SelectedFilterTypeCompareMode,
             EnabledFilterIsEdited = IsEnabledFilterIsEdited,
             EnabledFilterIsInspected = IsEnabledFilterIsInspected,
-            EnabledFilterCompareModeIsInspected = IsEnabledFilterCompareModeIsInspected,
-            EnabledIgnoreInspectedWhileTransfer = IsEnabledIgnoreInspectedWhileTransfer,
+            EnabledFilterCompareModeIsInspected = _dataService.IsEnabledFilterCompareModeIsInspected,
+            EnabledIgnoreInspectedWhileTransfer = _dataService.IsEnabledIgnoreInspectedWhileTransfer,
             AudioPlayerVolume = AudioPlayerViewModel.Volume,
             AudioPlayerPreviousVolume = AudioPlayerViewModel.PreviousVolume,
             AudioPlayerMuted = AudioPlayerViewModel.IsMuted,
@@ -516,7 +516,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
                 SelectedFilterType = projectFile.FilterType;
 
             if (Enum.IsDefined(typeof(FilterType), projectFile.FilterType))
-                SelectedFilterTypeCompareMode = projectFile.FilterTypeCompareMode;
+                _dataService.SelectedFilterTypeCompareMode = projectFile.FilterTypeCompareMode;
 
             if (Enum.IsDefined(typeof(StringComparison), projectFile.ComparisonMethod))
                 SelectedComparisonMethod = projectFile.ComparisonMethod;
@@ -532,8 +532,8 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             IsEnabledFilterEditedText = projectFile.EnabledFilterEditedText;
             IsEnabledFilterIsInspected = projectFile.EnabledFilterIsInspected;
             IsEnabledFilterIsEdited = projectFile.EnabledFilterIsEdited;
-            IsEnabledFilterCompareModeIsInspected = projectFile.EnabledFilterCompareModeIsInspected;
-            IsEnabledIgnoreInspectedWhileTransfer = projectFile.EnabledIgnoreInspectedWhileTransfer;
+            _dataService.IsEnabledFilterCompareModeIsInspected = projectFile.EnabledFilterCompareModeIsInspected;
+            _dataService.IsEnabledIgnoreInspectedWhileTransfer = projectFile.EnabledIgnoreInspectedWhileTransfer;
             AudioPlayerViewModel.IsMuted = projectFile.AudioPlayerMuted;
         }
         catch (Exception e)
@@ -676,13 +676,4 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         OnPropertyChanged(nameof(InspectedConversationsCount));
         OnPropertyChanged(nameof(EditedConversationsCount));
     }
-
-    [ObservableProperty]
-    private FilterType _selectedFilterTypeCompareMode = FilterType.HideAll;
-
-    [ObservableProperty]
-    private bool _isEnabledFilterCompareModeIsInspected = true;
-
-    [ObservableProperty]
-    private bool _isEnabledIgnoreInspectedWhileTransfer = true;
 }

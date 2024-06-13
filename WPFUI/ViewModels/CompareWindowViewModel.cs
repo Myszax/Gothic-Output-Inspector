@@ -77,6 +77,10 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
         OnPropertyChanged(nameof(LoadedConversationsDiffCount));
         OnPropertyChanged(nameof(FilteredConversationsDiffCount));
         Title = _dataService.CompareWindowTitle;
+
+        SelectedFilterType = _dataService.SelectedFilterTypeCompareMode;
+        IsEnabledFilterIsInspected = _dataService.IsEnabledFilterCompareModeIsInspected;
+        IsEnabledIgnoreInspectedWhileTransfer = _dataService.IsEnabledIgnoreInspectedWhileTransfer;
     }
 
     partial void OnFilterValueCompareModeChanged(string value)
@@ -239,5 +243,9 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
     {
         _dataService.ConversationsToCompare.Clear();
         AudioPlayerViewModel.StopCommand.Execute(null);
+
+        _dataService.SelectedFilterTypeCompareMode = SelectedFilterType;
+        _dataService.IsEnabledFilterCompareModeIsInspected = IsEnabledFilterIsInspected;
+        _dataService.IsEnabledIgnoreInspectedWhileTransfer = IsEnabledIgnoreInspectedWhileTransfer;
     }
 }
