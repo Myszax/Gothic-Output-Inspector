@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NAudio.Wave;
 using Parser;
 using System;
 using System.Collections.Generic;
@@ -11,8 +10,6 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Forms;
 using WPFUI.Comparer;
@@ -21,8 +18,6 @@ using WPFUI.Enums;
 using WPFUI.Extensions;
 using WPFUI.Interfaces;
 using WPFUI.Models;
-using WPFUI.NAudioWrapper;
-using WPFUI.NAudioWrapper.Enums;
 using WPFUI.Services;
 using static WPFUI.Components.Messages;
 
@@ -73,25 +68,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     private ConversationDiff? _selectedGridRowCompareMode = new();
 
     [ObservableProperty]
-    private double _currentAudioLength;
-
-    [ObservableProperty]
-    private double _currentAudioPosition;
-
-    [ObservableProperty]
-    private float _currentVolume = 1f;
-
-    [ObservableProperty]
-    private string _currentlyPlayingAudioName = string.Empty;
-
-    [ObservableProperty]
-    private string _currentlySelectedAudioName = string.Empty;
-
-    [ObservableProperty]
     private string _pathToAudioFiles = string.Empty;
-
-    [ObservableProperty]
-    private bool _isMuted = false;
 
     [ObservableProperty]
     private bool _isEnabledIgnoreInspectedWhileTransfer = true;
@@ -145,12 +122,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     [NotifyCanExecuteChangedFor(nameof(CompareOtherFileCommand))]
     private bool _isOuFileImported = false;
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(StopPlaybackCommand))]
-    private PlaybackState _stateOfPlayback = PlaybackState.Stopped;
-
-    private AudioPlayer? _audioPlayer;
-
     private List<ConversationDiff> _conversationDiffList = new();
 
     private List<Dialogue> _parsedDialogues = new();
@@ -159,15 +130,16 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
     private bool _projectWasEdited = false;
 
-    private float _previousVolume = 0f;
-
     private readonly IDataService _dataService;
     private readonly IDialogService _dialogService;
 
     public MainWindowViewModel(IDataService dataService, IDialogService dialogService)
+    public MainWindowViewModel(IDataService dataService, IDialogService dialogService, AudioPlayerViewModel audioPlayerViewModel)
     {
         _dataService = dataService;
         _dialogService = dialogService;
+
+        AudioPlayerViewModel = audioPlayerViewModel;
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // need to register to be able to use Encoding.GetEncoding()
 
         Encodings = Encoding.GetEncodings()
@@ -186,9 +158,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         ConversationCollection.Filter = FilterCollection;
         OnPropertyChanged(nameof(LoadedConversationsCount));
         OnPropertyChanged(nameof(LoadedNPCsCount));
-
-        var refreshAudioPosition = new Task(new Action(RefreshAudioPosition));
-        refreshAudioPosition.Start();
     }
 
     public bool CanClose()
@@ -273,7 +242,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         else
             soundFileName = value.Diff.Compared?.Sound;
 
-        CurrentlySelectedAudioName = PathToAudioFiles + (soundFileName ?? string.Empty);
         PropertyColor = ColoredText.Create(value.Diff.Variances);
     }
 
@@ -281,16 +249,16 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
     partial void OnSelectedConversationChanged(Conversation value)
     {
-        CurrentlySelectedAudioName = PathToAudioFiles + SelectedConversation.Sound;
         FillLowerDataGrid();
 
         if (!ConversationCollection.Cast<Conversation>().Contains(value))
             SelectedGridRow = null;
 
         SelectedLowerGridRow = value;
+        _dataService.CurrentConversation = value;
     }
 
-    partial void OnPathToAudioFilesChanged(string value) => CurrentlySelectedAudioName = value + SelectedConversation.Sound;
+    partial void OnPathToAudioFilesChanged(string value) => _dataService.AudioFilesPath = value;
 
     private void FillLowerDataGrid()
     {
@@ -376,9 +344,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         "MVVMTK0034:Direct field reference to [ObservableProperty] backing field", Justification = "Avoid call to OnFilterValueChanged() in this case.")]
     private void CleanReloadRefreshConversationCollection()
     {
-        StopPlayback();
-        _audioPlayer = null;
-        CurrentlyPlayingAudioName = string.Empty;
+        AudioPlayerViewModel.StopCommand.Execute(null);
         _filterValue = string.Empty; // _filterValue has to accessed directly to avoid unnecessary Refresh() on ConversationCollection        
         OnPropertyChanged(nameof(FilterValue)); // then call OnPropertyChanged on FilterValue, it speed ups loading/importing
         SelectedGridRow = null;
@@ -412,9 +378,9 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             EnabledFilterIsInspected = IsEnabledFilterIsInspected,
             EnabledFilterCompareModeIsInspected = IsEnabledFilterCompareModeIsInspected,
             EnabledIgnoreInspectedWhileTransfer = IsEnabledIgnoreInspectedWhileTransfer,
-            AudioPlayerVolume = CurrentVolume,
-            AudioPlayerPreviousVolume = _previousVolume,
-            AudioPlayerMuted = IsMuted,
+            AudioPlayerVolume = AudioPlayerViewModel.Volume,
+            AudioPlayerPreviousVolume = AudioPlayerViewModel.PreviousVolume,
+            AudioPlayerMuted = AudioPlayerViewModel.IsMuted,
         };
 
         var opt = new JsonSerializerOptions()
@@ -659,10 +625,10 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
                 SelectedComparisonMethod = projectFile.ComparisonMethod;
 
             if (projectFile.AudioPlayerVolume >= 0f && projectFile.AudioPlayerVolume <= 1f)
-                CurrentVolume = projectFile.AudioPlayerVolume;
+                AudioPlayerViewModel.Volume = projectFile.AudioPlayerVolume;
 
             if (projectFile.AudioPlayerPreviousVolume >= 0f && projectFile.AudioPlayerPreviousVolume <= 1f)
-                _previousVolume = projectFile.AudioPlayerPreviousVolume;
+                AudioPlayerViewModel.PreviousVolume = projectFile.AudioPlayerPreviousVolume;
 
             IsEnabledFilterName = projectFile.EnabledFilterName;
             IsEnabledFilterOriginalText = projectFile.EnabledFilterOriginalText;
@@ -671,7 +637,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             IsEnabledFilterIsEdited = projectFile.EnabledFilterIsEdited;
             IsEnabledFilterCompareModeIsInspected = projectFile.EnabledFilterCompareModeIsInspected;
             IsEnabledIgnoreInspectedWhileTransfer = projectFile.EnabledIgnoreInspectedWhileTransfer;
-            IsMuted = projectFile.AudioPlayerMuted;
+            AudioPlayerViewModel.IsMuted = projectFile.AudioPlayerMuted;
         }
         catch (Exception e)
         {
@@ -784,99 +750,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     }
 
     [RelayCommand]
-    private void StartPlayback()
-    {
-        if (string.IsNullOrEmpty(CurrentlySelectedAudioName))
-            return;
-
-        if (string.IsNullOrEmpty(PathToAudioFiles))
-        {
-            _dialogService.ShowMessageBox(AUDIO_PATH_NOT_SPECIFIED, CAPTION_AUDIO, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            return;
-        }
-
-        if (!File.Exists(CurrentlySelectedAudioName))
-        {
-            _dialogService.ShowMessageBox(FILE_NOT_FOUND, CAPTION_AUDIO, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
-
-        if (!CurrentlyPlayingAudioName.Equals(CurrentlySelectedAudioName) && _audioPlayer is not null)
-        {
-            _audioPlayer.PlaybackStopType = PlaybackStopType.BySelectingNewFileWhilePlaying;
-            _audioPlayer.Stop();
-            CurrentAudioPosition = 0;
-        }
-
-        var realState = _audioPlayer?.GetPlaybackState ?? PlaybackState.Stopped;
-
-        if (realState == PlaybackState.Stopped)
-        {
-            _audioPlayer = new AudioPlayer(CurrentlySelectedAudioName, CurrentVolume, CurrentAudioPosition);
-            _audioPlayer.PlaybackPaused += AudioPlayer_PlaybackPaused;
-            _audioPlayer.PlaybackResumed += AudioPlayer_PlaybackResumed;
-            _audioPlayer.PlaybackStopped += AudioPlayer_PlaybackStopped;
-            CurrentAudioLength = _audioPlayer.GetLengthInSeconds();
-            CurrentlyPlayingAudioName = CurrentlySelectedAudioName;
-        }
-        _audioPlayer?.TogglePlayPause(CurrentVolume, CurrentAudioPosition);
-    }
-
-    [RelayCommand(CanExecute = nameof(CanStopPlayback))]
-    private void StopPlayback()
-    {
-        if (_audioPlayer is null)
-            return;
-
-        _audioPlayer.PlaybackStopType = PlaybackStopType.ByUser;
-        _audioPlayer.Stop();
-    }
-    private bool CanStopPlayback() => StateOfPlayback == PlaybackState.Playing || StateOfPlayback == PlaybackState.Paused;
-
-    [RelayCommand]
-    private void TrackControlMouseDown()
-    {
-        if (_audioPlayer is null)
-            return;
-
-        if (StateOfPlayback == PlaybackState.Playing)
-            _audioPlayer.Pause();
-    }
-
-
-    [RelayCommand]
-    private void TrackControlMouseUp()
-    {
-        if (_audioPlayer is null)
-            return;
-
-        _audioPlayer.Play(PlaybackState.Paused, CurrentVolume, CurrentAudioPosition);
-    }
-
-    [RelayCommand]
-    private void VolumeControlValueChanged()
-    {
-        _audioPlayer?.SetVolume(CurrentVolume);
-        IsMuted = false;
-    }
-
-    private void AudioPlayer_PlaybackStopped(PlaybackStopType playbackStopType)
-    {
-        // when it occurs I don't have to change UI because it is in same state, just new audio is playing
-        if (playbackStopType == PlaybackStopType.BySelectingNewFileWhilePlaying)
-            return;
-
-        StateOfPlayback = PlaybackState.Stopped;
-        CurrentAudioPosition = 0;
-    }
-    [RelayCommand]
-    private void ToggleMute()
-    {
-        if (IsMuted)
-            UnMuteSound();
-        else
-            MuteSound();
-    }
+    private void StartPlayback() => AudioPlayerViewModel.PlayCommand.Execute(null);
 
     private bool TryToSaveProject()
     {

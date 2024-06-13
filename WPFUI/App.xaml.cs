@@ -14,6 +14,7 @@ public partial class App : Application
     public App()
     {
         _services.AddSingleton<MainWindowViewModel>();
+        _services.AddSingleton<AudioPlayerViewModel>();
         _services.AddSingleton<WindowMapper>();
         _services.AddSingleton<IDataService, DataService>();
         _services.AddSingleton<IWindowManager, WindowManager>();
