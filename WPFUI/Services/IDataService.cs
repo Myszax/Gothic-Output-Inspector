@@ -7,16 +7,15 @@ namespace WPFUI.Services;
 public interface IDataService
 {
     public RangeObservableCollection<Conversation> Data { get; set; }
-    public void AddItem(Conversation item);
-
-    public void AddRange(IEnumerable<Conversation> items);
+    public HashSet<Conversation> ConversationsToCompare { get; set; }
+    public string AudioFilesPath { get; set; }
+    public Conversation CurrentConversation { get; set; }
 }
 
 public sealed class DataService : IDataService
 {
     public RangeObservableCollection<Conversation> Data { get; set; } = [];
-
-    public void AddItem(Conversation item) => Data.Add(item);
-
-    public void AddRange(IEnumerable<Conversation> items) => Data.AddRange(items);
+    public HashSet<Conversation> ConversationsToCompare { get; set; } = [];
+    public string AudioFilesPath { get; set; } = string.Empty;
+    public Conversation CurrentConversation { get; set; } = new();
 }
