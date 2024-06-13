@@ -359,13 +359,13 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
     private void CompareOtherFile()
     {
-        var fileDialogSettings = new FileDialogSettings()
+        var fileDialogSettings = new OpenFileDialogSettings()
         {
             Filter = "Supported files|*.bin;*.goi",
             Title = "Open file to compare"
         };
 
-        var fileDialogResult = _dialogService.ShowFileDialog(fileDialogSettings, out string filePath, false);
+        var fileDialogResult = _dialogService.ShowOpenFileDialog(fileDialogSettings, out string filePath, false);
 
         if (fileDialogResult != DialogResult.OK || string.IsNullOrEmpty(filePath))
             return;
@@ -413,12 +413,12 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
                 return;
         }
 
-        var fileDialogSettings = new FileDialogSettings()
+        var fileDialogSettings = new OpenFileDialogSettings()
         {
             Filter = "Binary files (*.bin)|*.bin|All files (*.*)|*.*",
         };
 
-        var fileDialogResult = _dialogService.ShowFileDialog(fileDialogSettings, out string filePath, false);
+        var fileDialogResult = _dialogService.ShowOpenFileDialog(fileDialogSettings, out string filePath, false);
 
         if (fileDialogResult != DialogResult.OK || string.IsNullOrWhiteSpace(filePath))
             return;
@@ -471,12 +471,12 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
                 return;
         }
 
-        var fileDialogSettings = new FileDialogSettings()
+        var fileDialogSettings = new OpenFileDialogSettings()
         {
             Filter = "Gothic Output Inspector (*.goi)|*.goi"
         };
 
-        var fileDialogResult = _dialogService.ShowFileDialog(fileDialogSettings, out string filePath, false);
+        var fileDialogResult = _dialogService.ShowOpenFileDialog(fileDialogSettings, out string filePath, false);
 
         if (fileDialogResult != DialogResult.OK || string.IsNullOrWhiteSpace(filePath))
             return;

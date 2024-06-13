@@ -12,8 +12,8 @@ public interface IDialogService
     public DialogResult ShowMessageBox(string? text, string? caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton);
     public DialogResult ShowMessageBox(string? text, string? caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton, MessageBoxOptions options);
 
-    public DialogResult ShowFileDialog(FileDialogSettings fileDialogSettings, out string file, bool safeFileName);
-    public DialogResult ShowFileDialogMulti(FileDialogSettings fileDialogSettings, out string[] files, bool safeFileNames);
+    public DialogResult ShowOpenFileDialog(OpenFileDialogSettings fileDialogSettings, out string file, bool safeFileName);
+    public DialogResult ShowOpenFileDialogMulti(OpenFileDialogSettings fileDialogSettings, out string[] files, bool safeFileNames);
 }
 
 public class DialogService : IDialogService
@@ -32,9 +32,9 @@ public class DialogService : IDialogService
     public DialogResult ShowMessageBox(string? text, string? caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton, MessageBoxOptions options) =>
         MessageBox.Show(text, caption, buttons, icon, defaultButton, options);
 
-    public DialogResult ShowFileDialog(FileDialogSettings fileDialogSettings, out string file, bool safeFileName)
+    public DialogResult ShowOpenFileDialog(OpenFileDialogSettings fileDialogSettings, out string file, bool safeFileName)
     {
-        var dialog = MapFileDialogSettingsToOpenFileDialog(fileDialogSettings);
+        var dialog = MapOpenFileDialogSettingsToOpenFileDialog(fileDialogSettings);
         dialog.Multiselect = false;
 
         var result = dialog.ShowDialog();
@@ -47,9 +47,9 @@ public class DialogService : IDialogService
         return result;
     }
 
-    public DialogResult ShowFileDialogMulti(FileDialogSettings fileDialogSettings, out string[] files, bool safeFileNames)
+    public DialogResult ShowOpenFileDialogMulti(OpenFileDialogSettings fileDialogSettings, out string[] files, bool safeFileNames)
     {
-        var dialog = MapFileDialogSettingsToOpenFileDialog(fileDialogSettings);
+        var dialog = MapOpenFileDialogSettingsToOpenFileDialog(fileDialogSettings);
         dialog.Multiselect = true;
 
         var result = dialog.ShowDialog();
@@ -62,7 +62,7 @@ public class DialogService : IDialogService
         return result;
     }
 
-    private static OpenFileDialog MapFileDialogSettingsToOpenFileDialog(FileDialogSettings fileDialogSettings)
+    private static OpenFileDialog MapOpenFileDialogSettingsToOpenFileDialog(OpenFileDialogSettings fileDialogSettings)
     {
         return new OpenFileDialog
         {

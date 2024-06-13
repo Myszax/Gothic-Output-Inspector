@@ -1,6 +1,6 @@
 ﻿namespace WPFUI.Components;
 
-public sealed class FileDialogSettings
+public sealed class OpenFileDialogSettings
 {
     public bool AddExtension { get; set; } = true;
 
