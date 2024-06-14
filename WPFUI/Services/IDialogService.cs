@@ -14,6 +14,9 @@ public interface IDialogService
 
     public DialogResult ShowOpenFileDialog(OpenFileDialogSettings fileDialogSettings, out string file, bool safeFileName);
     public DialogResult ShowOpenFileDialogMulti(OpenFileDialogSettings fileDialogSettings, out string[] files, bool safeFileNames);
+
+    public DialogResult ShowSaveFileDialog(SaveFileDialogSettings fileDialogSettings, out string file);
+    public DialogResult ShowSaveFileDialogMulti(SaveFileDialogSettings fileDialogSettings, out string[] files);
 }
 
 public class DialogService : IDialogService
@@ -62,6 +65,26 @@ public class DialogService : IDialogService
         return result;
     }
 
+    public DialogResult ShowSaveFileDialog(SaveFileDialogSettings fileDialogSettings, out string file)
+    {
+        var dialog = MapSaveFileDialogSettingsToSaveFileDialog(fileDialogSettings);
+
+        var result = dialog.ShowDialog();
+        file = dialog.FileName;
+
+        return result;
+    }
+
+    public DialogResult ShowSaveFileDialogMulti(SaveFileDialogSettings fileDialogSettings, out string[] files)
+    {
+        var dialog = MapSaveFileDialogSettingsToSaveFileDialog(fileDialogSettings);
+
+        var result = dialog.ShowDialog();
+        files = dialog.FileNames;
+
+        return result;
+    }
+
     private static OpenFileDialog MapOpenFileDialogSettingsToOpenFileDialog(OpenFileDialogSettings fileDialogSettings)
     {
         return new OpenFileDialog
@@ -85,6 +108,35 @@ public class DialogService : IDialogService
             ShowPinnedPlaces = fileDialogSettings.ShowPinnedPlaces,
             ShowPreview = fileDialogSettings.ShowPreview,
             ShowReadOnly = fileDialogSettings.ShowReadOnly,
+            SupportMultiDottedExtensions = fileDialogSettings.SupportMultiDottedExtensions,
+            Title = fileDialogSettings.Title,
+            ValidateNames = fileDialogSettings.ValidateNames
+        };
+    }
+
+    private static SaveFileDialog MapSaveFileDialogSettingsToSaveFileDialog(SaveFileDialogSettings fileDialogSettings)
+    {
+        return new SaveFileDialog
+        {
+            AddExtension = fileDialogSettings.AddExtension,
+            AddToRecent = fileDialogSettings.AddToRecent,
+            AutoUpgradeEnabled = fileDialogSettings.AutoUpgradeEnabled,
+            CheckFileExists = fileDialogSettings.CheckFileExists,
+            CheckPathExists = fileDialogSettings.CheckPathExists,
+            CheckWriteAccess = fileDialogSettings.CheckWriteAccess,
+            CreatePrompt = fileDialogSettings.CreatePrompt,
+            DefaultExt = fileDialogSettings.DefaultExt,
+            DereferenceLinks = fileDialogSettings.DereferenceLinks,
+            ExpandedMode = fileDialogSettings.ExpandedMode,
+            Filter = fileDialogSettings.Filter,
+            FilterIndex = fileDialogSettings.FilterIndex,
+            InitialDirectory = fileDialogSettings.InitialDirectory,
+            OkRequiresInteraction = fileDialogSettings.OkRequiresInteraction,
+            OverwritePrompt = fileDialogSettings.OverwritePrompt,
+            RestoreDirectory = fileDialogSettings.RestoreDirectory,
+            ShowHelp = fileDialogSettings.ShowHelp,
+            ShowHiddenFiles = fileDialogSettings.ShowHiddenFiles,
+            ShowPinnedPlaces = fileDialogSettings.ShowPinnedPlaces,
             SupportMultiDottedExtensions = fileDialogSettings.SupportMultiDottedExtensions,
             Title = fileDialogSettings.Title,
             ValidateNames = fileDialogSettings.ValidateNames
