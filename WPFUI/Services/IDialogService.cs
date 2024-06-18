@@ -17,6 +17,8 @@ public interface IDialogService
 
     public DialogResult ShowSaveFileDialog(SaveFileDialogSettings fileDialogSettings, out string file);
     public DialogResult ShowSaveFileDialogMulti(SaveFileDialogSettings fileDialogSettings, out string[] files);
+
+    public DialogResult ShowFolderBrowserDialog(FolderBrowserDialogSettings fileDialogSettings, out string path);
 }
 
 public class DialogService : IDialogService
@@ -85,6 +87,16 @@ public class DialogService : IDialogService
         return result;
     }
 
+    public DialogResult ShowFolderBrowserDialog(FolderBrowserDialogSettings fileDialogSettings, out string path)
+    {
+        var dialog = MapFolderBrowserDialogSettingsToFolderBrowserDialog(fileDialogSettings);
+
+        var result = dialog.ShowDialog();
+        path = dialog.SelectedPath;
+
+        return result;
+    }
+
     private static OpenFileDialog MapOpenFileDialogSettingsToOpenFileDialog(OpenFileDialogSettings fileDialogSettings)
     {
         return new OpenFileDialog
@@ -140,6 +152,23 @@ public class DialogService : IDialogService
             SupportMultiDottedExtensions = fileDialogSettings.SupportMultiDottedExtensions,
             Title = fileDialogSettings.Title,
             ValidateNames = fileDialogSettings.ValidateNames
+        };
+    }
+
+    private static FolderBrowserDialog MapFolderBrowserDialogSettingsToFolderBrowserDialog(FolderBrowserDialogSettings fileDialogSettings)
+    {
+        return new FolderBrowserDialog
+        {
+            AddToRecent = fileDialogSettings.AddToRecent,
+            AutoUpgradeEnabled = fileDialogSettings.AutoUpgradeEnabled,
+            Description = fileDialogSettings.Description,
+            InitialDirectory = fileDialogSettings.InitialDirectory,
+            OkRequiresInteraction = fileDialogSettings.OkRequiresInteraction,
+            RootFolder = fileDialogSettings.RootFolder,
+            ShowHiddenFiles = fileDialogSettings.ShowHiddenFiles,
+            ShowNewFolderButton = fileDialogSettings.ShowNewFolderButton,
+            ShowPinnedPlaces = fileDialogSettings.ShowPinnedPlaces,
+            UseDescriptionForTitle = fileDialogSettings.UseDescriptionForTitle
         };
     }
 }

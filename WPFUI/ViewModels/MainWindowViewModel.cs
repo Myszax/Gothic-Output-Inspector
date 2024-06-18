@@ -321,18 +321,16 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
     private void SetPathToAudioFiles()
     {
-        var fbd = new FolderBrowserDialog();
+        var result = _dialogService.ShowFolderBrowserDialog(new FolderBrowserDialogSettings(), out string path);
 
-        if (fbd.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+        if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(path))
         {
-            PathToAudioFiles = fbd.SelectedPath + '\\';
+            PathToAudioFiles = path + '\\';
             _dataService.AudioFilesPath = PathToAudioFiles;
             ProjectFileChanged();
         }
         else
             _dialogService.ShowMessageBox(AUDIO_PATH_NOT_SPECIFIED, CAPTION_AUDIO, MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-        fbd.Dispose();
     }
 
     [RelayCommand]
