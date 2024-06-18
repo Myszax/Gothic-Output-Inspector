@@ -608,18 +608,15 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
     private bool TryToSaveProjectAs()
     {
-        var sfd = new SaveFileDialog()
+        var saveFileDialogSettings = new SaveFileDialogSettings()
         {
-            Filter = "Gothic Output Inspector (*.goi)|*.goi",
+            Filter = "Gothic Output Inspector (*.goi)|*.goi"
         };
 
-        if (sfd.ShowDialog() != DialogResult.OK || string.IsNullOrWhiteSpace(sfd.FileName))
-        {
-            sfd.Dispose();
+        var result = _dialogService.ShowSaveFileDialog(saveFileDialogSettings, out string path);
+
+        if (result != DialogResult.OK || string.IsNullOrWhiteSpace(path))
             return false;
-        }
-        string path = sfd.FileName;
-        sfd.Dispose();
 
         try
         {
