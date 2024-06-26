@@ -31,13 +31,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
 
     [ObservableProperty]
-    private ColoredText _propertyColor = new();
-
-    [ObservableProperty]
     private string _filterValue = string.Empty;
-
-    [ObservableProperty]
-    private string _filterValueCompareMode = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EditedConversationsCount))]
@@ -86,8 +80,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     [NotifyCanExecuteChangedFor(nameof(SetPathToAudioFilesCommand))]
     [NotifyCanExecuteChangedFor(nameof(CompareOtherFileCommand))]
     private bool _isOuFileImported = false;
-
-    private List<Dialogue> _parsedDialogues = [];
 
     private string _previousNpcName = string.Empty;
 
@@ -440,10 +432,11 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             return;
 
         var parser = new Reader(filePath, SelectedEncoding);
+        List<Dialogue> parsedDialogues;
 
         try
         {
-            _parsedDialogues = parser.Parse(false);
+            parsedDialogues = parser.Parse(false);
         }
         catch (Exception e)
         {
@@ -458,7 +451,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
         var conversationList = new List<Conversation>();
 
-        foreach (var dialogue in _parsedDialogues)
+        foreach (var dialogue in parsedDialogues)
             conversationList.Add(Conversation.CreateConversationFromDialogue(dialogue));
 
         _dataService.Data.AddRange(conversationList);
