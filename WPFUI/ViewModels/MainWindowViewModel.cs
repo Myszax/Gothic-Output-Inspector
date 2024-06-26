@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Windows.Data;
 using System.Windows.Forms;
 using WPFUI.Components;
+using WPFUI.Enums;
 using WPFUI.Interfaces;
 using WPFUI.Models;
 using WPFUI.Services;
