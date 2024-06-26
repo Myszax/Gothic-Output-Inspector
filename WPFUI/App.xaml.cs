@@ -17,6 +17,7 @@ public partial class App : Application
         _services.AddTransient<CompareWindowViewModel>();
         _services.AddSingleton<AudioPlayerViewModel>();
         _services.AddSingleton<WindowMapper>();
+        _services.AddSingleton<ISettingsService, SettingsService>();
         _services.AddSingleton<IDataService, DataService>();
         _services.AddSingleton<IWindowManager, WindowManager>();
         _services.AddSingleton<IDialogService, DialogService>();
