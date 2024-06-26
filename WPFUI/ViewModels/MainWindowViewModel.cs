@@ -512,7 +512,10 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         }
 
         if (projectFile is null)
-            return; // TODO: info about it
+        {
+            _dialogService.ShowMessageBox(SAVE_PROJECT_NULL, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
 
         try
         {
