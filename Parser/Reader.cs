@@ -5,7 +5,7 @@ using static Parser.Constants;
 
 namespace Parser;
 
-public sealed class Reader
+public sealed class Reader(string path, Encoding encoding)
 {
     private readonly byte[] _typeSizes = [
         0,                        // ?            = 0x00
@@ -29,21 +29,15 @@ public sealed class Reader
 	    sizeof(uint),             // Hash         = 0x12,
     ];
 
-    private readonly string _path;
+    private readonly string _path = path;
 
-    private readonly Encoding _encoding;
+    private readonly Encoding _encoding = encoding;
 
     private HashTableEntry[] _hashTableEntries = [];
 
     private BinaryReader _reader = new(Stream.Null);
 
     private ArchiveHeader _header = new();
-
-    public Reader(string path, Encoding encoding)
-    {
-        _path = path;
-        _encoding = encoding;
-    }
 
     public List<Dialogue> Parse(bool allowDuplicates)
     {

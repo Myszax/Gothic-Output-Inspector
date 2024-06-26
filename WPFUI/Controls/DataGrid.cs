@@ -33,11 +33,8 @@ public sealed class DataGrid : System.Windows.Controls.DataGrid
     }
 }
 
-public sealed class CustomDataGridExAutomationPeer : FrameworkElementAutomationPeer
+public sealed class CustomDataGridExAutomationPeer(FrameworkElement owner) : FrameworkElementAutomationPeer(owner)
 {
-    public CustomDataGridExAutomationPeer(FrameworkElement owner)
-        : base(owner) { }
-
     protected override string GetNameCore() => "DataGridExAutomationPeer";
 
     protected override AutomationControlType GetAutomationControlTypeCore() => AutomationControlType.DataGrid;
