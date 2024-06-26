@@ -15,8 +15,6 @@ namespace WPFUI.ViewModels;
 
 public partial class AudioPlayerViewModel : ObservableObject
 {
-    public float PreviousVolume { get; set; } = 0f;
-
     [ObservableProperty]
     private string _currentlyPlayingAudioName = string.Empty;
 
@@ -37,27 +35,35 @@ public partial class AudioPlayerViewModel : ObservableObject
     private PlaybackState _stateOfPlayback = PlaybackState.Stopped;
 
     private AudioPlayer? _audioPlayer;
+    private readonly ISettingsService _settingsService;
     private readonly IDataService _dataService;
     private readonly IDialogService _dialogService;
 
-    public AudioPlayerViewModel(IDataService dataService, IDialogService dialogService)
+    public AudioPlayerViewModel(ISettingsService settingsService, IDataService dataService, IDialogService dialogService)
     {
+        _settingsService = settingsService;
         _dataService = dataService;
         _dialogService = dialogService;
 
         var refreshAudioPosition = new Task(new Action(RefreshAudioPosition));
         refreshAudioPosition.Start();
+
+        Volume = _settingsService.AudioPlayerVolume;
+        IsMuted = _settingsService.AudioPlayerIsMuted;
     }
+
+    partial void OnVolumeChanged(float value) => _settingsService.AudioPlayerVolume = value;
+    partial void OnIsMutedChanged(bool value) => _settingsService.AudioPlayerIsMuted = value;
 
     [RelayCommand]
     private void Play()
     {
-        var audioFileFullPath = _dataService.AudioFilesPath + _dataService.CurrentConversation.Sound;
+        var audioFileFullPath = _settingsService.AudioPlayerPathToFiles + _dataService.CurrentConversation.Sound;
 
         if (string.IsNullOrEmpty(audioFileFullPath))
             return;
 
-        if (string.IsNullOrEmpty(_dataService.AudioFilesPath))
+        if (string.IsNullOrEmpty(_settingsService.AudioPlayerPathToFiles))
         {
             _dialogService.ShowMessageBox(AUDIO_PATH_NOT_SPECIFIED, CAPTION_AUDIO, MessageBoxButtons.OK, MessageBoxIcon.Information);
             return;
@@ -132,14 +138,14 @@ public partial class AudioPlayerViewModel : ObservableObject
 
     private void MuteSound()
     {
-        PreviousVolume = Volume;
+        _settingsService.AudioPlayerPreviousVolume = Volume;
         Volume = 0;
         IsMuted = true;
     }
 
     private void UnMuteSound()
     {
-        Volume = PreviousVolume;
+        Volume = _settingsService.AudioPlayerPreviousVolume;
         IsMuted = false;
     }
 
