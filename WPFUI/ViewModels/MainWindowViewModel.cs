@@ -7,9 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Unicode;
 using System.Windows.Data;
 using System.Windows.Forms;
 using WPFUI.Components;
@@ -315,11 +313,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             AudioPlayerMuted = _settingsService.AudioPlayerIsMuted,
         };
 
-        var opt = new JsonSerializerOptions()
-        {
-            Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
-        };
-        File.WriteAllText(path, JsonSerializer.Serialize(save, opt));
+        File.WriteAllText(path, JsonSerializer.Serialize(save, SaveFile.SerializerOptions));
         _projectWasEdited = false;
     }
 
@@ -518,7 +512,10 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         }
 
         if (projectFile is null)
-            return; // TODO: info about it
+        {
+            _dialogService.ShowMessageBox(SAVE_PROJECT_NULL, "Parsing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return;
+        }
 
         try
         {

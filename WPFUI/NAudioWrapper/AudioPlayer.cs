@@ -20,11 +20,11 @@ public sealed class AudioPlayer
 
     public float GetVolume() => _output is not null ? _output.Volume : 1f;
 
-    public event Action PlaybackPaused;
+    public event Action? PlaybackPaused;
 
-    public event Action PlaybackResumed;
+    public event Action? PlaybackResumed;
 
-    public event Action<PlaybackStopType> PlaybackStopped;
+    public event Action<PlaybackStopType>? PlaybackStopped;
 
     private WaveFileReader? _waveFileReader;
 

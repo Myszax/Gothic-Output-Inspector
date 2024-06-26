@@ -35,9 +35,9 @@ public sealed class Reader
 
     private HashTableEntry[] _hashTableEntries = Array.Empty<HashTableEntry>();
 
-    private BinaryReader _reader;
+    private BinaryReader _reader = new(Stream.Null);
 
-    private ArchiveHeader _header;
+    private ArchiveHeader _header = new();
 
     public Reader(string path, Encoding encoding)
     {

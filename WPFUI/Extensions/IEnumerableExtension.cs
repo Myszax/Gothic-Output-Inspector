@@ -9,7 +9,8 @@ namespace WPFUI.Extensions;
 
 public static class IEnumerableExtension
 {
-    public static List<ComparisonResult<TSource>> CompareTo<TSource, TKey>(this IEnumerable<TSource> original, IEnumerable<TSource> toCompare, Func<TSource, TKey> keySelector)
+    public static List<ComparisonResult<TSource>> CompareTo<TSource, TKey>(
+        this IEnumerable<TSource> original, IEnumerable<TSource> toCompare, Func<TSource, TKey> keySelector) where TKey : notnull
     {
         if (original is null)
             throw new ArgumentNullException(nameof(original));

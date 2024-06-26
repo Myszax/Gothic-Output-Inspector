@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using WPFUI.Models;
 
 namespace WPFUI.Components;
 
 public sealed class SaveFile
 {
+    public static JsonSerializerOptions SerializerOptions { get; } = new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) };
+
     public int Version { get; set; } = 1;
 
     public IEnumerable<Conversation> Conversations { get; set; } = [];

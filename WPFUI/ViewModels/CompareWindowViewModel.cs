@@ -23,9 +23,9 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
     public AudioPlayerViewModel AudioPlayerViewModel { get; private set; }
     public MainWindowViewModel MainWindowViewModel { get; private set; }
     public int FilteredConversationsDiffCount => ConversationDiffCollection.Cast<object>().Count();
-    public int AddedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Added).Count();
-    public int ChangedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Changed).Count();
-    public int RemovedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff.Type == ComparisonResultType.Removed).Count();
+    public int AddedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff?.Type == ComparisonResultType.Added).Count();
+    public int ChangedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff?.Type == ComparisonResultType.Changed).Count();
+    public int RemovedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff?.Type == ComparisonResultType.Removed).Count();
     public int LoadedConversationsDiffCount => _conversationDiffList.Count;
 
     [ObservableProperty]
@@ -207,7 +207,7 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
         if (obj is null || obj is not ConversationDiff conversationDiff)
             return false;
 
-        if (conversationDiff.Diff.Compared is not null)
+        if (conversationDiff.Diff is not null && conversationDiff.Diff.Compared is not null)
         {
             if (SelectedFilterType == FilterType.HideAll)
             {
