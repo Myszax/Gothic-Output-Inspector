@@ -136,8 +136,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
         SetGroupingAndSortingOnConversationCollection();
         ConversationCollection.Filter = FilterCollection;
-        OnPropertyChanged(nameof(LoadedConversationsCount));
-        OnPropertyChanged(nameof(LoadedNPCsCount));
     }
 
     public bool CanClose()
