@@ -18,6 +18,8 @@ public sealed class SaveFile
 
     public StringComparison ComparisonMethod { get; set; } = StringComparison.Ordinal;
 
+    public StringComparison ComparisonMethodCompareMode { get; set; } = StringComparison.Ordinal;
+
     public bool EnabledFilterName { get; set; } = true;
 
     public bool EnabledFilterOriginalText { get; set; } = true;

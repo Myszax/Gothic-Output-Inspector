@@ -300,6 +300,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             ChosenEncoding = _settingsService.MainCurrentEncoding.HeaderName,
             AudioPath = _settingsService.AudioPlayerPathToFiles,
             ComparisonMethod = _settingsService.MainComparisonMethod,
+            ComparisonMethodCompareMode = _settingsService.CompareModeComparisonMethod,
             EnabledFilterName = _settingsService.MainIsEnabledFilterName,
             EnabledFilterOriginalText = _settingsService.MainIsEnabledFilterOriginalText,
             EnabledFilterEditedText = _settingsService.MainIsEnabledFilterEditedText,
@@ -538,6 +539,9 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
             if (Enum.IsDefined(typeof(StringComparison), projectFile.ComparisonMethod))
                 SelectedComparisonMethod = projectFile.ComparisonMethod;
+
+            if (Enum.IsDefined(typeof(StringComparison), projectFile.ComparisonMethodCompareMode))
+                _settingsService.CompareModeComparisonMethod = projectFile.ComparisonMethodCompareMode;
 
             if (projectFile.AudioPlayerVolume >= 0f && projectFile.AudioPlayerVolume <= 1f)
                 AudioPlayerViewModel.Volume = projectFile.AudioPlayerVolume;
