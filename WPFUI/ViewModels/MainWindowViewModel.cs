@@ -52,37 +52,31 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     private Conversation? _selectedLowerGridRow = new();
 
     [ObservableProperty]
-    private string _pathToAudioFiles = string.Empty;
-
-    [ObservableProperty]
     private Encoding _selectedEncoding;
 
     [ObservableProperty]
     private Encoding _usedEncoding;
 
     [ObservableProperty]
-    private StringComparison _selectedComparisonMethod = StringComparison.Ordinal;
+    private StringComparison _selectedComparisonMethod;
 
     [ObservableProperty]
-    private FilterType _selectedFilterType = FilterType.HideAll;
+    private FilterType _selectedFilterType;
 
     [ObservableProperty]
-    private bool _isEnabledFilterName = true;
+    private bool _isEnabledFilterName;
 
     [ObservableProperty]
-    private bool _isEnabledFilterOriginalText = true;
+    private bool _isEnabledFilterOriginalText;
 
     [ObservableProperty]
-    private bool _isEnabledFilterEditedText = false;
+    private bool _isEnabledFilterEditedText;
 
     [ObservableProperty]
-    private bool _isEnabledFilterIsEdited = true;
+    private bool _isEnabledFilterIsEdited;
 
     [ObservableProperty]
-    private bool _isEnabledFilterIsInspected = true;
-
-    [ObservableProperty]
-    private string _pathToSaveFile = string.Empty;
+    private bool _isEnabledFilterIsInspected;
 
     [ObservableProperty]
     private string _title = TITLE;
@@ -100,21 +94,22 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
     private bool _projectWasEdited = false;
 
+    private readonly ISettingsService _settingsService;
     private readonly IDataService _dataService;
     private readonly IDialogService _dialogService;
     private readonly IWindowManager _windowManager;
 
     public AudioPlayerViewModel AudioPlayerViewModel { get; private set; }
 
-    public MainWindowViewModel(IDataService dataService, IDialogService dialogService, IWindowManager windowManager, AudioPlayerViewModel audioPlayerViewModel)
+    public MainWindowViewModel(ISettingsService settingsService, IDataService dataService, IDialogService dialogService,
+        IWindowManager windowManager, AudioPlayerViewModel audioPlayerViewModel)
     {
+        _settingsService = settingsService;
         _windowManager = windowManager;
         _dataService = dataService;
         _dialogService = dialogService;
 
         AudioPlayerViewModel = audioPlayerViewModel;
-
-        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // need to register to be able to use Encoding.GetEncoding()
 
         Encodings = Encoding.GetEncodings()
             .Select(x => x.GetEncoding())
@@ -124,8 +119,28 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             .Select(x => new EncodingMenuItem { Encoding = x, IsChecked = false })
             .ToList();
 
-        Encodings[1].IsChecked = true;
-        SelectedEncoding = Encodings[1].Encoding;
+        var selectedEncodingIndex = Encodings.FindIndex(x => x.Encoding == _settingsService.MainCurrentEncoding);
+        if (selectedEncodingIndex > -1)
+        {
+            SelectedEncoding = _settingsService.MainCurrentEncoding;
+            Encodings[selectedEncodingIndex].IsChecked = true;
+        }
+        else
+        {
+            Encodings[1].IsChecked = true;
+            SelectedEncoding = Encodings[1].Encoding;
+            _settingsService.MainCurrentEncoding = SelectedEncoding;
+        }
+        UsedEncoding = _settingsService.MainOriginalEncoding;
+
+        SelectedFilterType = _settingsService.MainFilterType;
+        SelectedComparisonMethod = _settingsService.MainComparisonMethod;
+        IsEnabledFilterIsEdited = _settingsService.MainIsEnabledFilterIsEdited;
+        IsEnabledFilterIsInspected = _settingsService.MainIsEnabledFilterIsInspected;
+        IsEnabledFilterEditedText = _settingsService.MainIsEnabledFilterEditedText;
+        IsEnabledFilterName = _settingsService.MainIsEnabledFilterName;
+        IsEnabledFilterOriginalText = _settingsService.MainIsEnabledFilterOriginalText;
+
 
         ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
         SetGroupingAndSortingOnConversationCollection();
@@ -148,6 +163,16 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
         return true;
     }
+
+    partial void OnSelectedComparisonMethodChanged(StringComparison value) => _settingsService.MainComparisonMethod = value;
+    partial void OnSelectedEncodingChanged(Encoding value) => _settingsService.MainCurrentEncoding = value;
+    partial void OnIsEnabledFilterNameChanged(bool value) => _settingsService.MainIsEnabledFilterName = value;
+    partial void OnIsEnabledFilterEditedTextChanged(bool value) => _settingsService.MainIsEnabledFilterEditedText = value;
+    partial void OnIsEnabledFilterIsEditedChanged(bool value) => _settingsService.MainIsEnabledFilterIsEdited = value;
+    partial void OnIsEnabledFilterIsInspectedChanged(bool value) => _settingsService.MainIsEnabledFilterIsInspected = value;
+    partial void OnIsEnabledFilterOriginalTextChanged(bool value) => _settingsService.MainIsEnabledFilterOriginalText = value;
+    partial void OnSelectedFilterTypeChanged(FilterType value) => _settingsService.MainFilterType = value;
+    partial void OnUsedEncodingChanged(Encoding value) => _settingsService.MainOriginalEncoding = value;
 
     partial void OnFilterValueChanged(string value)
     {
@@ -190,8 +215,6 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         SelectedLowerGridRow = value;
         _dataService.CurrentConversation = value;
     }
-
-    partial void OnPathToAudioFilesChanged(string value) => _dataService.AudioFilesPath = value;
 
     private void FillLowerDataGrid()
     {
@@ -273,22 +296,22 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
         var save = new SaveFile()
         {
             Conversations = _dataService.Data,
-            OriginalEncoding = UsedEncoding.HeaderName,
-            ChosenEncoding = SelectedEncoding.HeaderName,
-            AudioPath = PathToAudioFiles,
-            ComparisonMethod = SelectedComparisonMethod,
-            EnabledFilterName = IsEnabledFilterName,
-            EnabledFilterOriginalText = IsEnabledFilterOriginalText,
-            EnabledFilterEditedText = IsEnabledFilterEditedText,
-            FilterType = SelectedFilterType,
-            FilterTypeCompareMode = _dataService.SelectedFilterTypeCompareMode,
-            EnabledFilterIsEdited = IsEnabledFilterIsEdited,
-            EnabledFilterIsInspected = IsEnabledFilterIsInspected,
-            EnabledFilterCompareModeIsInspected = _dataService.IsEnabledFilterCompareModeIsInspected,
-            EnabledIgnoreInspectedWhileTransfer = _dataService.IsEnabledIgnoreInspectedWhileTransfer,
-            AudioPlayerVolume = AudioPlayerViewModel.Volume,
-            AudioPlayerPreviousVolume = AudioPlayerViewModel.PreviousVolume,
-            AudioPlayerMuted = AudioPlayerViewModel.IsMuted,
+            OriginalEncoding = _settingsService.MainOriginalEncoding.HeaderName,
+            ChosenEncoding = _settingsService.MainCurrentEncoding.HeaderName,
+            AudioPath = _settingsService.AudioPlayerPathToFiles,
+            ComparisonMethod = _settingsService.MainComparisonMethod,
+            EnabledFilterName = _settingsService.MainIsEnabledFilterName,
+            EnabledFilterOriginalText = _settingsService.MainIsEnabledFilterOriginalText,
+            EnabledFilterEditedText = _settingsService.MainIsEnabledFilterEditedText,
+            FilterType = _settingsService.MainFilterType,
+            FilterTypeCompareMode = _settingsService.CompareModeSelectedFilterType,
+            EnabledFilterIsEdited = _settingsService.MainIsEnabledFilterIsEdited,
+            EnabledFilterIsInspected = _settingsService.MainIsEnabledFilterIsInspected,
+            EnabledFilterCompareModeIsInspected = _settingsService.CompareModeIsEnabledFilterIsInspected,
+            EnabledIgnoreInspectedWhileTransfer = _settingsService.CompareModeIsEnabledIgnoreInspectedWhileTransfer,
+            AudioPlayerVolume = _settingsService.AudioPlayerVolume,
+            AudioPlayerPreviousVolume = _settingsService.AudioPlayerPreviousVolume,
+            AudioPlayerMuted = _settingsService.AudioPlayerIsMuted,
         };
 
         var opt = new JsonSerializerOptions()
@@ -325,8 +348,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
         if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(path))
         {
-            PathToAudioFiles = path + '\\';
-            _dataService.AudioFilesPath = PathToAudioFiles;
+            _settingsService.AudioPlayerPathToFiles = path + '\\';
             ProjectFileChanged();
         }
         else
@@ -504,17 +526,15 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
             if (!string.IsNullOrWhiteSpace(projectFile.OriginalEncoding))
                 UsedEncoding = Encoding.GetEncoding(projectFile.OriginalEncoding);
-            else
-                UsedEncoding = Encoding.GetEncoding(1250);
 
             if (!string.IsNullOrWhiteSpace(projectFile.AudioPath))
-                PathToAudioFiles = projectFile.AudioPath;
+                _settingsService.AudioPlayerPathToFiles = projectFile.AudioPath;
 
             if (Enum.IsDefined(typeof(FilterType), projectFile.FilterType))
                 SelectedFilterType = projectFile.FilterType;
 
             if (Enum.IsDefined(typeof(FilterType), projectFile.FilterType))
-                _dataService.SelectedFilterTypeCompareMode = projectFile.FilterTypeCompareMode;
+                _settingsService.CompareModeSelectedFilterType = projectFile.FilterTypeCompareMode;
 
             if (Enum.IsDefined(typeof(StringComparison), projectFile.ComparisonMethod))
                 SelectedComparisonMethod = projectFile.ComparisonMethod;
@@ -523,15 +543,15 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
                 AudioPlayerViewModel.Volume = projectFile.AudioPlayerVolume;
 
             if (projectFile.AudioPlayerPreviousVolume >= 0f && projectFile.AudioPlayerPreviousVolume <= 1f)
-                AudioPlayerViewModel.PreviousVolume = projectFile.AudioPlayerPreviousVolume;
+                _settingsService.AudioPlayerVolume = projectFile.AudioPlayerPreviousVolume;
 
             IsEnabledFilterName = projectFile.EnabledFilterName;
             IsEnabledFilterOriginalText = projectFile.EnabledFilterOriginalText;
             IsEnabledFilterEditedText = projectFile.EnabledFilterEditedText;
             IsEnabledFilterIsInspected = projectFile.EnabledFilterIsInspected;
             IsEnabledFilterIsEdited = projectFile.EnabledFilterIsEdited;
-            _dataService.IsEnabledFilterCompareModeIsInspected = projectFile.EnabledFilterCompareModeIsInspected;
-            _dataService.IsEnabledIgnoreInspectedWhileTransfer = projectFile.EnabledIgnoreInspectedWhileTransfer;
+            _settingsService.CompareModeIsEnabledFilterIsInspected = projectFile.EnabledFilterCompareModeIsInspected;
+            _settingsService.CompareModeIsEnabledIgnoreInspectedWhileTransfer = projectFile.EnabledIgnoreInspectedWhileTransfer;
             AudioPlayerViewModel.IsMuted = projectFile.AudioPlayerMuted;
         }
         catch (Exception e)
@@ -548,7 +568,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
         CleanReloadRefreshConversationCollection();
         IsOuFileImported = true;
-        PathToSaveFile = pathToSaveFile;
+        _settingsService.MainPathToSaveFile = pathToSaveFile;
         Title = TITLE + " - " + pathToSaveFile;
     }
 
@@ -589,12 +609,12 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
 
     private bool TryToSaveProject()
     {
-        if (string.IsNullOrWhiteSpace(PathToSaveFile))
+        if (string.IsNullOrWhiteSpace(_settingsService.MainPathToSaveFile))
             return TryToSaveProjectAs();
 
         try
         {
-            SaveFileToDisk(PathToSaveFile);
+            SaveFileToDisk(_settingsService.MainPathToSaveFile);
         }
         catch (Exception e)
         {
@@ -602,7 +622,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             return false;
         }
 
-        Title = TITLE + " - " + PathToSaveFile;
+        Title = TITLE + " - " + _settingsService.MainPathToSaveFile;
         return true;
     }
 
@@ -628,7 +648,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
             return false;
         }
 
-        PathToSaveFile = path;
+        _settingsService.MainPathToSaveFile = path;
         Title = TITLE + " - " + path;
         return true;
     }
