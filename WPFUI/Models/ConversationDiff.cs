@@ -9,5 +9,5 @@ public partial class ConversationDiff : ObservableObject
     private string _name = string.Empty;
 
     [ObservableProperty]
-    private ComparisonResult<Conversation> _diff;
+    private ComparisonResult<Conversation>? _diff;
 }
