@@ -35,16 +35,16 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
     private string _filterValueCompareMode = string.Empty;
 
     [ObservableProperty]
-    private FilterType _selectedFilterType = FilterType.HideAll;
+    private FilterType _selectedFilterType;
 
     [ObservableProperty]
-    private bool _isEnabledFilterIsInspected = true;
+    private bool _isEnabledFilterIsInspected;
 
     [ObservableProperty]
-    private bool _isEnabledIgnoreInspectedWhileTransfer = true;
+    private bool _isEnabledIgnoreInspectedWhileTransfer;
 
     [ObservableProperty]
-    private StringComparison _selectedComparisonMethod = StringComparison.Ordinal;
+    private StringComparison _selectedComparisonMethod;
 
     [ObservableProperty]
     private ConversationDiff? _selectedGridRow = new();
@@ -55,14 +55,16 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
     [ObservableProperty]
     private string _title = string.Empty;
 
+    private readonly ISettingsService _settingsService;
     private readonly IDataService _dataService;
     private readonly IDialogService _dialogService;
 
     private readonly List<ConversationDiff> _conversationDiffList;
 
 
-    public CompareWindowViewModel(IDataService dataService, IDialogService dialogService, AudioPlayerViewModel audioPlayerViewModel, MainWindowViewModel mainWindowViewModel)
+    public CompareWindowViewModel(ISettingsService settingsService, IDataService dataService, IDialogService dialogService, AudioPlayerViewModel audioPlayerViewModel, MainWindowViewModel mainWindowViewModel)
     {
+        _settingsService = settingsService;
         _dataService = dataService;
         _dialogService = dialogService;
         AudioPlayerViewModel = audioPlayerViewModel;
@@ -78,9 +80,10 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
         OnPropertyChanged(nameof(FilteredConversationsDiffCount));
         Title = _dataService.CompareWindowTitle;
 
-        SelectedFilterType = _dataService.SelectedFilterTypeCompareMode;
-        IsEnabledFilterIsInspected = _dataService.IsEnabledFilterCompareModeIsInspected;
-        IsEnabledIgnoreInspectedWhileTransfer = _dataService.IsEnabledIgnoreInspectedWhileTransfer;
+        SelectedComparisonMethod = _settingsService.CompareModeComparisonMethod;
+        SelectedFilterType = _settingsService.CompareModeSelectedFilterType;
+        IsEnabledFilterIsInspected = _settingsService.CompareModeIsEnabledFilterIsInspected;
+        IsEnabledIgnoreInspectedWhileTransfer = _settingsService.CompareModeIsEnabledIgnoreInspectedWhileTransfer;
     }
 
     partial void OnFilterValueCompareModeChanged(string value)
@@ -244,8 +247,9 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
         _dataService.ConversationsToCompare.Clear();
         AudioPlayerViewModel.StopCommand.Execute(null);
 
-        _dataService.SelectedFilterTypeCompareMode = SelectedFilterType;
-        _dataService.IsEnabledFilterCompareModeIsInspected = IsEnabledFilterIsInspected;
-        _dataService.IsEnabledIgnoreInspectedWhileTransfer = IsEnabledIgnoreInspectedWhileTransfer;
+        _settingsService.CompareModeComparisonMethod = SelectedComparisonMethod;
+        _settingsService.CompareModeSelectedFilterType = SelectedFilterType;
+        _settingsService.CompareModeIsEnabledFilterIsInspected = IsEnabledFilterIsInspected;
+        _settingsService.CompareModeIsEnabledIgnoreInspectedWhileTransfer = IsEnabledIgnoreInspectedWhileTransfer;
     }
 }
