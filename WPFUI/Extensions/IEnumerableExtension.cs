@@ -12,12 +12,9 @@ public static class IEnumerableExtension
     public static List<ComparisonResult<TSource>> CompareTo<TSource, TKey>(
         this IEnumerable<TSource> original, IEnumerable<TSource> toCompare, Func<TSource, TKey> keySelector) where TKey : notnull
     {
-        if (original is null)
-            throw new ArgumentNullException(nameof(original));
-        if (toCompare is null)
-            throw new ArgumentNullException(nameof(toCompare));
-        if (keySelector is null)
-            throw new ArgumentNullException(nameof(keySelector));
+        ArgumentNullException.ThrowIfNull(nameof(original));
+        ArgumentNullException.ThrowIfNull(nameof(toCompare));
+        ArgumentNullException.ThrowIfNull(nameof(keySelector));
 
         var remoteKeyValues = toCompare.ToDictionary(keySelector);
 
