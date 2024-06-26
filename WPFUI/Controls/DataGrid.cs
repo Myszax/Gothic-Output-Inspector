@@ -42,5 +42,5 @@ public sealed class CustomDataGridExAutomationPeer : FrameworkElementAutomationP
 
     protected override AutomationControlType GetAutomationControlTypeCore() => AutomationControlType.DataGrid;
 
-    protected override List<AutomationPeer> GetChildrenCore() => new();
+    protected override List<AutomationPeer> GetChildrenCore() => [];
 }

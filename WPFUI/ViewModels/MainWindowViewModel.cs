@@ -21,7 +21,7 @@ namespace WPFUI.ViewModels;
 
 public partial class MainWindowViewModel : ObservableObject, ICloseable
 {
-    public RangeObservableCollection<Conversation> SelectedConversations { get; } = new();
+    public RangeObservableCollection<Conversation> SelectedConversations { get; } = [];
     public ICollectionView ConversationCollection { get; set; }
     public List<EncodingMenuItem> Encodings { get; }
     public int LoadedConversationsCount => _dataService.Data.Count;
@@ -87,7 +87,7 @@ public partial class MainWindowViewModel : ObservableObject, ICloseable
     [NotifyCanExecuteChangedFor(nameof(CompareOtherFileCommand))]
     private bool _isOuFileImported = false;
 
-    private List<Dialogue> _parsedDialogues = new();
+    private List<Dialogue> _parsedDialogues = [];
 
     private string _previousNpcName = string.Empty;
 

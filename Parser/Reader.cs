@@ -7,7 +7,7 @@ namespace Parser;
 
 public sealed class Reader
 {
-    private readonly byte[] _typeSizes = new byte[] {
+    private readonly byte[] _typeSizes = [
         0,                        // ?            = 0x00
 	    0,                        // String       = 0x01,
 	    sizeof(int),              // Int          = 0x02,
@@ -27,13 +27,13 @@ public sealed class Reader
 	    0,                        // RawFloat     = 0x10,
 	    sizeof(uint),             // Enum         = 0x11,
 	    sizeof(uint),             // Hash         = 0x12,
-    };
+    ];
 
     private readonly string _path;
 
     private readonly Encoding _encoding;
 
-    private HashTableEntry[] _hashTableEntries = Array.Empty<HashTableEntry>();
+    private HashTableEntry[] _hashTableEntries = [];
 
     private BinaryReader _reader = new(Stream.Null);
 
