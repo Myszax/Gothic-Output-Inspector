@@ -3,7 +3,7 @@ using WPFUI.Comparer;
 
 namespace WPFUI.Models;
 
-public partial class ConversationDiff : ObservableObject
+public sealed partial class ConversationDiff : ObservableObject
 {
     [ObservableProperty]
     private string _name = string.Empty;

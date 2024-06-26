@@ -17,7 +17,7 @@ using static WPFUI.Components.Messages;
 
 namespace WPFUI.ViewModels;
 
-public partial class CompareWindowViewModel : ObservableObject, ICloseable
+public sealed partial class CompareWindowViewModel : ObservableObject, ICloseable
 {
     public ICollectionView ConversationDiffCollection { get; set; }
     public AudioPlayerViewModel AudioPlayerViewModel { get; private set; }

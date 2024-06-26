@@ -21,7 +21,7 @@ public interface IDialogService
     public DialogResult ShowFolderBrowserDialog(FolderBrowserDialogSettings fileDialogSettings, out string path);
 }
 
-public class DialogService : IDialogService
+public sealed class DialogService : IDialogService
 {
     public DialogResult ShowMessageBox(string? text) => MessageBox.Show(text);
 

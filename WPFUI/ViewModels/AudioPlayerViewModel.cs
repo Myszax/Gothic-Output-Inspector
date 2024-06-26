@@ -11,7 +11,7 @@ using static WPFUI.Components.Messages;
 
 namespace WPFUI.ViewModels;
 
-public partial class AudioPlayerViewModel : ObservableObject
+public sealed partial class AudioPlayerViewModel : ObservableObject
 {
     [ObservableProperty]
     private string _currentlyPlayingAudioName = string.Empty;

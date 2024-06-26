@@ -2,7 +2,7 @@
 using System.Text;
 
 namespace WPFUI.Models;
-public partial class EncodingMenuItem : ObservableObject
+public sealed partial class EncodingMenuItem : ObservableObject
 {
     public Encoding Encoding { get; set; } = Encoding.Default;
 

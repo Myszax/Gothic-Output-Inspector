@@ -6,7 +6,7 @@ using WPFUI.Enums;
 
 namespace WPFUI.Models;
 
-public partial class Conversation : ObservableObject, IEquatable<Conversation>
+public sealed partial class Conversation : ObservableObject, IEquatable<Conversation>
 {
     public string Name { get; set; } = string.Empty;
     public string OriginalText { get; set; } = string.Empty;

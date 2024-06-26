@@ -19,7 +19,7 @@ using static WPFUI.Components.Messages;
 
 namespace WPFUI.ViewModels;
 
-public partial class MainWindowViewModel : ObservableObject, ICloseable
+public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
 {
     public RangeObservableCollection<Conversation> SelectedConversations { get; } = [];
     public ICollectionView ConversationCollection { get; set; }
