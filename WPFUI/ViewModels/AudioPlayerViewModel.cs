@@ -132,6 +132,14 @@ public partial class AudioPlayerViewModel : ObservableObject
         if (playbackStopType == PlaybackStopType.BySelectingNewFileWhilePlaying)
             return;
 
+        if (_audioPlayer is not null)
+        {
+            _audioPlayer.PlaybackPaused -= PlaybackPaused;
+            _audioPlayer.PlaybackResumed -= PlaybackResumed;
+            _audioPlayer.PlaybackStopped -= PlaybackStopped;
+            _audioPlayer.Dispose();
+        }
+
         StateOfPlayback = PlaybackState.Stopped;
         CurrentAudioPosition = 0;
     }
