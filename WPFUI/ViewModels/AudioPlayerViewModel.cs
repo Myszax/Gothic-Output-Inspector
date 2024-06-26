@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NAudio.Wave;
-using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WPFUI.NAudioWrapper;
@@ -44,9 +42,6 @@ public partial class AudioPlayerViewModel : ObservableObject
         _settingsService = settingsService;
         _dataService = dataService;
         _dialogService = dialogService;
-
-        var refreshAudioPosition = new Task(new Action(RefreshAudioPosition));
-        refreshAudioPosition.Start();
 
         Volume = _settingsService.AudioPlayerVolume;
         IsMuted = _settingsService.AudioPlayerIsMuted;
@@ -94,6 +89,10 @@ public partial class AudioPlayerViewModel : ObservableObject
             CurrentlyPlayingAudioName = audioFileFullPath;
         }
         _audioPlayer?.TogglePlayPause(Volume, CurrentAudioPosition);
+
+        realState = _audioPlayer?.GetPlaybackState ?? PlaybackState.Stopped;
+        if (realState == PlaybackState.Playing)
+            Task.Run(RefreshAudioPosition);
     }
 
     [RelayCommand]
@@ -159,18 +158,12 @@ public partial class AudioPlayerViewModel : ObservableObject
 
     private bool CanStopPlayback() => StateOfPlayback == PlaybackState.Playing || StateOfPlayback == PlaybackState.Paused;
 
-    private void RefreshAudioPosition()
+    private async Task RefreshAudioPosition()
     {
-        // i know it drains unnecessary resources
-        // should be running only when `PlaybackState.Playing`
-        // eg. in play and resume method and stopped in stop method
-        // but for now i am leaving it like that: TODO
-        while (true)
+        while (_audioPlayer is not null && StateOfPlayback == PlaybackState.Playing)
         {
-            if (_audioPlayer is not null && StateOfPlayback == PlaybackState.Playing)
-                CurrentAudioPosition = _audioPlayer.CurrentTime;
-
-            Thread.Sleep(20);
+            CurrentAudioPosition = _audioPlayer.CurrentTime;
+            await Task.Delay(5);
         }
     }
 }
