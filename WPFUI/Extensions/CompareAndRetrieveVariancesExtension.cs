@@ -31,7 +31,7 @@ public static class CompareAndRetrieveVariancesExtension
                 continue;
             }
 
-            if (!valAIsNull && !variance.ValA.Equals(variance.ValB))
+            if (!valAIsNull && !variance.ValA!.Equals(variance.ValB))
                 variancesDict.Add(variance.PropertyName, variance);
         }
 
