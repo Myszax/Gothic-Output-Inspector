@@ -14,16 +14,13 @@ namespace WPFUI.ViewModels;
 public sealed partial class AudioPlayerViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _currentlyPlayingAudioName = string.Empty;
+    private double _currentAudioLength;
 
     [ObservableProperty]
     private double _currentAudioPosition;
 
     [ObservableProperty]
-    private double _currentAudioLength;
-
-    [ObservableProperty]
-    private float _volume = 1f;
+    private string _currentlyPlayingAudioName = string.Empty;
 
     [ObservableProperty]
     private bool _isMuted = false;
@@ -32,10 +29,14 @@ public sealed partial class AudioPlayerViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(StopCommand))]
     private PlaybackState _stateOfPlayback = PlaybackState.Stopped;
 
-    private AudioPlayer? _audioPlayer;
-    private readonly ISettingsService _settingsService;
+    [ObservableProperty]
+    private float _volume = 1f;
+
     private readonly IDataService _dataService;
     private readonly IDialogService _dialogService;
+    private readonly ISettingsService _settingsService;
+
+    private AudioPlayer? _audioPlayer;
 
     public AudioPlayerViewModel(ISettingsService settingsService, IDataService dataService, IDialogService dialogService)
     {
@@ -43,12 +44,54 @@ public sealed partial class AudioPlayerViewModel : ObservableObject
         _dataService = dataService;
         _dialogService = dialogService;
 
-        Volume = _settingsService.AudioPlayerVolume;
         IsMuted = _settingsService.AudioPlayerIsMuted;
+        Volume = _settingsService.AudioPlayerVolume;
     }
 
-    partial void OnVolumeChanged(float value) => _settingsService.AudioPlayerVolume = value;
-    partial void OnIsMutedChanged(bool value) => _settingsService.AudioPlayerIsMuted = value;
+    private bool CanStopPlayback() => StateOfPlayback == PlaybackState.Playing || StateOfPlayback == PlaybackState.Paused;
+
+    private void MuteSound()
+    {
+        _settingsService.AudioPlayerPreviousVolume = Volume;
+        Volume = 0;
+        IsMuted = true;
+    }
+
+    private void PlaybackPaused() => StateOfPlayback = PlaybackState.Paused;
+    private void PlaybackResumed() => StateOfPlayback = PlaybackState.Playing;
+
+    private void PlaybackStopped(PlaybackStopType playbackStopType)
+    {
+        // when it occurs I don't have to change UI because it is in same state, just new audio is playing
+        if (playbackStopType == PlaybackStopType.BySelectingNewFileWhilePlaying)
+            return;
+
+        if (_audioPlayer is not null)
+        {
+            _audioPlayer.PlaybackPaused -= PlaybackPaused;
+            _audioPlayer.PlaybackResumed -= PlaybackResumed;
+            _audioPlayer.PlaybackStopped -= PlaybackStopped;
+            _audioPlayer.Dispose();
+        }
+
+        StateOfPlayback = PlaybackState.Stopped;
+        CurrentAudioPosition = 0;
+    }
+
+    private async Task RefreshAudioPosition()
+    {
+        while (_audioPlayer is not null && StateOfPlayback == PlaybackState.Playing)
+        {
+            CurrentAudioPosition = _audioPlayer.CurrentTime;
+            await Task.Delay(5);
+        }
+    }
+
+    private void UnMuteSound()
+    {
+        Volume = _settingsService.AudioPlayerPreviousVolume;
+        IsMuted = false;
+    }
 
     [RelayCommand]
     private void Play()
@@ -95,13 +138,6 @@ public sealed partial class AudioPlayerViewModel : ObservableObject
             Task.Run(RefreshAudioPosition);
     }
 
-    [RelayCommand]
-    private void VolumeControlValueChanged()
-    {
-        _audioPlayer?.SetVolume(Volume);
-        IsMuted = false;
-    }
-
     [RelayCommand(CanExecute = nameof(CanStopPlayback))]
     private void Stop()
     {
@@ -121,49 +157,13 @@ public sealed partial class AudioPlayerViewModel : ObservableObject
             MuteSound();
     }
 
-    private void PlaybackResumed() => StateOfPlayback = PlaybackState.Playing;
-
-    private void PlaybackPaused() => StateOfPlayback = PlaybackState.Paused;
-
-    private void PlaybackStopped(PlaybackStopType playbackStopType)
+    [RelayCommand]
+    private void VolumeControlValueChanged()
     {
-        // when it occurs I don't have to change UI because it is in same state, just new audio is playing
-        if (playbackStopType == PlaybackStopType.BySelectingNewFileWhilePlaying)
-            return;
-
-        if (_audioPlayer is not null)
-        {
-            _audioPlayer.PlaybackPaused -= PlaybackPaused;
-            _audioPlayer.PlaybackResumed -= PlaybackResumed;
-            _audioPlayer.PlaybackStopped -= PlaybackStopped;
-            _audioPlayer.Dispose();
-        }
-
-        StateOfPlayback = PlaybackState.Stopped;
-        CurrentAudioPosition = 0;
-    }
-
-    private void MuteSound()
-    {
-        _settingsService.AudioPlayerPreviousVolume = Volume;
-        Volume = 0;
-        IsMuted = true;
-    }
-
-    private void UnMuteSound()
-    {
-        Volume = _settingsService.AudioPlayerPreviousVolume;
+        _audioPlayer?.SetVolume(Volume);
         IsMuted = false;
     }
 
-    private bool CanStopPlayback() => StateOfPlayback == PlaybackState.Playing || StateOfPlayback == PlaybackState.Paused;
-
-    private async Task RefreshAudioPosition()
-    {
-        while (_audioPlayer is not null && StateOfPlayback == PlaybackState.Playing)
-        {
-            CurrentAudioPosition = _audioPlayer.CurrentTime;
-            await Task.Delay(5);
-        }
-    }
+    partial void OnIsMutedChanged(bool value) => _settingsService.AudioPlayerIsMuted = value;
+    partial void OnVolumeChanged(float value) => _settingsService.AudioPlayerVolume = value;
 }
