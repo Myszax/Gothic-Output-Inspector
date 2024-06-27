@@ -13,6 +13,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:WPFUI" xmlns:fa="http://schemas.fontawesome.com/icons/svg"
         xmlns:components="clr-namespace:WPFUI.Components"
+        xmlns:Enums="clr-namespace:WPFUI.Enums"
         mc:Ignorable="d"
         FontSize="16"
         Title="{Binding Title}" Width="1280" Height="720" 
@@ -163,7 +164,7 @@
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="3 0 3 0">
                             <TextBlock VerticalAlignment="Center" Text="Filter Mode:" />
                             <!--TODO: Set width by longest item length-->
-                            <ComboBox ItemsSource="{components:BindingEnums components:FilterType}" SelectedItem="{Binding SelectedFilterType}" Width="110">
+                            <ComboBox ItemsSource="{components:BindingEnums Enums:FilterType}" SelectedItem="{Binding SelectedFilterType}" Width="110">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="SelectionChanged">
                                         <i:InvokeCommandAction Command="{Binding RefreshConversationCollectionCommand}" CommandParameter="{components:False}" />

@@ -23,7 +23,7 @@ public sealed class DataGrid : System.Windows.Controls.DataGrid
     {
         var dataGrid = e.Source as DataGrid;
 
-        if (dataGrid is not null && dataGrid.SelectedItem is not null)
+        if (dataGrid?.SelectedItem is not null)
         {
             dataGrid.ScrollIntoView(dataGrid.SelectedItem);
             dataGrid.UpdateLayout();
@@ -33,14 +33,9 @@ public sealed class DataGrid : System.Windows.Controls.DataGrid
     }
 }
 
-public sealed class CustomDataGridExAutomationPeer : FrameworkElementAutomationPeer
+public sealed class CustomDataGridExAutomationPeer(FrameworkElement owner) : FrameworkElementAutomationPeer(owner)
 {
-    public CustomDataGridExAutomationPeer(FrameworkElement owner)
-        : base(owner) { }
-
-    protected override string GetNameCore() => "DataGridExAutomationPeer";
-
     protected override AutomationControlType GetAutomationControlTypeCore() => AutomationControlType.DataGrid;
-
-    protected override List<AutomationPeer> GetChildrenCore() => new();
+    protected override List<AutomationPeer> GetChildrenCore() => [];
+    protected override string GetNameCore() => "DataGridExAutomationPeer";
 }

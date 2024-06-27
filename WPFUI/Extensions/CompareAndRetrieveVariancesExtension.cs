@@ -25,7 +25,7 @@ public static class CompareAndRetrieveVariancesExtension
             if (valAIsNull && valBIsNull)
                 continue;
 
-            if (valAIsNull && !valBIsNull || !valAIsNull && valBIsNull)
+            if (valAIsNull ^ valBIsNull)
             {
                 variancesDict.Add(variance.PropertyName, variance);
                 continue;

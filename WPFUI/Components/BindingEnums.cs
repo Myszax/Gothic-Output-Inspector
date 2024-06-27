@@ -9,7 +9,7 @@ public sealed class BindingEnums : MarkupExtension
 
     public BindingEnums(Type enumType)
     {
-        if (enumType is null || !enumType.IsEnum)
+        if (enumType?.IsEnum != true)
             throw new Exception("EnumType cannot be null and of type Enum");
 
         EnumType = enumType;

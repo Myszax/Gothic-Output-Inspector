@@ -17,25 +17,21 @@ using static WPFUI.Components.Messages;
 
 namespace WPFUI.ViewModels;
 
-public partial class CompareWindowViewModel : ObservableObject, ICloseable
+public sealed partial class CompareWindowViewModel : ObservableObject, ICloseable
 {
-    public ICollectionView ConversationDiffCollection { get; set; }
-    public AudioPlayerViewModel AudioPlayerViewModel { get; private set; }
-    public MainWindowViewModel MainWindowViewModel { get; private set; }
-    public int FilteredConversationsDiffCount => ConversationDiffCollection.Cast<object>().Count();
-    public int AddedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff?.Type == ComparisonResultType.Added).Count();
-    public int ChangedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff?.Type == ComparisonResultType.Changed).Count();
-    public int RemovedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff?.Type == ComparisonResultType.Removed).Count();
-    public int LoadedConversationsDiffCount => _conversationDiffList.Count;
+    public AudioPlayerViewModel AudioPlayerViewModel { get; }
+    public MainWindowViewModel MainWindowViewModel { get; }
 
-    [ObservableProperty]
-    private ConversationDiff _selectedConversationDiff = new();
+    public ICollectionView ConversationDiffCollection { get; private set; }
+
+    public int AddedConversationsDiffCount => _conversationDiffList.Count(x => x.Diff?.Type == ComparisonResultType.Added);
+    public int ChangedConversationsDiffCount => _conversationDiffList.Count(x => x.Diff?.Type == ComparisonResultType.Changed);
+    public int FilteredConversationsDiffCount => ConversationDiffCollection.Cast<object>().Count();
+    public int LoadedConversationsDiffCount => _conversationDiffList.Count;
+    public int RemovedConversationsDiffCount => _conversationDiffList.Count(x => x.Diff?.Type == ComparisonResultType.Removed);
 
     [ObservableProperty]
     private string _filterValueCompareMode = string.Empty;
-
-    [ObservableProperty]
-    private FilterType _selectedFilterType;
 
     [ObservableProperty]
     private bool _isEnabledFilterIsInspected;
@@ -44,23 +40,27 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
     private bool _isEnabledIgnoreInspectedWhileTransfer;
 
     [ObservableProperty]
+    private ColoredText _propertyColor = new();
+
+    [ObservableProperty]
     private StringComparison _selectedComparisonMethod;
+
+    [ObservableProperty]
+    private ConversationDiff _selectedConversationDiff = new();
+
+    [ObservableProperty]
+    private FilterType _selectedFilterType;
 
     [ObservableProperty]
     private ConversationDiff? _selectedGridRow = new();
 
     [ObservableProperty]
-    private ColoredText _propertyColor = new();
-
-    [ObservableProperty]
     private string _title = string.Empty;
 
-    private readonly ISettingsService _settingsService;
+    private readonly List<ConversationDiff> _conversationDiffList;
     private readonly IDataService _dataService;
     private readonly IDialogService _dialogService;
-
-    private readonly List<ConversationDiff> _conversationDiffList;
-
+    private readonly ISettingsService _settingsService;
 
     public CompareWindowViewModel(ISettingsService settingsService, IDataService dataService, IDialogService dialogService, AudioPlayerViewModel audioPlayerViewModel, MainWindowViewModel mainWindowViewModel)
     {
@@ -71,7 +71,7 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
         MainWindowViewModel = mainWindowViewModel;
 
         _conversationDiffList = _dataService.Data.CompareTo(_dataService.ConversationsToCompare, x => x.Name)
-            .Select(x => new ConversationDiff() { Diff = x, Name = x.Original?.Name ?? x.Compared!.Name }).ToList();
+            .ConvertAll(x => new ConversationDiff() { Diff = x, Name = x.Original?.Name ?? x.Compared!.Name });
 
         FilterValueCompareMode = string.Empty;
         ConversationDiffCollection = CollectionViewSource.GetDefaultView(_conversationDiffList);
@@ -84,33 +84,6 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
         SelectedFilterType = _settingsService.CompareModeSelectedFilterType;
         IsEnabledFilterIsInspected = _settingsService.CompareModeIsEnabledFilterIsInspected;
         IsEnabledIgnoreInspectedWhileTransfer = _settingsService.CompareModeIsEnabledIgnoreInspectedWhileTransfer;
-    }
-
-    partial void OnFilterValueCompareModeChanged(string value)
-    {
-        ConversationDiffCollection.Refresh();
-        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
-    }
-
-    partial void OnSelectedGridRowChanged(ConversationDiff? value)
-    {
-        if (value is null)
-            return;
-
-        SelectedConversationDiff = value;
-    }
-
-    partial void OnSelectedConversationDiffChanged(ConversationDiff value)
-    {
-        if (value.Diff is null)
-            return;
-
-        if (value.Diff.Type == ComparisonResultType.Removed && value.Diff.Original is not null)
-            _dataService.CurrentConversation = value.Diff.Original;
-        else if (value.Diff.Compared is not null)
-            _dataService.CurrentConversation = value.Diff.Compared;
-
-        PropertyColor = ColoredText.Create(value.Diff.Variances);
     }
 
     public bool CanClose()
@@ -130,6 +103,32 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
         }
 
         return false;
+    }
+
+    private void CleanUpOnClose()
+    {
+        _dataService.ConversationsToCompare.Clear();
+        AudioPlayerViewModel.StopCommand.Execute(null);
+
+        _settingsService.CompareModeComparisonMethod = SelectedComparisonMethod;
+        _settingsService.CompareModeSelectedFilterType = SelectedFilterType;
+        _settingsService.CompareModeIsEnabledFilterIsInspected = IsEnabledFilterIsInspected;
+        _settingsService.CompareModeIsEnabledIgnoreInspectedWhileTransfer = IsEnabledIgnoreInspectedWhileTransfer;
+    }
+
+    private void SelectNextConversationDiffGridItem()
+    {
+        _conversationDiffList.Remove(SelectedConversationDiff);
+
+        if (FilteredConversationsDiffCount > 0)
+        {
+            if (FilteredConversationsDiffCount == ConversationDiffCollection.CurrentPosition + 1)
+                ConversationDiffCollection.MoveCurrentToPrevious();
+            else
+                ConversationDiffCollection.MoveCurrentToNext();
+        }
+        else
+            SelectedConversationDiff = new();
     }
 
     [RelayCommand]
@@ -192,22 +191,12 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
         OnPropertyChanged(nameof(RemovedConversationsDiffCount));
     }
 
-    [RelayCommand]
-    private void RefreshConversationDiffCollection(bool checkForEmptyFilterValue = true)
-    {
-        if (checkForEmptyFilterValue && string.IsNullOrEmpty(FilterValueCompareMode))
-            return;
-
-        ConversationDiffCollection.Refresh();
-        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
-    }
-
     private bool FilterConversationDiffCollection(object obj)
     {
         if (obj is null || obj is not ConversationDiff conversationDiff)
             return false;
 
-        if (conversationDiff.Diff is not null && conversationDiff.Diff.Compared is not null)
+        if (conversationDiff.Diff?.Compared is not null)
         {
             if (SelectedFilterType == FilterType.HideAll)
             {
@@ -221,35 +210,43 @@ public partial class CompareWindowViewModel : ObservableObject, ICloseable
             }
         }
 
-        if (FilterValueCompareMode.Length > 0 && !conversationDiff.Name.Contains(FilterValueCompareMode, SelectedComparisonMethod))
-            return false;
-
-        return true;
+        return FilterValueCompareMode.Length == 0 || conversationDiff.Name.Contains(FilterValueCompareMode, SelectedComparisonMethod);
     }
 
-    private void SelectNextConversationDiffGridItem()
+    [RelayCommand]
+    private void RefreshConversationDiffCollection(bool checkForEmptyFilterValue = true)
     {
-        _conversationDiffList.Remove(SelectedConversationDiff);
+        if (checkForEmptyFilterValue && string.IsNullOrEmpty(FilterValueCompareMode))
+            return;
 
-        if (FilteredConversationsDiffCount > 0)
-        {
-            if (FilteredConversationsDiffCount == ConversationDiffCollection.CurrentPosition + 1)
-                ConversationDiffCollection.MoveCurrentToPrevious();
-            else
-                ConversationDiffCollection.MoveCurrentToNext();
-        }
-        else
-            SelectedConversationDiff = new();
+        ConversationDiffCollection.Refresh();
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
     }
 
-    private void CleanUpOnClose()
+    partial void OnFilterValueCompareModeChanged(string value)
     {
-        _dataService.ConversationsToCompare.Clear();
-        AudioPlayerViewModel.StopCommand.Execute(null);
+        ConversationDiffCollection.Refresh();
+        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
+    }
 
-        _settingsService.CompareModeComparisonMethod = SelectedComparisonMethod;
-        _settingsService.CompareModeSelectedFilterType = SelectedFilterType;
-        _settingsService.CompareModeIsEnabledFilterIsInspected = IsEnabledFilterIsInspected;
-        _settingsService.CompareModeIsEnabledIgnoreInspectedWhileTransfer = IsEnabledIgnoreInspectedWhileTransfer;
+    partial void OnSelectedConversationDiffChanged(ConversationDiff value)
+    {
+        if (value.Diff is null)
+            return;
+
+        if (value.Diff.Type == ComparisonResultType.Removed && value.Diff.Original is not null)
+            _dataService.CurrentConversation = value.Diff.Original;
+        else if (value.Diff.Compared is not null)
+            _dataService.CurrentConversation = value.Diff.Compared;
+
+        PropertyColor = ColoredText.Create(value.Diff.Variances);
+    }
+
+    partial void OnSelectedGridRowChanged(ConversationDiff? value)
+    {
+        if (value is null)
+            return;
+
+        SelectedConversationDiff = value;
     }
 }

@@ -5,9 +5,11 @@ using static Parser.Constants;
 
 namespace Parser;
 
-public sealed class Reader
+public sealed class Reader(string path, Encoding encoding)
 {
-    private readonly byte[] _typeSizes = new byte[] {
+    private readonly Encoding _encoding = encoding;
+    private readonly string _path = path;
+    private readonly byte[] _typeSizes = [
         0,                        // ?            = 0x00
 	    0,                        // String       = 0x01,
 	    sizeof(int),              // Int          = 0x02,
@@ -27,23 +29,11 @@ public sealed class Reader
 	    0,                        // RawFloat     = 0x10,
 	    sizeof(uint),             // Enum         = 0x11,
 	    sizeof(uint),             // Hash         = 0x12,
-    };
+    ];
 
-    private readonly string _path;
-
-    private readonly Encoding _encoding;
-
-    private HashTableEntry[] _hashTableEntries = Array.Empty<HashTableEntry>();
-
-    private BinaryReader _reader = new(Stream.Null);
-
+    private HashTableEntry[] _hashTableEntries = [];
     private ArchiveHeader _header = new();
-
-    public Reader(string path, Encoding encoding)
-    {
-        _path = path;
-        _encoding = encoding;
-    }
+    private BinaryReader _reader = new(Stream.Null);
 
     public List<Dialogue> Parse(bool allowDuplicates)
     {
@@ -71,6 +61,73 @@ public sealed class Reader
         _reader.Close();
 
         return listOfDialogues;
+    }
+
+    private ushort EnsureEntryMeta(ArchiveTypeBinSafe type)
+    {
+        GetEntryKey();
+        var tmpType = _reader.ReadByte();
+
+        var size = (ArchiveTypeBinSafe)tmpType switch
+        {
+            ArchiveTypeBinSafe.String or ArchiveTypeBinSafe.Raw or ArchiveTypeBinSafe.RawFloat => _reader.ReadUInt16(),
+            _ => _typeSizes[tmpType],
+        };
+
+        if ((byte)type != tmpType)
+        {
+            SkipStreamBytesPosition(size);
+            throw new ParserException($"archive_reader_BinSafe: type mismatch expected {type}, got: {tmpType}");
+        }
+
+        return size;
+    }
+
+    private string GetEntryKey()
+    {
+        var peekedByte = _reader.ReadByte();
+        _reader.BaseStream.Position--;
+
+        if (peekedByte != (byte)ArchiveTypeBinSafe.Hash)
+            throw new ParserException("Reader_BinSafe: invalid format");
+
+        SkipStreamBytesPosition(1);
+        var hash = _reader.ReadUInt32();
+
+        return _hashTableEntries[hash].Key;
+    }
+
+    private ArchiveFormat HeaderGetFormat()
+    {
+        var format = _reader.ReadLine();
+        if (format.Equals(ARCHIVE_FORMAT_ASCII))
+            return ArchiveFormat.ASCII;
+
+        if (format.Equals(ARCHIVE_FORMAT_BINARY))
+            return ArchiveFormat.Binary;
+
+        if (format.Equals(ARCHIVE_FORMAT_BIN_SAFE))
+            return ArchiveFormat.BinSafe;
+
+        throw new ParserException("Header: Format not match.");
+    }
+
+    private bool HeaderGetSave()
+    {
+        var saveGame = _reader.ReadLine();
+        if (!saveGame.StartsWith(HEADER_SAVEGAME))
+            throw new ParserException($"Header: `{HEADER_SAVEGAME}` field missing");
+
+        return int.Parse(saveGame[^1..]) != 0;
+    }
+
+    private int HeaderGetVersion()
+    {
+        var version = _reader.ReadLine();
+        if (!version.StartsWith(HEADER_VER))
+            throw new ParserException($"Header: '{HEADER_VER}' field missing");
+
+        return int.Parse(version[HEADER_VER.Length..]);
     }
 
     private List<Dialogue> ParseAllDialogues(int itemCount, bool allowDuplicates)
@@ -114,46 +171,75 @@ public sealed class Reader
         return list;
     }
 
-    private string ValidateObjectBeginAndGetName(ArchiveObject obj)
+    private void ParseHeader()
     {
-        if (!ReadObjectBegin(obj) || !obj.ClassName.Equals(zCCSBlock))
-            throw new ParserException($"expected '{zCCSBlock}' but didn't find it");
+        _header = new ArchiveHeader();
 
-        var name = ReadString(false);
-        var blockCount = ReadInt();
-        ReadFloat(); // subBlock0
+        if (!_reader.ReadLine().Equals(HEADER_ZENGINE_ARCHIVE))
+            throw new ParserException($"Header: Missing '{HEADER_ZENGINE_ARCHIVE}' at start.");
 
-        if (blockCount != MAXIMUM_BLOCK_COUNT_READED)
-            throw new ParserException($"expected only one block but got {blockCount} for {name}");
+        _header.Version = HeaderGetVersion();
+        _header.Archiver = _reader.ReadLine();
+        _header.Format = HeaderGetFormat();
+        _header.Save = HeaderGetSave();
 
-        if (!ReadObjectBegin(obj) || !obj.ClassName.Equals(zCCSAtomicBlock))
-            throw new ParserException($"expected atomic block, not found for {name}");
+        var optionalLine = _reader.ReadLine();
+        if (optionalLine.StartsWith(HEADER_DATE))
+        {
+            _header.Date = DateTime.Parse(optionalLine[HEADER_DATE.Length..]);
+            optionalLine = _reader.ReadLine();
+        }
 
-        if (!ReadObjectBegin(obj) || !obj.ClassName.Equals(zCEventMessage))
-            throw new ParserException($"expected {zCEventMessage} not found for {name}");
+        if (optionalLine.StartsWith(HEADER_USER))
+        {
+            _header.User = optionalLine[HEADER_USER.Length..];
+            optionalLine = _reader.ReadLine();
+        }
 
-        return name;
+        if (!optionalLine.Equals(HEADER_END))
+            throw new ParserException($"Header: first '{HEADER_END}' missing");
+
+        ParseHeaderBinSafe();
     }
 
-    private void ValidateObjectEnd()
+    private void ParseHeaderBinSafe()
     {
-        if (!ReadObjectEnd())
-        {
-            SkipObject(true);
-            throw new ParserException($"{zCEventMessage} not fully parsed");
-        }
+        _reader.ReadUInt32(); // version
+        _reader.ReadUInt32(); // object count
+        var offset = _reader.ReadUInt32();
+        var markPos = _reader.BaseStream.Position;
+        _reader.BaseStream.Position = offset;
+        var hashTableSize = _reader.ReadUInt32();
+        Array.Resize(ref _hashTableEntries, (int)hashTableSize);
 
-        if (!ReadObjectEnd())
+        for (int i = 0; i < hashTableSize; i++)
         {
-            SkipObject(true);
-            throw new ParserException($"{zCCSAtomicBlock} not fully parsed");
-        }
+            var keyLength = _reader.ReadUInt16();
+            var insertionIndex = _reader.ReadUInt16();
+            var hashValue = _reader.ReadUInt32();
+            var key = _reader.ReadChars(keyLength);
 
-        if (!ReadObjectEnd())
-        {
-            SkipObject(true);
-            throw new ParserException($"{zCCSBlock} not fully parsed");
+            _hashTableEntries[insertionIndex] = new HashTableEntry { Hash = hashValue, Key = new string(key) };
         }
+        _reader.BaseStream.Position = markPos;
+    }
+
+    private uint ReadEnum()
+    {
+        EnsureEntryMeta(ArchiveTypeBinSafe.Enum);
+        return _reader.ReadUInt32();
+    }
+
+    private float ReadFloat()
+    {
+        EnsureEntryMeta(ArchiveTypeBinSafe.Float);
+        return _reader.ReadSingle();
+    }
+
+    private int ReadInt()
+    {
+        EnsureEntryMeta(ArchiveTypeBinSafe.Int);
+        return _reader.ReadInt32();
     }
 
     private bool ReadObjectBegin(ArchiveObject obj)
@@ -209,7 +295,7 @@ public sealed class Reader
             return false;
         }
 
-        if (!ReadString(false, OBJECT_END_LENGTH).Equals(OBJECT_END))
+        if (!ReadString(false, OBJECT_END_LENGTH).Equals(zOBJECT_END))
         {
             ResetStream(mark);
             return false;
@@ -218,21 +304,28 @@ public sealed class Reader
         return true;
     }
 
-    private void SkipObject(bool skipCurrent)
+    private string ReadString(bool encode = true, ushort bytesCount = 0)
     {
-        var tmp = new ArchiveObject();
-        var level = skipCurrent ? 1 : 0;
+        if (bytesCount == 0)
+            bytesCount = EnsureEntryMeta(ArchiveTypeBinSafe.String);
 
-        do
+        string ret;
+
+        if (encode)
         {
-            if (ReadObjectBegin(tmp))
-                ++level;
-            else if (ReadObjectEnd())
-                --level;
-            else
-                SkipEntry();
-        } while (level > 0);
+            var bytesArray = _reader.ReadBytes(bytesCount);
+            ret = _encoding.GetString(bytesArray);
+        }
+        else
+        {
+            var charsArray = _reader.ReadChars(bytesCount);
+            ret = new string(charsArray);
+        }
+
+        return ret;
     }
+
+    private void ResetStream(long mark) => _reader.BaseStream.Position = mark;
 
     private void SkipEntry()
     {
@@ -267,172 +360,63 @@ public sealed class Reader
         }
     }
 
-    private void ResetStream(long mark)
+    private void SkipObject(bool skipCurrent)
     {
-        _reader.BaseStream.Position = mark;
+        var tmp = new ArchiveObject();
+        var level = skipCurrent ? 1 : 0;
+
+        do
+        {
+            if (ReadObjectBegin(tmp))
+                ++level;
+            else if (ReadObjectEnd())
+                --level;
+            else
+                SkipEntry();
+        } while (level > 0);
     }
 
-    private void ParseHeaderBinSafe()
+    private void SkipStreamBytesPosition(int count) => _reader.BaseStream.Position += count;
+
+    private string ValidateObjectBeginAndGetName(ArchiveObject obj)
     {
-        _reader.ReadUInt32(); // version
-        _reader.ReadUInt32(); // object count
-        var offset = _reader.ReadUInt32();
-        var markPos = _reader.BaseStream.Position;
-        _reader.BaseStream.Position = offset;
-        var hashTableSize = _reader.ReadUInt32();
-        Array.Resize(ref _hashTableEntries, (int)hashTableSize);
+        if (!ReadObjectBegin(obj) || !obj.ClassName.Equals(zCCSBlock))
+            throw new ParserException($"expected '{zCCSBlock}' but didn't find it");
 
-        for (int i = 0; i < hashTableSize; i++)
-        {
-            var keyLength = _reader.ReadUInt16();
-            var insertionIndex = _reader.ReadUInt16();
-            var hashValue = _reader.ReadUInt32();
-            var key = _reader.ReadChars(keyLength);
+        var name = ReadString(false);
+        var blockCount = ReadInt();
+        ReadFloat(); // subBlock0
 
-            _hashTableEntries[insertionIndex] = new HashTableEntry { Hash = hashValue, Key = new string(key) };
-        }
-        _reader.BaseStream.Position = markPos;
+        if (blockCount != MAXIMUM_BLOCK_COUNT_READED)
+            throw new ParserException($"expected only one block but got {blockCount} for {name}");
+
+        if (!ReadObjectBegin(obj) || !obj.ClassName.Equals(zCCSAtomicBlock))
+            throw new ParserException($"expected atomic block, not found for {name}");
+
+        if (!ReadObjectBegin(obj) || !obj.ClassName.Equals(zCEventMessage))
+            throw new ParserException($"expected {zCEventMessage} not found for {name}");
+
+        return name;
     }
 
-    private void ParseHeader()
+    private void ValidateObjectEnd()
     {
-        _header = new ArchiveHeader();
-
-        if (!_reader.ReadLine().Equals(HEADER_ZENGINE_ARCHIVE))
-            throw new ParserException($"Header: Missing '{HEADER_ZENGINE_ARCHIVE}' at start.");
-
-        _header.Version = HeaderGetVersion();
-        _header.Archiver = _reader.ReadLine();
-        _header.Format = HeaderGetFormat();
-        _header.Save = HeaderGetSave();
-
-        var optionalLine = _reader.ReadLine();
-        if (optionalLine.StartsWith(HEADER_DATE))
+        if (!ReadObjectEnd())
         {
-            _header.Date = DateTime.Parse(optionalLine[HEADER_DATE.Length..]);
-            optionalLine = _reader.ReadLine();
-        }
-
-        if (optionalLine.StartsWith(HEADER_USER))
-        {
-            _header.User = optionalLine[HEADER_USER.Length..];
-            optionalLine = _reader.ReadLine();
+            SkipObject(true);
+            throw new ParserException($"{zCEventMessage} not fully parsed");
         }
 
-        if (!optionalLine.Equals(HEADER_END))
-            throw new ParserException($"Header: first '{HEADER_END}' missing");
-
-        ParseHeaderBinSafe();
-    }
-
-    private int HeaderGetVersion()
-    {
-        var version = _reader.ReadLine();
-        if (!version.StartsWith(HEADER_VER))
-            throw new ParserException($"Header: '{HEADER_VER}' field missing");
-
-        return int.Parse(version[HEADER_VER.Length..]);
-    }
-
-    private void SkipStreamBytesPosition(int count)
-    {
-        _reader.BaseStream.Position += count;
-    }
-
-    private ArchiveFormat HeaderGetFormat()
-    {
-        var format = _reader.ReadLine();
-        if (format.Equals(ARCHIVE_FORMAT_ASCII))
-            return ArchiveFormat.ASCII;
-
-        if (format.Equals(ARCHIVE_FORMAT_BINARY))
-            return ArchiveFormat.Binary;
-
-        if (format.Equals(ARCHIVE_FORMAT_BIN_SAFE))
-            return ArchiveFormat.BinSafe;
-
-        throw new ParserException("Header: Format not match.");
-    }
-
-    private bool HeaderGetSave()
-    {
-        var saveGame = _reader.ReadLine();
-        if (!saveGame.StartsWith(HEADER_SAVEGAME))
-            throw new ParserException($"Header: `{HEADER_SAVEGAME}` field missing");
-
-        return int.Parse(saveGame[^1..]) != 0;
-    }
-
-    private string GetEntryKey()
-    {
-        var peekedByte = _reader.ReadByte();
-        _reader.BaseStream.Position--;
-
-        if (peekedByte != (byte)ArchiveTypeBinSafe.Hash)
-            throw new ParserException("Reader_BinSafe: invalid format");
-
-        SkipStreamBytesPosition(1);
-        var hash = _reader.ReadUInt32();
-
-        return _hashTableEntries[hash].Key;
-    }
-
-    private ushort EnsureEntryMeta(ArchiveTypeBinSafe type)
-    {
-        GetEntryKey();
-        var tmpType = _reader.ReadByte();
-
-        var size = (ArchiveTypeBinSafe)tmpType switch
+        if (!ReadObjectEnd())
         {
-            ArchiveTypeBinSafe.String or ArchiveTypeBinSafe.Raw or ArchiveTypeBinSafe.RawFloat => _reader.ReadUInt16(),
-            _ => _typeSizes[tmpType],
-        };
-
-        if ((byte)type != tmpType)
-        {
-            SkipStreamBytesPosition(size);
-            throw new ParserException($"archive_reader_BinSafe: type mismatch expected {type}, got: {tmpType}");
+            SkipObject(true);
+            throw new ParserException($"{zCCSAtomicBlock} not fully parsed");
         }
 
-        return size;
-    }
-
-    private int ReadInt()
-    {
-        EnsureEntryMeta(ArchiveTypeBinSafe.Int);
-        return _reader.ReadInt32();
-    }
-
-    private float ReadFloat()
-    {
-        EnsureEntryMeta(ArchiveTypeBinSafe.Float);
-        return _reader.ReadSingle();
-    }
-
-    private uint ReadEnum()
-    {
-        EnsureEntryMeta(ArchiveTypeBinSafe.Enum);
-        return _reader.ReadUInt32();
-    }
-
-    private string ReadString(bool encode = true, ushort bytesCount = 0)
-    {
-        if (bytesCount == 0)
-            bytesCount = EnsureEntryMeta(ArchiveTypeBinSafe.String);
-
-        string ret;
-
-        if (encode)
+        if (!ReadObjectEnd())
         {
-            var bytesArray = _reader.ReadBytes(bytesCount);
-            ret = _encoding.GetString(bytesArray);
+            SkipObject(true);
+            throw new ParserException($"{zCCSBlock} not fully parsed");
         }
-        else
-        {
-            var charsArray = _reader.ReadChars(bytesCount);
-            ret = new string(charsArray);
-        }
-
-        return ret;
     }
 }

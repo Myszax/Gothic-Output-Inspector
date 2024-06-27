@@ -10,25 +10,29 @@ public sealed class AudioPlayer
 {
     public PlaybackStopType PlaybackStopType { get; set; }
 
-    public double CurrentTime => _waveFileReader!.CurrentTime.TotalSeconds;
+    public float Volume
+    {
+        get
+        {
+            return (_output?.Volume) ?? 1f;
+        }
+        set
+        {
+            if (_output is not null)
+                _output.Volume = value;
+        }
+    }
 
-    public double GetLengthInSeconds() => _waveFileReader is not null ? _waveFileReader.TotalTime.TotalSeconds : 0d;
-
-    public double GetPositionInSeconds() => _waveFileReader is not null ? _waveFileReader.CurrentTime.TotalSeconds : 0d;
-
-    public PlaybackState GetPlaybackState => _output is not null ? _output.PlaybackState : PlaybackState.Stopped;
-
-    public float GetVolume() => _output is not null ? _output.Volume : 1f;
+    public double CurrentTime => (_waveFileReader?.CurrentTime.TotalSeconds) ?? 0d;
+    public PlaybackState PlaybackState => (_output?.PlaybackState) ?? PlaybackState.Stopped;
+    public double TotalTime => (_waveFileReader?.TotalTime.TotalSeconds) ?? 0d;
 
     public event Action? PlaybackPaused;
-
     public event Action? PlaybackResumed;
-
     public event Action<PlaybackStopType>? PlaybackStopped;
 
-    private WaveFileReader? _waveFileReader;
-
     private WaveOutEvent? _output;
+    private WaveFileReader? _waveFileReader;
 
     public AudioPlayer(string filePath, float volume, double position = 0d)
     {
@@ -102,7 +106,7 @@ public sealed class AudioPlayer
         if (_waveFileReader is null || _output is null || playbackState == PlaybackState.Playing)
             return;
 
-        if (playbackState == PlaybackState.Paused && GetPositionInSeconds() != desiredPosition)
+        if (playbackState == PlaybackState.Paused && _waveFileReader.CurrentTime.TotalSeconds != desiredPosition)
             _waveFileReader.SetPosition(desiredPosition);
 
         _output.Play();
@@ -111,12 +115,6 @@ public sealed class AudioPlayer
     }
 
     public void SetPosition(double value) => _waveFileReader?.SetPosition(value);
-
-    public void SetVolume(float value)
-    {
-        if (_output is not null)
-            _output.Volume = value;
-    }
 
     public void Stop() => _output?.Stop();
 

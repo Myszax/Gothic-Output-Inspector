@@ -12,16 +12,10 @@ public interface IWindowManager
     public bool? ShowDialogWindow<TViewModel>();
 }
 
-public sealed class WindowManager : IWindowManager
+public sealed class WindowManager(WindowMapper windowMapper, IServiceProvider serviceProvider) : IWindowManager
 {
-    private readonly WindowMapper _windowMapper;
-    private readonly IServiceProvider _serviceProvider;
-
-    public WindowManager(WindowMapper windowMapper, IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-        _windowMapper = windowMapper;
-    }
+    private readonly WindowMapper _windowMapper = windowMapper;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public bool? ShowDialogWindow<TViewModel>()
     {

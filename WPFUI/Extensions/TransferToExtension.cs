@@ -10,7 +10,7 @@ public static class TransferToExtension
 {
     public static void TransferTo<T>(this T source, T target, IDictionary<string, ComparisonVariance> values)
     {
-        if (values is null || !values.Any())
+        if (values?.Any() != true)
             return;
 
         var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);

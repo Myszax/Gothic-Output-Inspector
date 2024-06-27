@@ -9,16 +9,9 @@ public sealed class RangeObservableCollection<T> : ObservableCollection<T>
 {
     private bool _suppressNotification = false;
 
-    protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-    {
-        if (!_suppressNotification)
-            base.OnCollectionChanged(e);
-    }
-
     public void AddRange(IEnumerable<T> list)
     {
-        if (list is null)
-            throw new ArgumentNullException(nameof(list));
+        ArgumentNullException.ThrowIfNull(nameof(list));
 
         _suppressNotification = true;
 
@@ -27,5 +20,11 @@ public sealed class RangeObservableCollection<T> : ObservableCollection<T>
 
         _suppressNotification = false;
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+    }
+
+    protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+    {
+        if (!_suppressNotification)
+            base.OnCollectionChanged(e);
     }
 }

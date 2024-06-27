@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using WPFUI.Components;
+using WPFUI.Enums;
 
 namespace WPFUI.Services;
 
