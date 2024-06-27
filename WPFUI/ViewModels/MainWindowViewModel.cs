@@ -27,9 +27,9 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
 
     public ICollectionView ConversationCollection { get; private set; }
 
-    public int EditedConversationsCount => _dataService.Data.Where(x => x.IsEdited).Count();
+    public int EditedConversationsCount => _dataService.Data.Count(x => x.IsEdited);
     public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
-    public int InspectedConversationsCount => _dataService.Data.Where(x => x.IsInspected).Count();
+    public int InspectedConversationsCount => _dataService.Data.Count(x => x.IsInspected);
     public int LoadedConversationsCount => _dataService.Data.Count;
     public int LoadedNPCsCount => ConversationCollection.Groups.Count;
 

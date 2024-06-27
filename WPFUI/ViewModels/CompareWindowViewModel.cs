@@ -24,11 +24,11 @@ public sealed partial class CompareWindowViewModel : ObservableObject, ICloseabl
 
     public ICollectionView ConversationDiffCollection { get; private set; }
 
-    public int AddedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff?.Type == ComparisonResultType.Added).Count();
-    public int ChangedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff?.Type == ComparisonResultType.Changed).Count();
+    public int AddedConversationsDiffCount => _conversationDiffList.Count(x => x.Diff?.Type == ComparisonResultType.Added);
+    public int ChangedConversationsDiffCount => _conversationDiffList.Count(x => x.Diff?.Type == ComparisonResultType.Changed);
     public int FilteredConversationsDiffCount => ConversationDiffCollection.Cast<object>().Count();
     public int LoadedConversationsDiffCount => _conversationDiffList.Count;
-    public int RemovedConversationsDiffCount => _conversationDiffList.Where(x => x.Diff?.Type == ComparisonResultType.Removed).Count();
+    public int RemovedConversationsDiffCount => _conversationDiffList.Count(x => x.Diff?.Type == ComparisonResultType.Removed);
 
     [ObservableProperty]
     private string _filterValueCompareMode = string.Empty;
@@ -71,7 +71,7 @@ public sealed partial class CompareWindowViewModel : ObservableObject, ICloseabl
         MainWindowViewModel = mainWindowViewModel;
 
         _conversationDiffList = _dataService.Data.CompareTo(_dataService.ConversationsToCompare, x => x.Name)
-            .Select(x => new ConversationDiff() { Diff = x, Name = x.Original?.Name ?? x.Compared!.Name }).ToList();
+            .ConvertAll(x => new ConversationDiff() { Diff = x, Name = x.Original?.Name ?? x.Compared!.Name });
 
         FilterValueCompareMode = string.Empty;
         ConversationDiffCollection = CollectionViewSource.GetDefaultView(_conversationDiffList);
