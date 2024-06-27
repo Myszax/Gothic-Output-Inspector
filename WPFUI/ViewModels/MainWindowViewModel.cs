@@ -21,46 +21,20 @@ namespace WPFUI.ViewModels;
 
 public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
 {
-    public RangeObservableCollection<Conversation> SelectedConversations { get; } = [];
-    public ICollectionView ConversationCollection { get; set; }
+    public AudioPlayerViewModel AudioPlayerViewModel { get; }
     public List<EncodingMenuItem> Encodings { get; }
+    public RangeObservableCollection<Conversation> SelectedConversations { get; } = [];
+
+    public ICollectionView ConversationCollection { get; private set; }
+
+    public int EditedConversationsCount => _dataService.Data.Where(x => x.IsEdited).Count();
+    public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
+    public int InspectedConversationsCount => _dataService.Data.Where(x => x.IsInspected).Count();
     public int LoadedConversationsCount => _dataService.Data.Count;
     public int LoadedNPCsCount => ConversationCollection.Groups.Count;
-    public int EditedConversationsCount => _dataService.Data.Where(x => x.IsEdited).Count();
-    public int InspectedConversationsCount => _dataService.Data.Where(x => x.IsInspected).Count();
-    public int FilteredConversationsCount => ConversationCollection.Cast<object>().Count();
 
     [ObservableProperty]
     private string _filterValue = string.Empty;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(EditedConversationsCount))]
-    [NotifyPropertyChangedFor(nameof(InspectedConversationsCount))]
-    private Conversation _selectedConversation = new();
-
-    [ObservableProperty]
-    private Conversation? _selectedGridRow = new();
-
-    [ObservableProperty]
-    private Conversation? _selectedLowerGridRow = new();
-
-    [ObservableProperty]
-    private Encoding _selectedEncoding;
-
-    [ObservableProperty]
-    private Encoding _usedEncoding;
-
-    [ObservableProperty]
-    private StringComparison _selectedComparisonMethod;
-
-    [ObservableProperty]
-    private FilterType _selectedFilterType;
-
-    [ObservableProperty]
-    private bool _isEnabledFilterName;
-
-    [ObservableProperty]
-    private bool _isEnabledFilterOriginalText;
 
     [ObservableProperty]
     private bool _isEnabledFilterEditedText;
@@ -72,25 +46,49 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
     private bool _isEnabledFilterIsInspected;
 
     [ObservableProperty]
+    private bool _isEnabledFilterName;
+
+    [ObservableProperty]
+    private bool _isEnabledFilterOriginalText;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CompareOtherFileCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveProjectAsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SaveProjectCommand))]
+    [NotifyCanExecuteChangedFor(nameof(SetPathToAudioFilesCommand))]
+    private bool _isOuFileImported = false;
+
+    [ObservableProperty]
+    private Conversation _selectedConversation = new();
+
+    [ObservableProperty]
+    private StringComparison _selectedComparisonMethod;
+
+    [ObservableProperty]
+    private Encoding _selectedEncoding;
+
+    [ObservableProperty]
+    private FilterType _selectedFilterType;
+
+    [ObservableProperty]
+    private Conversation? _selectedGridRow = new();
+
+    [ObservableProperty]
+    private Conversation? _selectedLowerGridRow = new();
+
+    [ObservableProperty]
     private string _title = TITLE;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(SaveProjectCommand))]
-    [NotifyCanExecuteChangedFor(nameof(SaveProjectAsCommand))]
-    [NotifyCanExecuteChangedFor(nameof(SetPathToAudioFilesCommand))]
-    [NotifyCanExecuteChangedFor(nameof(CompareOtherFileCommand))]
-    private bool _isOuFileImported = false;
+    private Encoding _usedEncoding;
 
-    private string _previousNpcName = string.Empty;
-
-    private bool _projectWasEdited = false;
-
-    private readonly ISettingsService _settingsService;
     private readonly IDataService _dataService;
     private readonly IDialogService _dialogService;
+    private readonly ISettingsService _settingsService;
     private readonly IWindowManager _windowManager;
 
-    public AudioPlayerViewModel AudioPlayerViewModel { get; private set; }
+    private string _previousNpcName = string.Empty;
+    private bool _projectWasEdited = false;
 
     public MainWindowViewModel(ISettingsService settingsService, IDataService dataService, IDialogService dialogService,
         IWindowManager windowManager, AudioPlayerViewModel audioPlayerViewModel)
@@ -153,56 +151,35 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
         return true;
     }
 
-    partial void OnSelectedComparisonMethodChanged(StringComparison value) => _settingsService.MainComparisonMethod = value;
-    partial void OnSelectedEncodingChanged(Encoding value) => _settingsService.MainCurrentEncoding = value;
-    partial void OnIsEnabledFilterNameChanged(bool value) => _settingsService.MainIsEnabledFilterName = value;
-    partial void OnIsEnabledFilterEditedTextChanged(bool value) => _settingsService.MainIsEnabledFilterEditedText = value;
-    partial void OnIsEnabledFilterIsEditedChanged(bool value) => _settingsService.MainIsEnabledFilterIsEdited = value;
-    partial void OnIsEnabledFilterIsInspectedChanged(bool value) => _settingsService.MainIsEnabledFilterIsInspected = value;
-    partial void OnIsEnabledFilterOriginalTextChanged(bool value) => _settingsService.MainIsEnabledFilterOriginalText = value;
-    partial void OnSelectedFilterTypeChanged(FilterType value) => _settingsService.MainFilterType = value;
-    partial void OnUsedEncodingChanged(Encoding value) => _settingsService.MainOriginalEncoding = value;
-
-    partial void OnFilterValueChanged(string value)
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator",
+    "MVVMTK0034:Direct field reference to [ObservableProperty] backing field", Justification = "Avoid call to OnFilterValueChanged() in this case.")]
+    private void CleanReloadRefreshConversationCollection()
     {
-        ConversationCollection.Refresh();
-        OnPropertyChanged(nameof(FilteredConversationsCount));
-
-        if (FilteredConversationsCount > 0)
-        {
-            var enumerator = ConversationCollection.GetEnumerator();
-            if (enumerator.MoveNext())
-                SelectedGridRow = (Conversation)enumerator.Current;
-        }
-    }
-
-    partial void OnSelectedGridRowChanged(Conversation? value)
-    {
-        if (value is null)
-            return;
-
-        SelectedConversation = value;
-    }
-
-    partial void OnSelectedLowerGridRowChanged(Conversation? value)
-    {
-        if (value is null)
-            return;
-
-        SelectedGridRow = value;
-    }
-
-    partial void OnSelectedConversationChanging(Conversation value) => _previousNpcName = SelectedConversation.NpcName;
-
-    partial void OnSelectedConversationChanged(Conversation value)
-    {
+        AudioPlayerViewModel.StopCommand.Execute(null);
+        _filterValue = string.Empty; // _filterValue has to accessed directly to avoid unnecessary Refresh() on ConversationCollection        
+        OnPropertyChanged(nameof(FilterValue)); // then call OnPropertyChanged on FilterValue, it speed ups loading/importing
+        SelectedGridRow = null;
+        SelectedConversation = new();
         FillLowerDataGrid();
+        ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
+        OnPropertyChanged(nameof(LoadedConversationsCount));
+        ConversationCollection.Refresh();
+        OnPropertyChanged(nameof(LoadedNPCsCount));
+        OnPropertyChanged(nameof(FilteredConversationsCount));
+        OnPropertyChanged(nameof(EditedConversationsCount));
+        OnPropertyChanged(nameof(InspectedConversationsCount));
+        _projectWasEdited = false;
+    }
 
-        if (!ConversationCollection.Cast<Conversation>().Contains(value))
-            SelectedGridRow = null;
-
-        SelectedLowerGridRow = value;
-        _dataService.CurrentConversation = value;
+    private void CleanUpOnCompareWindowClose()
+    {
+        ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
+        OnPropertyChanged(nameof(LoadedConversationsCount));
+        ConversationCollection.Refresh();
+        OnPropertyChanged(nameof(LoadedNPCsCount));
+        OnPropertyChanged(nameof(FilteredConversationsCount));
+        OnPropertyChanged(nameof(InspectedConversationsCount));
+        OnPropertyChanged(nameof(EditedConversationsCount));
     }
 
     private void FillLowerDataGrid()
@@ -247,37 +224,32 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
         return !IsEnabledFilterName && !IsEnabledFilterOriginalText && !IsEnabledFilterEditedText;
     }
 
-    private void SetGroupingAndSortingOnConversationCollection()
+    private HashSet<Conversation> OpenFileToCompare(string fileName)
     {
-        var pgd = new PropertyGroupDescription(nameof(Conversation.NpcName));
-        pgd.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-        ConversationCollection.GroupDescriptions.Add(pgd);
+        if (string.IsNullOrWhiteSpace(fileName))
+            throw new Exception("File name is NULL or WhiteSpace");
 
-        pgd = new PropertyGroupDescription(nameof(Conversation.Context));
-        pgd.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-        ConversationCollection.GroupDescriptions.Add(pgd);
+        var loadedList = Enumerable.Empty<Conversation>();
 
-        ConversationCollection.SortDescriptions.Add(new SortDescription(nameof(Conversation.Number), ListSortDirection.Ascending));
-    }
+        if (fileName.EndsWith(".goi", StringComparison.OrdinalIgnoreCase))
+        {
+            var saveFile = File.ReadAllText(fileName);
+            var projectFile = JsonSerializer.Deserialize<SaveFile>(saveFile)
+                ?? throw new Exception("Error while reading save file. NULL");
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator",
-        "MVVMTK0034:Direct field reference to [ObservableProperty] backing field", Justification = "Avoid call to OnFilterValueChanged() in this case.")]
-    private void CleanReloadRefreshConversationCollection()
-    {
-        AudioPlayerViewModel.StopCommand.Execute(null);
-        _filterValue = string.Empty; // _filterValue has to accessed directly to avoid unnecessary Refresh() on ConversationCollection        
-        OnPropertyChanged(nameof(FilterValue)); // then call OnPropertyChanged on FilterValue, it speed ups loading/importing
-        SelectedGridRow = null;
-        SelectedConversation = new();
-        FillLowerDataGrid();
-        ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
-        OnPropertyChanged(nameof(LoadedConversationsCount));
-        ConversationCollection.Refresh();
-        OnPropertyChanged(nameof(LoadedNPCsCount));
-        OnPropertyChanged(nameof(FilteredConversationsCount));
-        OnPropertyChanged(nameof(EditedConversationsCount));
-        OnPropertyChanged(nameof(InspectedConversationsCount));
-        _projectWasEdited = false;
+            loadedList = projectFile.Conversations;
+        }
+        else if (fileName.EndsWith(".bin", StringComparison.OrdinalIgnoreCase))
+        {
+            var parser = new Reader(fileName, SelectedEncoding);
+            var parsedDialogues = parser.Parse(false);
+
+            loadedList = parsedDialogues.Select(Conversation.CreateConversationFromDialogue);
+        }
+        else
+            throw new Exception($"File '{fileName}' cannot be opened.");
+
+        return loadedList.ToHashSet();
     }
 
     private void SaveFileToDisk(string path)
@@ -308,37 +280,73 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
         _projectWasEdited = false;
     }
 
-    [RelayCommand]
-    private void SelectedTreeItemChanged(object value)
+    private void SetGroupingAndSortingOnConversationCollection()
     {
-        if (value is null || value is not Conversation)
-            return;
+        var pgd = new PropertyGroupDescription(nameof(Conversation.NpcName));
+        pgd.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+        ConversationCollection.GroupDescriptions.Add(pgd);
 
-        SelectedConversation = (Conversation)value;
+        pgd = new PropertyGroupDescription(nameof(Conversation.Context));
+        pgd.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+        ConversationCollection.GroupDescriptions.Add(pgd);
+
+        ConversationCollection.SortDescriptions.Add(new SortDescription(nameof(Conversation.Number), ListSortDirection.Ascending));
     }
 
-    [RelayCommand]
-    private void RefreshConversationCollection(bool checkForEmptyFilterValue = true)
+    private bool TryToSaveProject()
     {
-        if (checkForEmptyFilterValue && string.IsNullOrEmpty(FilterValue))
-            return;
+        if (string.IsNullOrWhiteSpace(_settingsService.MainPathToSaveFile))
+            return TryToSaveProjectAs();
 
-        ConversationCollection.Refresh();
-        OnPropertyChanged(nameof(FilteredConversationsCount));
-    }
-
-    [RelayCommand(CanExecute = nameof(IsOuFileImported))]
-    private void SetPathToAudioFiles()
-    {
-        var result = _dialogService.ShowFolderBrowserDialog(new FolderBrowserDialogSettings(), out string path);
-
-        if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(path))
+        try
         {
-            _settingsService.AudioPlayerPathToFiles = path + '\\';
-            ProjectFileChanged();
+            SaveFileToDisk(_settingsService.MainPathToSaveFile);
         }
-        else
-            _dialogService.ShowMessageBox(AUDIO_PATH_NOT_SPECIFIED, CAPTION_AUDIO, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        catch (Exception e)
+        {
+            _dialogService.ShowMessageBox(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+
+        Title = TITLE + " - " + _settingsService.MainPathToSaveFile;
+        return true;
+    }
+
+    private bool TryToSaveProjectAs()
+    {
+        var saveFileDialogSettings = new SaveFileDialogSettings()
+        {
+            Filter = "Gothic Output Inspector (*.goi)|*.goi"
+        };
+
+        var result = _dialogService.ShowSaveFileDialog(saveFileDialogSettings, out string path);
+
+        if (result != DialogResult.OK || string.IsNullOrWhiteSpace(path))
+            return false;
+
+        try
+        {
+            SaveFileToDisk(path);
+        }
+        catch (Exception e)
+        {
+            _dialogService.ShowMessageBox(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+
+        _settingsService.MainPathToSaveFile = path;
+        Title = TITLE + " - " + path;
+        return true;
+    }
+
+    [RelayCommand]
+    private void ChangeEncoding(EncodingMenuItem value)
+    {
+        foreach (var encodingMenuItem in Encodings)
+            encodingMenuItem.IsChecked = false;
+
+        value.IsChecked = true;
+        SelectedEncoding = value.Encoding;
     }
 
     [RelayCommand]
@@ -350,16 +358,6 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
 
         if (edited)
             ProjectFileChanged();
-    }
-
-    [RelayCommand]
-    private void ChangeEncoding(EncodingMenuItem value)
-    {
-        foreach (var encodingMenuItem in Encodings)
-            encodingMenuItem.IsChecked = false;
-
-        value.IsChecked = true;
-        SelectedEncoding = value.Encoding;
     }
 
     [RelayCommand(CanExecute = nameof(IsOuFileImported))]
@@ -387,7 +385,6 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
             return;
         }
 
-
         _dataService.CompareWindowTitle = TITLE + " - " + filePath;
         var previousConversation = _dataService.CurrentConversation;
         _dataService.CurrentConversation = new();
@@ -404,6 +401,27 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
         {
             SelectedGridRow = null;
             SelectedConversation = _dataService.CurrentConversation = new();
+        }
+    }
+
+    [RelayCommand]
+    private void ExitApplication()
+    {
+        if (!_projectWasEdited)
+            System.Windows.Application.Current.Shutdown();
+
+        var result = _dialogService.ShowMessageBox(SAVE_PROMPT, CAPTION_SAVING, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+        bool shouldExit = false;
+
+        if (result == DialogResult.No)
+            shouldExit = true;
+        else if (result == DialogResult.Yes)
+            shouldExit = TryToSaveProject();
+
+        if (shouldExit)
+        {
+            _projectWasEdited = false; // to avoid another SaveProjectPrompt() in Closing event
+            System.Windows.Application.Current.Shutdown();
         }
     }
 
@@ -459,12 +477,6 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
         Title = TITLE + " - NewProject";
         ProjectFileChanged();
     }
-
-    [RelayCommand(CanExecute = nameof(IsOuFileImported))]
-    private void SaveProject() => TryToSaveProject();
-
-    [RelayCommand(CanExecute = nameof(IsOuFileImported))]
-    private void SaveProjectAs() => TryToSaveProjectAs();
 
     [RelayCommand]
     private void OpenProject()
@@ -577,111 +589,97 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
     }
 
     [RelayCommand]
-    private void ExitApplication()
+    private void RefreshConversationCollection(bool checkForEmptyFilterValue = true)
     {
-        if (!_projectWasEdited)
-            System.Windows.Application.Current.Shutdown();
+        if (checkForEmptyFilterValue && string.IsNullOrEmpty(FilterValue))
+            return;
 
-        var result = _dialogService.ShowMessageBox(SAVE_PROMPT, CAPTION_SAVING, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-        bool shouldExit = false;
+        ConversationCollection.Refresh();
+        OnPropertyChanged(nameof(FilteredConversationsCount));
+    }
 
-        if (result == DialogResult.No)
-            shouldExit = true;
-        else if (result == DialogResult.Yes)
-            shouldExit = TryToSaveProject();
+    [RelayCommand(CanExecute = nameof(IsOuFileImported))]
+    private void SaveProject() => TryToSaveProject();
 
-        if (shouldExit)
+    [RelayCommand(CanExecute = nameof(IsOuFileImported))]
+    private void SaveProjectAs() => TryToSaveProjectAs();
+
+    [RelayCommand]
+    private void SelectedTreeItemChanged(object value)
+    {
+        if (value is null || value is not Conversation)
+            return;
+
+        SelectedConversation = (Conversation)value;
+    }
+
+    [RelayCommand(CanExecute = nameof(IsOuFileImported))]
+    private void SetPathToAudioFiles()
+    {
+        var result = _dialogService.ShowFolderBrowserDialog(new FolderBrowserDialogSettings(), out string path);
+
+        if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(path))
         {
-            _projectWasEdited = false; // to avoid another SaveProjectPrompt() in Closing event
-            System.Windows.Application.Current.Shutdown();
+            _settingsService.AudioPlayerPathToFiles = path + '\\';
+            ProjectFileChanged();
         }
+        else
+            _dialogService.ShowMessageBox(AUDIO_PATH_NOT_SPECIFIED, CAPTION_AUDIO, MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 
     [RelayCommand]
     private void StartPlayback() => AudioPlayerViewModel.PlayCommand.Execute(null);
 
-    private bool TryToSaveProject()
+    partial void OnFilterValueChanged(string value)
     {
-        if (string.IsNullOrWhiteSpace(_settingsService.MainPathToSaveFile))
-            return TryToSaveProjectAs();
-
-        try
-        {
-            SaveFileToDisk(_settingsService.MainPathToSaveFile);
-        }
-        catch (Exception e)
-        {
-            _dialogService.ShowMessageBox(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return false;
-        }
-
-        Title = TITLE + " - " + _settingsService.MainPathToSaveFile;
-        return true;
-    }
-
-    private bool TryToSaveProjectAs()
-    {
-        var saveFileDialogSettings = new SaveFileDialogSettings()
-        {
-            Filter = "Gothic Output Inspector (*.goi)|*.goi"
-        };
-
-        var result = _dialogService.ShowSaveFileDialog(saveFileDialogSettings, out string path);
-
-        if (result != DialogResult.OK || string.IsNullOrWhiteSpace(path))
-            return false;
-
-        try
-        {
-            SaveFileToDisk(path);
-        }
-        catch (Exception e)
-        {
-            _dialogService.ShowMessageBox(e.Message, "Saving Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return false;
-        }
-
-        _settingsService.MainPathToSaveFile = path;
-        Title = TITLE + " - " + path;
-        return true;
-    }
-
-    private HashSet<Conversation> OpenFileToCompare(string fileName)
-    {
-        if (string.IsNullOrWhiteSpace(fileName))
-            throw new Exception("File name is NULL or WhiteSpace");
-
-        var loadedList = Enumerable.Empty<Conversation>();
-
-        if (fileName.EndsWith(".goi", StringComparison.OrdinalIgnoreCase))
-        {
-            var saveFile = File.ReadAllText(fileName);
-            var projectFile = JsonSerializer.Deserialize<SaveFile>(saveFile)
-                ?? throw new Exception("Error while reading save file. NULL");
-
-            loadedList = projectFile.Conversations;
-        }
-        else if (fileName.EndsWith(".bin", StringComparison.OrdinalIgnoreCase))
-        {
-            var parser = new Reader(fileName, SelectedEncoding);
-            var parsedDialogues = parser.Parse(false);
-
-            loadedList = parsedDialogues.Select(Conversation.CreateConversationFromDialogue);
-        }
-        else
-            throw new Exception($"File '{fileName}' cannot be opened.");
-
-        return loadedList.ToHashSet();
-    }
-
-    private void CleanUpOnCompareWindowClose()
-    {
-        ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
-        OnPropertyChanged(nameof(LoadedConversationsCount));
         ConversationCollection.Refresh();
-        OnPropertyChanged(nameof(LoadedNPCsCount));
         OnPropertyChanged(nameof(FilteredConversationsCount));
-        OnPropertyChanged(nameof(InspectedConversationsCount));
-        OnPropertyChanged(nameof(EditedConversationsCount));
+
+        if (FilteredConversationsCount > 0)
+        {
+            var enumerator = ConversationCollection.GetEnumerator();
+            if (enumerator.MoveNext())
+                SelectedGridRow = (Conversation)enumerator.Current;
+        }
     }
+
+    partial void OnIsEnabledFilterEditedTextChanged(bool value) => _settingsService.MainIsEnabledFilterEditedText = value;
+    partial void OnIsEnabledFilterIsEditedChanged(bool value) => _settingsService.MainIsEnabledFilterIsEdited = value;
+    partial void OnIsEnabledFilterIsInspectedChanged(bool value) => _settingsService.MainIsEnabledFilterIsInspected = value;
+    partial void OnIsEnabledFilterNameChanged(bool value) => _settingsService.MainIsEnabledFilterName = value;
+    partial void OnIsEnabledFilterOriginalTextChanged(bool value) => _settingsService.MainIsEnabledFilterOriginalText = value;
+    partial void OnSelectedComparisonMethodChanged(StringComparison value) => _settingsService.MainComparisonMethod = value;
+
+    partial void OnSelectedConversationChanged(Conversation value)
+    {
+        FillLowerDataGrid();
+
+        if (!ConversationCollection.Cast<Conversation>().Contains(value))
+            SelectedGridRow = null;
+
+        SelectedLowerGridRow = value;
+        _dataService.CurrentConversation = value;
+    }
+
+    partial void OnSelectedConversationChanging(Conversation value) => _previousNpcName = SelectedConversation.NpcName;
+    partial void OnSelectedEncodingChanged(Encoding value) => _settingsService.MainCurrentEncoding = value;
+    partial void OnSelectedFilterTypeChanged(FilterType value) => _settingsService.MainFilterType = value;
+
+    partial void OnSelectedGridRowChanged(Conversation? value)
+    {
+        if (value is null)
+            return;
+
+        SelectedConversation = value;
+    }
+
+    partial void OnSelectedLowerGridRowChanged(Conversation? value)
+    {
+        if (value is null)
+            return;
+
+        SelectedGridRow = value;
+    }
+
+    partial void OnUsedEncodingChanged(Encoding value) => _settingsService.MainOriginalEncoding = value;
 }
