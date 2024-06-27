@@ -196,7 +196,7 @@ public sealed partial class CompareWindowViewModel : ObservableObject, ICloseabl
         if (obj is null || obj is not ConversationDiff conversationDiff)
             return false;
 
-        if (conversationDiff.Diff is not null && conversationDiff.Diff.Compared is not null)
+        if (conversationDiff.Diff?.Compared is not null)
         {
             if (SelectedFilterType == FilterType.HideAll)
             {

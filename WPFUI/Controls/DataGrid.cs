@@ -23,7 +23,7 @@ public sealed class DataGrid : System.Windows.Controls.DataGrid
     {
         var dataGrid = e.Source as DataGrid;
 
-        if (dataGrid is not null && dataGrid.SelectedItem is not null)
+        if (dataGrid?.SelectedItem is not null)
         {
             dataGrid.ScrollIntoView(dataGrid.SelectedItem);
             dataGrid.UpdateLayout();

@@ -22,7 +22,7 @@ public sealed class ColoredText
     {
         var ct = new ColoredText();
 
-        if (variances is null || !variances.Any())
+        if (variances?.Any() != true)
             return ct;
 
         ct.Context = variances.ContainsKey("Context");
