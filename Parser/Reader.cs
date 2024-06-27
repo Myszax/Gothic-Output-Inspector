@@ -295,7 +295,7 @@ public sealed class Reader(string path, Encoding encoding)
             return false;
         }
 
-        if (!ReadString(false, OBJECT_END_LENGTH).Equals(OBJECT_END))
+        if (!ReadString(false, OBJECT_END_LENGTH).Equals(zOBJECT_END))
         {
             ResetStream(mark);
             return false;

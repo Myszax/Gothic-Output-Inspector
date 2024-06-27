@@ -17,12 +17,12 @@ public static class Constants
     public const string HEADER_ZENGINE_ARCHIVE = "ZenGin Archive";
     #endregion
 
-    #region ZenGine_Objects_Strings
-    public const string OBJECT_END = "[]";
+    #region ZenGine_Objects_Strings    
     public const string zCCSAtomicBlock = "zCCSAtomicBlock";
     public const string zCCSBlock = "zCCSBlock";
     public const string zCCSLib = "zCCSLib";
     public const string zCEventMessage = "oCMsgConversation:oCNpcMessage:zCEventMessage";
+    public const string zOBJECT_END = "[]";
     #endregion
 
     #region Parser_Numbers
