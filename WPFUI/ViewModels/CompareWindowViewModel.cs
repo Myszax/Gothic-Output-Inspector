@@ -210,10 +210,7 @@ public sealed partial class CompareWindowViewModel : ObservableObject, ICloseabl
             }
         }
 
-        if (FilterValueCompareMode.Length > 0 && !conversationDiff.Name.Contains(FilterValueCompareMode, SelectedComparisonMethod))
-            return false;
-
-        return true;
+        return FilterValueCompareMode.Length == 0 || conversationDiff.Name.Contains(FilterValueCompareMode, SelectedComparisonMethod);
     }
 
     [RelayCommand]
