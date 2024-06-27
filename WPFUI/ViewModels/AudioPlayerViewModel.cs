@@ -120,7 +120,7 @@ public sealed partial class AudioPlayerViewModel : ObservableObject
             CurrentAudioPosition = 0;
         }
 
-        var realState = _audioPlayer?.GetPlaybackState ?? PlaybackState.Stopped;
+        var realState = _audioPlayer?.PlaybackState ?? PlaybackState.Stopped;
 
         if (realState == PlaybackState.Stopped)
         {
@@ -128,12 +128,12 @@ public sealed partial class AudioPlayerViewModel : ObservableObject
             _audioPlayer.PlaybackPaused += PlaybackPaused;
             _audioPlayer.PlaybackResumed += PlaybackResumed;
             _audioPlayer.PlaybackStopped += PlaybackStopped;
-            CurrentAudioLength = _audioPlayer.GetLengthInSeconds();
+            CurrentAudioLength = _audioPlayer.TotalTime;
             CurrentlyPlayingAudioName = audioFileFullPath;
         }
         _audioPlayer?.TogglePlayPause(Volume, CurrentAudioPosition);
 
-        realState = _audioPlayer?.GetPlaybackState ?? PlaybackState.Stopped;
+        realState = _audioPlayer?.PlaybackState ?? PlaybackState.Stopped;
         if (realState == PlaybackState.Playing)
             Task.Run(RefreshAudioPosition);
     }
@@ -160,7 +160,9 @@ public sealed partial class AudioPlayerViewModel : ObservableObject
     [RelayCommand]
     private void VolumeControlValueChanged()
     {
-        _audioPlayer?.SetVolume(Volume);
+        if (_audioPlayer is not null)
+            _audioPlayer.Volume = Volume;
+
         IsMuted = false;
     }
 
