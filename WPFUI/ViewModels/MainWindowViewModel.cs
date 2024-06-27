@@ -130,7 +130,6 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
         IsEnabledFilterName = _settingsService.MainIsEnabledFilterName;
         IsEnabledFilterOriginalText = _settingsService.MainIsEnabledFilterOriginalText;
 
-
         ConversationCollection = CollectionViewSource.GetDefaultView(_dataService.Data);
         SetGroupingAndSortingOnConversationCollection();
         ConversationCollection.Filter = FilterCollection;
@@ -373,7 +372,6 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
 
         if (fileDialogResult != DialogResult.OK || string.IsNullOrEmpty(filePath))
             return;
-
 
         try
         {
