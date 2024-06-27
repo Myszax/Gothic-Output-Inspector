@@ -16,11 +16,6 @@ public sealed class WindowMapper
         RegisterMapping<CompareWindowViewModel, CompareWindow>();
     }
 
-    public void RegisterMapping<TViewModel, TWindow>() where TViewModel : ObservableObject where TWindow : Window
-    {
-        _mappings.Add(typeof(TViewModel), typeof(TWindow));
-    }
-
     public Type? GetWindowTypeForViewModel<TViewModel>()
     {
         _mappings.TryGetValue(typeof(TViewModel), out var windowType);
@@ -31,5 +26,10 @@ public sealed class WindowMapper
     {
         _mappings.TryGetValue(viewModelType, out var type);
         return type;
+    }
+
+    public void RegisterMapping<TViewModel, TWindow>() where TViewModel : ObservableObject where TWindow : Window
+    {
+        _mappings.Add(typeof(TViewModel), typeof(TWindow));
     }
 }
