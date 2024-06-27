@@ -8,21 +8,21 @@ namespace WPFUI.Models;
 
 public sealed partial class Conversation : ObservableObject, IEquatable<Conversation>
 {
-    public string Name { get; set; } = string.Empty;
-    public string OriginalText { get; set; } = string.Empty;
-    public string EditedText { get; set; } = string.Empty;
-    public string Sound { get; set; } = string.Empty;
     public string Context { get; set; } = string.Empty;
+    public string EditedText { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
     public string NpcName { get; set; } = string.Empty;
+    public int Number { get; set; }
+    public string OriginalText { get; set; } = string.Empty;
+    public string Sound { get; set; } = string.Empty;
     public ConversationType Type { get; set; }
     public int Voice { get; set; }
-    public int Number { get; set; }
-
-    [ObservableProperty]
-    private bool _isEdited = false;
 
     [ObservableProperty]
     private bool _isInspected = false;
+
+    [ObservableProperty]
+    private bool _isEdited = false;
 
     public static Conversation CreateConversationFromDialogue(Dialogue dialogue)
     {
@@ -42,8 +42,6 @@ public sealed partial class Conversation : ObservableObject, IEquatable<Conversa
     }
 
     public override bool Equals(object? obj) => obj is not null && Equals(obj as Conversation);
-
-    public override int GetHashCode() => Name.GetHashCode();
 
     public bool Equals(Conversation? other)
     {
@@ -76,6 +74,8 @@ public sealed partial class Conversation : ObservableObject, IEquatable<Conversa
 
         return true;
     }
+
+    public override int GetHashCode() => Name.GetHashCode();
 
     private static string GetContextFromName(ConversationType type, string[] nameParts)
     {
