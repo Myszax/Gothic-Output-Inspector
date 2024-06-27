@@ -12,7 +12,7 @@ public sealed class VolumeConverter : IValueConverter
             return "0%";
         else if ((float)value == 1f)
             return "100%";
-        return $"{((float)value * 100):N2}%";
+        return $"{(float)value * 100:N2}%";
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
