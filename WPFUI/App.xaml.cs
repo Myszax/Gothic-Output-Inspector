@@ -8,8 +8,8 @@ namespace WPFUI;
 
 public partial class App : Application
 {
-    private readonly IServiceCollection _services = new ServiceCollection();
     private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceCollection _services = new ServiceCollection();
 
     public App()
     {
