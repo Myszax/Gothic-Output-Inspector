@@ -6,8 +6,8 @@ namespace WPFUI.Models;
 public sealed partial class ConversationDiff : ObservableObject
 {
     [ObservableProperty]
-    private string _name = string.Empty;
+    private ComparisonResult<Conversation>? _diff;
 
     [ObservableProperty]
-    private ComparisonResult<Conversation>? _diff;
+    private string _name = string.Empty;
 }
