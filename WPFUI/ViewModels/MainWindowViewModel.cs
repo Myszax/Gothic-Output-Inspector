@@ -546,7 +546,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
                 AudioPlayerViewModel.Volume = projectFile.AudioPlayerVolume;
 
             if (projectFile.AudioPlayerPreviousVolume >= 0f && projectFile.AudioPlayerPreviousVolume <= 1f)
-                _settingsService.AudioPlayerVolume = projectFile.AudioPlayerPreviousVolume;
+                _settingsService.AudioPlayerPreviousVolume = projectFile.AudioPlayerPreviousVolume;
 
             IsEnabledFilterName = projectFile.EnabledFilterName;
             IsEnabledFilterOriginalText = projectFile.EnabledFilterOriginalText;
