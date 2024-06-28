@@ -473,6 +473,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
         CleanReloadRefreshConversationCollection();
         IsOuFileImported = true;
         Title = TITLE + " - NewProject";
+        _settingsService.MainPathToSaveFile = string.Empty;
         ProjectFileChanged();
     }
 
