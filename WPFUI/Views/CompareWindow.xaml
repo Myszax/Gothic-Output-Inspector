@@ -168,71 +168,150 @@
             </cc:DataGrid>
         </Grid>
 
-
         <Grid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1">
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0 6"
-                    FontWeight="Bold" Foreground="DarkOrange">Original</TextBlock>
-                <ScrollViewer BorderThickness="1 0 1 0" BorderBrush="Black">
-                    <StackPanel Margin="5 5 5 5">
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Type, Converter={StaticResource BoolToColorConverter}}">Type</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Type}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Name, Converter={StaticResource BoolToColorConverter}}">Name</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Name}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Sound, Converter={StaticResource BoolToColorConverter}}">Sound</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Sound}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.NpcName, Converter={StaticResource BoolToColorConverter}}">NPC Name</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.NpcName}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Context, Converter={StaticResource BoolToColorConverter}}">Context</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Context}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Voice, Converter={StaticResource BoolToColorConverter}}">Voice</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Voice}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Number, Converter={StaticResource BoolToColorConverter}}">Number</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Original.Number}" />
-                        </WrapPanel>
-                        <DockPanel LastChildFill="False">
+            <ScrollViewer BorderThickness="1 0 1 0" BorderBrush="Black" HorizontalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock HorizontalAlignment="Center" Margin="0 6" FontWeight="Bold" Foreground="DarkOrange">Original</TextBlock>
+                    <Grid Grid.IsSharedSizeScope="True" Margin="5 5 0 0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                         
+                        <Grid Grid.Row="0" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Type, Converter={StaticResource BoolToColorConverter}}">Type</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Original_Type}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Original_Type" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Original.Type}" />
+                        </Grid>
+
+                        <Grid Grid.Row="1" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Name, Converter={StaticResource BoolToColorConverter}}">Name</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Original_Name}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Original_Name" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Original.Name}" />
+                        </Grid>
+
+                        <Grid Grid.Row="2" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Sound, Converter={StaticResource BoolToColorConverter}}">Sound</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Original_Sound}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Original_Sound" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Original.Sound}" />
+                        </Grid>
+
+                        <Grid Grid.Row="3" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.NpcName, Converter={StaticResource BoolToColorConverter}}">NPC Name</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Original_NpcName}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Original_NpcName" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Original.NpcName}" />
+                        </Grid>
+
+                        <Grid Grid.Row="4" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Context, Converter={StaticResource BoolToColorConverter}}">Context</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Original_Context}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Original_Context" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Original.Context}" />
+                        </Grid>
+
+                        <Grid Grid.Row="5" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Voice, Converter={StaticResource BoolToColorConverter}}">Voice</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Original_Voice}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Original_Voice" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Original.Voice}" />
+                        </Grid>
+
+                        <Grid Grid.Row="6" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Number, Converter={StaticResource BoolToColorConverter}}">Number</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Original_Number}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Original_Number" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Original.Number}" />
+                        </Grid>
+
+                        <DockPanel LastChildFill="False" Grid.Row="7">
                             <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
-                                <TextBlock VerticalAlignment="Center" Text="Inspected" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}" />
-                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsInspected}" />
+                                <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}">Inspected</TextBlock>
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsInspected}"
+                                    Focusable="False" IsHitTestVisible="False"/>
                             </WrapPanel>
                             <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Edited, Converter={StaticResource BoolToColorConverter}}">Edited</TextBlock>
                                 <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Original.IsEdited}" />
                             </WrapPanel>
                         </DockPanel>
-                        <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.OriginalText, Converter={StaticResource BoolToColorConverter}}">Original Text</TextBlock>
-                            <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
-                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
-                             IsReadOnly="True"
-                             Text="{Binding SelectedConversationDiff.Diff.Original.OriginalText}" />
-                        </StackPanel>
-                        <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.EditedText, Converter={StaticResource BoolToColorConverter}}">Edited Text</TextBlock>
-                            <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
-                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
-                             IsReadOnly="True"
-                             SpellCheck.IsEnabled="True" Language="pl-PL"
-                             Text="{Binding SelectedConversationDiff.Diff.Original.EditedText, UpdateSourceTrigger=PropertyChanged}">
-                            </TextBox>
-                        </StackPanel>
+                    </Grid>
 
+                    <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.OriginalText, Converter={StaticResource BoolToColorConverter}}">Original Text</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Original_OriginalText}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                        </StackPanel>
+                        <TextBox x:Name="Original_OriginalText" VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                            TextWrapping="Wrap" IsReadOnly="True" Text="{Binding SelectedConversationDiff.Diff.Original.OriginalText}" />
                     </StackPanel>
-                </ScrollViewer>
-            </DockPanel>
+                    <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.EditedText, Converter={StaticResource BoolToColorConverter}}">Edited Text</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Original_EditedText}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                        </StackPanel>
+                        <TextBox x:Name="Original_EditedText" VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                             TextWrapping="Wrap" SpellCheck.IsEnabled="True" Language="pl-PL" IsReadOnly="True"
+                             Text="{Binding SelectedConversationDiff.Diff.Original.EditedText, UpdateSourceTrigger=PropertyChanged}">
+                        </TextBox>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="2" Grid.RowSpan="2">
@@ -256,70 +335,149 @@
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="3" x:Name="DetailedPanel" Grid.RowSpan="2">
+            <ScrollViewer BorderThickness="1 0 1 0" BorderBrush="Black" HorizontalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock HorizontalAlignment="Center" Margin="0 6" FontWeight="Bold" Foreground="DarkOrange">Imported</TextBlock>
+                    <Grid Grid.IsSharedSizeScope="True" Margin="5 5 0 0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
 
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Margin="0 6"
-                    FontWeight="Bold" Foreground="DarkOrange">Imported</TextBlock>
-                <ScrollViewer BorderThickness="1 0 0 0" BorderBrush="Black">
-                    <StackPanel Margin="5 5 5 5">
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Type, Converter={StaticResource BoolToColorConverter}}">Type</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Type}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Name, Converter={StaticResource BoolToColorConverter}}">Name</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Name}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Sound, Converter={StaticResource BoolToColorConverter}}">Sound</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Sound}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.NpcName, Converter={StaticResource BoolToColorConverter}}">NPC Name</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.NpcName}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Context, Converter={StaticResource BoolToColorConverter}}">Context</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Context}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Voice, Converter={StaticResource BoolToColorConverter}}">Voice</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Voice}" />
-                        </WrapPanel>
-                        <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Number, Converter={StaticResource BoolToColorConverter}}">Number</TextBlock>
-                            <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversationDiff.Diff.Compared.Number}" />
-                        </WrapPanel>
-                        <DockPanel LastChildFill="False">
+                        <Grid Grid.Row="0" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Type, Converter={StaticResource BoolToColorConverter}}">Type</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Imported_Type}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Imported_Type" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Compared.Type}" />
+                        </Grid>
+
+                        <Grid Grid.Row="1" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Name, Converter={StaticResource BoolToColorConverter}}">Name</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Imported_Name}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Imported_Name" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Compared.Name}" />
+                        </Grid>
+
+                        <Grid Grid.Row="2" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Sound, Converter={StaticResource BoolToColorConverter}}">Sound</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Imported_Sound}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Imported_Sound" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Compared.Sound}" />
+                        </Grid>
+
+                        <Grid Grid.Row="3" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.NpcName, Converter={StaticResource BoolToColorConverter}}">NPC Name</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Imported_NpcName}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Imported_NpcName" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Compared.NpcName}" />
+                        </Grid>
+
+                        <Grid Grid.Row="4" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Context, Converter={StaticResource BoolToColorConverter}}">Context</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Imported_Context}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Imported_Context" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Compared.Context}" />
+                        </Grid>
+
+                        <Grid Grid.Row="5" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Voice, Converter={StaticResource BoolToColorConverter}}">Voice</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Imported_Voice}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Imported_Voice" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Compared.Voice}" />
+                        </Grid>
+
+                        <Grid Grid.Row="6" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0" Foreground="{Binding PropertyColor.Number, Converter={StaticResource BoolToColorConverter}}">Number</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Imported_Number}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Imported_Number" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversationDiff.Diff.Compared.Number}" />
+                        </Grid>
+
+                        <DockPanel LastChildFill="False" Grid.Row="7">
                             <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Inspected, Converter={StaticResource BoolToColorConverter}}">Inspected</TextBlock>
-                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsInspected}" />
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsInspected}"
+						            Focusable="False" IsHitTestVisible="False"/>
                             </WrapPanel>
                             <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
                                 <TextBlock VerticalAlignment="Center" Foreground="{Binding PropertyColor.Edited, Converter={StaticResource BoolToColorConverter}}">Edited</TextBlock>
                                 <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversationDiff.Diff.Compared.IsEdited}" />
                             </WrapPanel>
                         </DockPanel>
-                        <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.OriginalText, Converter={StaticResource BoolToColorConverter}}">Original Text</TextBlock>
-                            <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
-                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
-                             IsReadOnly="True"
-                             Text="{Binding SelectedConversationDiff.Diff.Compared.OriginalText}" />
-                        </StackPanel>
-                        <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.EditedText, Converter={StaticResource BoolToColorConverter}}">Edited Text</TextBlock>
-                            <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
-                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
-                             SpellCheck.IsEnabled="True" Language="pl-PL"
-                             IsReadOnly="True"
-                             Text="{Binding SelectedConversationDiff.Diff.Compared.EditedText, UpdateSourceTrigger=PropertyChanged}">
-                            </TextBox>
-                        </StackPanel>
+                    </Grid>
 
+                    <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.OriginalText, Converter={StaticResource BoolToColorConverter}}">Original Text</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Imported_OriginalText}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                        </StackPanel>
+                        <TextBox x:Name="Imported_OriginalText" VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+				            TextWrapping="Wrap" IsReadOnly="True" Text="{Binding SelectedConversationDiff.Diff.Compared.OriginalText}" />
                     </StackPanel>
-                </ScrollViewer>
-            </DockPanel>
+                    <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center" Foreground="{Binding PropertyColor.EditedText, Converter={StaticResource BoolToColorConverter}}">Edited Text</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding MainWindowViewModel.CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Imported_EditedText}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                        </StackPanel>
+                        <TextBox x:Name="Imported_EditedText" VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+				             TextWrapping="Wrap" SpellCheck.IsEnabled="True" Language="pl-PL" IsReadOnly="True"
+				             Text="{Binding SelectedConversationDiff.Diff.Compared.EditedText, UpdateSourceTrigger=PropertyChanged}">
+                        </TextBox>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
 
         <Grid Grid.Row="4" Grid.ColumnSpan="10" Background="#FF18191B">
