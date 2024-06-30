@@ -81,6 +81,9 @@ public sealed partial class CompareWindowViewModel : ObservableObject, ICloseabl
 
         ConversationDiffCollection = CollectionViewSource.GetDefaultView(_conversationDiffList);
         ConversationDiffCollection.Filter = FilterConversationDiffCollection;
+
+        if (FilteredConversationsDiffCount > 0)
+            SelectedConversationDiff = (ConversationDiff)ConversationDiffCollection.CurrentItem;
     }
 
     public bool CanClose()
