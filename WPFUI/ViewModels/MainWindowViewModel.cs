@@ -339,6 +339,13 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
     }
 
     [RelayCommand]
+    private static void CopyToClipboard(object value)
+    {
+        if (value is string text && !string.IsNullOrEmpty(text))
+            Clipboard.SetText(text);
+    }
+
+    [RelayCommand]
     private void ChangeEncoding(EncodingMenuItem value)
     {
         foreach (var encodingMenuItem in Encodings)
