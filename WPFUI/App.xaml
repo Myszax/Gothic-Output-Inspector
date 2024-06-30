@@ -23,12 +23,23 @@
             </Style>
             <Style x:Key="SmoothTexBox" BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox">
                 <Setter Property="MinWidth" Value="0" />
+                <Setter Property="MinHeight" Value="0" />
                 <Setter Property="Padding" Value="5 3" />
-                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Left" />
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="TextAlignment" Value="Center" />
                 <Setter Property="Margin" Value="15 0 0 0" />
                 <Setter Property="IsReadOnly" Value="True" />
+            </Style>
+            <Style x:Key="CopyButton" BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+                <Setter Property="Height" Value="22" />
+                <Setter Property="Padding" Value="1" />
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Margin" Value="5 0 0 0" />
+                <Setter Property="VerticalAlignment" Value="Stretch" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="ToolTip" Value="Copy to Clipboard" />
             </Style>
             <converters:PlaybackStateConverter x:Key="PlaybackStateConverter" />
             <converters:MuteButtonConverter x:Key="MuteButtonConverter" />
