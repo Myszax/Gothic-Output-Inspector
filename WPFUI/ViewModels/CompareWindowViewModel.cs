@@ -73,17 +73,14 @@ public sealed partial class CompareWindowViewModel : ObservableObject, ICloseabl
         _conversationDiffList = _dataService.Data.CompareTo(_dataService.ConversationsToCompare, x => x.Name)
             .ConvertAll(x => new ConversationDiff() { Diff = x, Name = x.Original?.Name ?? x.Compared!.Name });
 
-        FilterValueCompareMode = string.Empty;
-        ConversationDiffCollection = CollectionViewSource.GetDefaultView(_conversationDiffList);
-        ConversationDiffCollection.Filter = FilterConversationDiffCollection;
-        OnPropertyChanged(nameof(LoadedConversationsDiffCount));
-        OnPropertyChanged(nameof(FilteredConversationsDiffCount));
-        Title = _dataService.CompareWindowTitle;
-
         SelectedComparisonMethod = _settingsService.CompareModeComparisonMethod;
         SelectedFilterType = _settingsService.CompareModeSelectedFilterType;
         IsEnabledFilterIsInspected = _settingsService.CompareModeIsEnabledFilterIsInspected;
         IsEnabledIgnoreInspectedWhileTransfer = _settingsService.CompareModeIsEnabledIgnoreInspectedWhileTransfer;
+        Title = _dataService.CompareWindowTitle;
+
+        ConversationDiffCollection = CollectionViewSource.GetDefaultView(_conversationDiffList);
+        ConversationDiffCollection.Filter = FilterConversationDiffCollection;
     }
 
     public bool CanClose()
