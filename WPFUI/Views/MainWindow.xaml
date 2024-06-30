@@ -328,59 +328,143 @@
         </Grid>
 
         <Grid Grid.Row="2" Grid.Column="2" x:Name="DetailedPanel" Grid.RowSpan="2">
-            <ScrollViewer BorderThickness="1 0 0 0" BorderBrush="Black">
-                <StackPanel Margin="5 5 5 5">
-                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5" VerticalAlignment="Center">
-                        <TextBlock VerticalAlignment="Center">Type</TextBlock>
-                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Type}" />
-                    </WrapPanel>
-                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                        <TextBlock VerticalAlignment="Center">Name</TextBlock>
-                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Name}" />
-                    </WrapPanel>
-                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                        <TextBlock VerticalAlignment="Center">Sound</TextBlock>
-                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Sound}" />
-                    </WrapPanel>
-                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                        <TextBlock VerticalAlignment="Center">NPC Name</TextBlock>
-                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.NpcName}" />
-                    </WrapPanel>
-                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                        <TextBlock VerticalAlignment="Center">Context</TextBlock>
-                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Context}" />
-                    </WrapPanel>
-                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                        <TextBlock VerticalAlignment="Center">Voice</TextBlock>
-                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Voice}" />
-                    </WrapPanel>
-                    <WrapPanel Orientation="Horizontal" Margin="5 5 0 5">
-                        <TextBlock VerticalAlignment="Center">Number</TextBlock>
-                        <TextBox Style="{StaticResource SmoothTexBox}" MouseDoubleClick="TextBox_CopyToClipboard" Text="{Binding SelectedConversation.Number}" />
-                    </WrapPanel>
-                    <DockPanel LastChildFill="False">
-                        <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Inspected</TextBlock>
-                            <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversation.IsInspected}"
+            <ScrollViewer BorderThickness="1 0 0 0" BorderBrush="Black" HorizontalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Grid Grid.IsSharedSizeScope="True" Margin="5 5 0 0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0">Type</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Type}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Type" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversation.Type}" />
+                        </Grid>
+
+                        <Grid Grid.Row="1" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0">Name</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Name}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Name" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversation.Name}" />
+                        </Grid>
+
+                        <Grid Grid.Row="2" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0">Sound</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Sound}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Sound" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversation.Sound}" />
+                        </Grid>
+
+                        <Grid Grid.Row="3" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0">NPC Name</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=NpcName}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="NpcName" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversation.NpcName}" />
+                        </Grid>
+
+                        <Grid Grid.Row="4" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0">Context</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Context}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Context" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversation.Context}" />
+                        </Grid>
+
+                        <Grid Grid.Row="5" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0">Voice</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Voice}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Voice" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversation.Voice}" />
+                        </Grid>
+
+                        <Grid Grid.Row="6" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="Properties" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Grid.Column="0">Number</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=Number}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                            <TextBox x:Name="Number" Grid.Column="2" Style="{StaticResource SmoothTexBox}" Text="{Binding SelectedConversation.Number}" />
+                        </Grid>
+
+                        <DockPanel LastChildFill="False" Grid.Row="7">
+                            <WrapPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="5 5 0 5">
+                                <TextBlock VerticalAlignment="Center">Inspected</TextBlock>
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding SelectedConversation.IsInspected}"
                             Command="{Binding ProjectFileChangedCommand}"/>
-                        </WrapPanel>
-                        <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
-                            <TextBlock VerticalAlignment="Center">Edited</TextBlock>
-                            <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversation.IsEdited}" />
-                        </WrapPanel>
-                    </DockPanel>
+                            </WrapPanel>
+                            <WrapPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="5 5 0 5">
+                                <TextBlock VerticalAlignment="Center">Edited</TextBlock>
+                                <CheckBox Margin="15 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Center" Focusable="False" IsHitTestVisible="False" IsChecked="{Binding SelectedConversation.IsEdited}" />
+                            </WrapPanel>
+                        </DockPanel>
+                    </Grid>
+
                     <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Center">Original Text</TextBlock>
-                        <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
-                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
-                             IsReadOnly="True"
-                             Text="{Binding SelectedConversation.OriginalText}" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center">Original Text</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=OriginalText}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                        </StackPanel>
+                        <TextBox x:Name="OriginalText" VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                         TextWrapping="Wrap" IsReadOnly="True" Text="{Binding SelectedConversation.OriginalText}" />
                     </StackPanel>
                     <StackPanel Margin="5 15 0 5" HorizontalAlignment="Center">
-                        <TextBlock HorizontalAlignment="Center">Edited Text</TextBlock>
-                        <TextBox VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
-                             TextWrapping="Wrap" MouseDoubleClick="TextBox_CopyToClipboard"
-                             SpellCheck.IsEnabled="True" Language="pl-PL"
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock HorizontalAlignment="Center">Edited Text</TextBlock>
+                            <Button Style="{StaticResource CopyButton}" Grid.Column="1" Command="{Binding CopyToClipboardCommand}" CommandParameter="{Binding Text, ElementName=EditedText}">
+                                <fa:ImageAwesome Icon="Regular_Copy" PrimaryColor="DarkCyan" />
+                            </Button>
+                        </StackPanel>
+                        <TextBox x:Name="EditedText" VerticalScrollBarVisibility="Auto" Width="300" MinLines="3" MaxLines="10" Padding="4"
+                             TextWrapping="Wrap" SpellCheck.IsEnabled="True" Language="pl-PL"
                              Text="{Binding SelectedConversation.EditedText, UpdateSourceTrigger=PropertyChanged}">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="TextChanged">
@@ -389,7 +473,6 @@
                             </i:Interaction.Triggers>
                         </TextBox>
                     </StackPanel>
-
                 </StackPanel>
             </ScrollViewer>
         </Grid>
