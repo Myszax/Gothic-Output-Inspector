@@ -279,6 +279,12 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
         _projectWasEdited = false;
     }
 
+    private void SelectFirstFilteredConversation()
+    {
+        if (FilteredConversationsCount > 0)
+            ConversationCollection.MoveCurrentToNext();
+    }
+
     private void SetGroupingAndSortingOnConversationCollection()
     {
         var pgd = new PropertyGroupDescription(nameof(Conversation.NpcName));
@@ -482,6 +488,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
         Title = TITLE + " - NewProject";
         _settingsService.MainPathToSaveFile = string.Empty;
         ProjectFileChanged();
+        SelectFirstFilteredConversation();
     }
 
     [RelayCommand]
@@ -581,6 +588,7 @@ public sealed partial class MainWindowViewModel : ObservableObject, ICloseable
         IsOuFileImported = true;
         _settingsService.MainPathToSaveFile = pathToSaveFile;
         Title = TITLE + " - " + pathToSaveFile;
+        SelectFirstFilteredConversation();
     }
 
     [RelayCommand]
