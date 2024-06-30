@@ -196,7 +196,8 @@
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
                 SelectedItem="{Binding SelectedGridRow}"
                 VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.IsVirtualizingWhenGrouping="True"
-                VirtualizingStackPanel.VirtualizationMode="Recycling">
+                VirtualizingStackPanel.VirtualizationMode="Recycling"
+                IsSynchronizedWithCurrentItem="True">
 
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Audio">
